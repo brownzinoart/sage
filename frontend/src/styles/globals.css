@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables for fonts */
+:root {
+  --font-playfair: 'Playfair Display', Georgia, serif;
+  --font-opensans: 'Open Sans', system-ui, sans-serif;
+}
+
+/* Modern Sage utilities */
+@layer utilities {
+  /* Smooth animations */
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+  }
+  /* Natural gradient backgrounds */
+  .sage-gradient {
+    background: linear-gradient(135deg, #e8f5e8 0%, #f7faf6 100%);
+  }
+  
+  .warm-gradient {
+    background: linear-gradient(135deg, #faf6f0 0%, #f8f3ea 100%);
+  }
+  
+  .earth-gradient {
+    background: linear-gradient(135deg, #f4e4c1 0%, #e6c79c 100%);
+  }
+  
+  /* Paper-like textures */
+  .paper-texture {
+    background-color: #fefefe;
+    background-image: 
+      radial-gradient(circle at 1px 1px, rgba(135, 169, 107, 0.05) 1px, transparent 0);
+    background-size: 20px 20px;
+  }
+  
+  /* Soft, natural shadows */
+  .sage-shadow {
+    box-shadow: 0 4px 20px rgba(135, 169, 107, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .sage-shadow:hover {
+    box-shadow: 0 8px 30px rgba(135, 169, 107, 0.15);
+  }
+  
+  /* Gentle glow effects */
+  .sage-glow {
+    box-shadow: 0 0 15px rgba(135, 169, 107, 0.2);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .sage-glow:hover {
+    box-shadow: 0 0 25px rgba(135, 169, 107, 0.3);
+  }
+  
+  /* Natural gradient text */
+  .sage-text {
+    background: linear-gradient(45deg, #87a96b, #6b8e23);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Organic shapes */
+  .organic-shape {
+    border-radius: 60% 40% 40% 20% / 70% 50% 30% 25%;
+  }
+  
+  /* Watercolor effects */
+  .watercolor-bg {
+    background: 
+      radial-gradient(ellipse at top, rgba(135, 169, 107, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(230, 199, 156, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom left, rgba(230, 224, 248, 0.1) 0%, transparent 50%);
+  }
+  
+  /* Soft scrollbar styling */
+  .zen-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #c3e9d0 #f0f9f4;
+  }
+  
+  .zen-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .zen-scroll::-webkit-scrollbar-track {
+    background: #f0f9f4;
+    border-radius: 10px;
+  }
+  
+  .zen-scroll::-webkit-scrollbar-thumb {
+    background: #c3e9d0;
+    border-radius: 10px;
+    border: 2px solid #f0f9f4;
+  }
+  
+  .zen-scroll::-webkit-scrollbar-thumb:hover {
+    background: #8ed1a6;
+  }
+}
+
+/* Zen loading states */
+.zen-skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0f9f4 25%,
+    #e6f4ea 50%,
+    #f0f9f4 75%
+  );
+  background-size: 200% 100%;
+  animation: zen-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes zen-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Zen hover states - gentle elevation */
+.zen-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.zen-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(62, 160, 85, 0.15);
+}
+
+/* Remove harsh outlines, use soft focus */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid rgba(62, 160, 85, 0.5);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter);
+  color: #3a3a35;
+  background-color: #fafaf9;
+  line-height: 1.6;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .zen-breathe,
+  .zen-loading {
+    animation: none;
+  }
+}
