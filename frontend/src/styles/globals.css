@@ -1,5 +1,5 @@
-/* Import Inter font family - our single, cohesive typeface */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* Import modern trending fonts for 2025 */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,7 +8,8 @@
 /* Design System CSS Variables */
 :root {
   /* Typography Scale - Based on 1.25 modular scale */
-  --font-family-primary: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family-primary: 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-family-display: 'Playfair Display', Georgia, serif;
   --font-size-xs: 0.75rem;      /* 12px */
   --font-size-sm: 0.875rem;     /* 14px */
   --font-size-base: 1rem;       /* 16px */

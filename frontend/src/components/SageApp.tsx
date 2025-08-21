@@ -233,11 +233,11 @@ export default function SageApp() {
                 });
               }}>
                 <div className="relative">
-                  <h1 className="text-8xl font-light text-white tracking-wider mb-2 group-hover:text-emerald-300 transition-all duration-500" 
+                  <h1 className="text-8xl font-display font-semibold text-white tracking-wide mb-2 group-hover:text-emerald-300 transition-all duration-500" 
                       style={{
-                        fontFamily: 'Inter, system-ui, sans-serif',
-                        letterSpacing: '0.15em',
-                        textShadow: '0 4px 12px rgba(0,0,0,0.3), 0 2px 4px rgba(255,255,255,0.1)'
+                        fontFamily: 'var(--font-playfair), Georgia, serif',
+                        letterSpacing: '0.08em',
+                        textShadow: '0 4px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(255,255,255,0.15)'
                       }}>
                     Sage
                   </h1>
@@ -258,12 +258,18 @@ export default function SageApp() {
                 </div>
                 
                 <div className="space-y-4">
-                  <p className="text-3xl text-slate-100 font-light tracking-widest group-hover:text-emerald-300 transition-all duration-500" 
-                     style={{textShadow: '0 2px 6px rgba(0,0,0,0.4)'}}>
+                  <p className="text-3xl text-slate-100 font-medium tracking-wide group-hover:text-emerald-300 transition-all duration-500" 
+                     style={{
+                       fontFamily: 'var(--font-poppins), system-ui, sans-serif',
+                       textShadow: '0 2px 6px rgba(0,0,0,0.4)'
+                     }}>
                     Your AI Hemp Guide
                   </p>
-                  <p className="text-xl text-slate-200 font-light" 
-                     style={{textShadow: '0 2px 4px rgba(0,0,0,0.3)'}}>
+                  <p className="text-xl text-slate-200 font-medium" 
+                     style={{
+                       fontFamily: 'var(--font-poppins), system-ui, sans-serif',
+                       textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                     }}>
                     ✨ Personalized • Private • Instant
                   </p>
                 </div>
@@ -275,22 +281,22 @@ export default function SageApp() {
                   <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl">🧠</span>
                   </div>
-                  <p className="text-sm font-medium text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>AI-Powered</p>
-                  <p className="text-xs text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Smart recommendations</p>
+                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>AI-Powered</p>
+                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Smart recommendations</p>
                 </div>
                 <div className="text-center space-y-2 group">
                   <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl">🔒</span>
                   </div>
-                  <p className="text-sm font-medium text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>100% Private</p>
-                  <p className="text-xs text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Your questions stay safe</p>
+                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>100% Private</p>
+                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Your questions stay safe</p>
                 </div>
                 <div className="text-center space-y-2 group">
                   <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-500 rounded-full flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl">⚡</span>
                   </div>
-                  <p className="text-sm font-medium text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>Instant Help</p>
-                  <p className="text-xs text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Available 24/7</p>
+                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>Instant Help</p>
+                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Available 24/7</p>
                 </div>
               </div>
             </div>
@@ -317,25 +323,31 @@ export default function SageApp() {
               </div>
 
               {/* Progressive blur background effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-white/20 to-emerald-50/30 rounded-3xl blur-xl transform scale-110 group-hover:scale-105 transition-transform duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-emerald-500/5 to-emerald-300/8 rounded-3xl blur-xl transform scale-110 group-hover:scale-105 transition-transform duration-500"></div>
               
-              {/* Main input card with texture */}
-              <div className="relative bg-white/95 backdrop-blur-xl rounded-3xl p-8 shadow-2xl shadow-black/10 border border-white/50 group-hover:shadow-emerald-500/20 transition-all duration-500"
+              {/* Main input card with glassmorphism */}
+              <div className="relative backdrop-blur-xl rounded-3xl p-8 shadow-2xl shadow-black/20 border border-white/10 group-hover:shadow-emerald-500/30 transition-all duration-500"
                    style={{
-                     background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 50%, rgba(16,185,129,0.05) 100%)'
+                     background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.12) 50%, rgba(16,185,129,0.08) 100%)'
                    }}>
                 
                 <div className="space-y-8">
                   {!hasSearched && (
                     <div className="text-center space-y-6">
                       <div className="relative inline-block">
-                        <p className="text-2xl text-slate-800 font-light relative z-10" style={{textShadow: '0 2px 4px rgba(0,0,0,0.2)'}}>
+                        <p className="text-2xl text-white font-semibold relative z-10" style={{
+                          fontFamily: 'var(--font-poppins), system-ui, sans-serif',
+                          textShadow: '0 2px 6px rgba(0,0,0,0.4)'
+                        }}>
                           What's on your mind today?
                         </p>
                         {/* Kinetic underline effect */}
                         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
                       </div>
-                      <p className="text-sm text-slate-600 opacity-90" style={{textShadow: '0 1px 2px rgba(0,0,0,0.2)'}}>
+                      <p className="text-sm text-slate-200 font-medium opacity-90" style={{
+                        fontFamily: 'var(--font-poppins), system-ui, sans-serif',
+                        textShadow: '0 1px 3px rgba(0,0,0,0.4)'
+                      }}>
                         Your AI hemp guide is ready to help ✨
                       </p>
                       
@@ -348,20 +360,20 @@ export default function SageApp() {
                             onClick={() => setSelectedExperience(level.id)}
                             className={`group/level relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                               selectedExperience === level.id
-                                ? 'bg-emerald-100/80 text-emerald-700 shadow-lg scale-105'
-                                : 'bg-white/40 text-slate-600 hover:bg-white/60 hover:scale-105'
+                                ? 'bg-emerald-400/20 text-emerald-200 shadow-lg scale-105 border border-emerald-300/30'
+                                : 'bg-white/10 text-slate-300 hover:bg-white/20 hover:scale-105 border border-white/20'
                             }`}
                           >
                             <span className="relative z-10">{level.icon} {level.label}</span>
                             {selectedExperience === level.id && (
-                              <div className="absolute inset-0 bg-emerald-200/50 rounded-full animate-pulse"></div>
+                              <div className="absolute inset-0 bg-emerald-400/20 rounded-full animate-pulse"></div>
                             )}
                           </button>
                         ))}
                       </div>
                       
                       {selectedExperience && (
-                        <p className="text-xs text-emerald-600/80 animate-fade-in">
+                        <p className="text-xs text-emerald-300/90 animate-fade-in">
                           Perfect! Sage will tailor responses for your {experienceLevels.find(l => l.id === selectedExperience)?.description.toLowerCase()} 🎯
                         </p>
                       )}
@@ -391,7 +403,7 @@ export default function SageApp() {
                           e.target.parentElement?.classList.remove('focused');
                         }}
                         placeholder={hasSearched ? "Ask anything else..." : "I can't sleep... I'm stressed... What helps with pain?"}
-                        className="w-full bg-transparent text-2xl text-slate-800 placeholder-slate-400/50 focus:outline-none font-light text-center py-6 px-4 transition-all duration-300"
+                        className="w-full bg-transparent text-2xl text-white placeholder-slate-300/60 focus:outline-none font-light text-center py-6 px-4 transition-all duration-300"
                       />
                       
                       {/* Animated underline that responds to typing */}
@@ -399,7 +411,7 @@ export default function SageApp() {
                       
                       {/* Floating character count for engagement */}
                       {searchQuery.length > 0 && (
-                        <div className="absolute -bottom-8 right-4 text-xs text-emerald-600/60 animate-fade-in">
+                        <div className="absolute -bottom-8 right-4 text-xs text-emerald-300/70 animate-fade-in">
                           {searchQuery.length} characters • Keep going! 💫
                         </div>
                       )}
@@ -410,7 +422,7 @@ export default function SageApp() {
                     <button
                       onClick={handleSearch}
                       disabled={!searchQuery.trim() || isLoading}
-                      className="group/btn relative px-16 py-5 text-white bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-500 rounded-full disabled:opacity-50 transition-all duration-500 font-medium text-lg shadow-2xl hover:shadow-emerald-500/40 transform hover:scale-105 disabled:transform-none overflow-hidden"
+                      className="group/btn relative px-16 py-5 text-white bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-500 rounded-full disabled:opacity-50 transition-all duration-500 font-semibold text-lg shadow-2xl hover:shadow-emerald-500/40 transform hover:scale-105 disabled:transform-none overflow-hidden"
                       style={{
                         backgroundSize: '200% 100%',
                         animation: !isLoading && searchQuery.trim() ? 'gradient-shift 3s ease-in-out infinite' : 'none'
@@ -438,12 +450,12 @@ export default function SageApp() {
                   {/* Confidence boost for hesitant users */}
                   {!hasSearched && (
                     <div className="text-center space-y-3 opacity-70 hover:opacity-100 transition-opacity duration-300">
-                      <div className="flex items-center justify-center gap-2 text-sm text-slate-500">
+                      <div className="flex items-center justify-center gap-2 text-sm text-slate-300">
                         <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                         <span>Private & secure</span>
-                        <div className="w-1 h-1 bg-slate-300 rounded-full mx-2"></div>
+                        <div className="w-1 h-1 bg-slate-400 rounded-full mx-2"></div>
                         <span>No judgment</span>
-                        <div className="w-1 h-1 bg-slate-300 rounded-full mx-2"></div>
+                        <div className="w-1 h-1 bg-slate-400 rounded-full mx-2"></div>
                         <span>Expert knowledge</span>
                         <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                       </div>
