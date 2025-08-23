@@ -46,10 +46,16 @@ export default function ResearchOverlay({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden border border-white/20">
+    <div 
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] flex flex-col border border-white/20"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200/50">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200/50 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-lg">
               <BookOpen className="w-5 h-5 text-blue-600" />
@@ -68,7 +74,7 @@ export default function ResearchOverlay({
         </div>
 
         {!hasResources ? (
-          <div className="p-8">
+          <div className="flex-1 overflow-y-auto p-8">
             <div className="text-center mb-6">
               <div className="p-4 bg-emerald-100 rounded-lg w-fit mx-auto mb-4">
                 <BookOpen className="w-8 h-8 text-emerald-600" />
@@ -128,10 +134,13 @@ export default function ResearchOverlay({
         ) : (
           <>
             {/* Navigation Tabs */}
-            <div className="flex border-b border-gray-200/50 px-6">
+            <div className="flex border-b border-gray-200/50 px-6 flex-shrink-0">
               <button
-                onClick={() => setActiveTab('overview')}
-                className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setActiveTab('overview')
+                }}
+                className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
                   activeTab === 'overview'
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-600 hover:text-gray-900'
@@ -141,8 +150,11 @@ export default function ResearchOverlay({
               </button>
               {(educational_resources?.research_studies?.papers?.length || 0) > 0 && (
                 <button
-                  onClick={() => setActiveTab('research')}
-                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setActiveTab('research')
+                  }}
+                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
                     activeTab === 'research'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-600 hover:text-gray-900'
@@ -153,8 +165,11 @@ export default function ResearchOverlay({
               )}
               {educational_resources?.dosage_guidelines && (
                 <button
-                  onClick={() => setActiveTab('dosage')}
-                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setActiveTab('dosage')
+                  }}
+                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
                     activeTab === 'dosage'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-600 hover:text-gray-900'
@@ -165,8 +180,11 @@ export default function ResearchOverlay({
               )}
               {educational_resources?.safety_information && (
                 <button
-                  onClick={() => setActiveTab('safety')}
-                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setActiveTab('safety')
+                  }}
+                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
                     activeTab === 'safety'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-600 hover:text-gray-900'
@@ -177,8 +195,11 @@ export default function ResearchOverlay({
               )}
               {educational_resources?.legal_status && (
                 <button
-                  onClick={() => setActiveTab('legal')}
-                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setActiveTab('legal')
+                  }}
+                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
                     activeTab === 'legal'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-600 hover:text-gray-900'
@@ -190,7 +211,7 @@ export default function ResearchOverlay({
             </div>
 
             {/* Content Area */}
-            <div className="overflow-y-auto max-h-[60vh] p-6">
+            <div className="flex-1 overflow-y-auto p-6">
               {/* Overview Tab */}
               {activeTab === 'overview' && (
                 <div className="space-y-6">
@@ -318,7 +339,8 @@ export default function ResearchOverlay({
                               href={paper.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800"
+                              className="text-blue-600 hover:text-blue-800 cursor-pointer transition-colors"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <ExternalLink className="w-4 h-4" />
                             </a>
@@ -345,8 +367,11 @@ export default function ResearchOverlay({
                           <div>
                             <p className="mb-2">{paper.abstract}</p>
                             <button
-                              onClick={() => setExpandedPaper(null)}
-                              className="text-blue-600 hover:text-blue-800 text-xs flex items-center gap-1"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setExpandedPaper(null)
+                              }}
+                              className="text-blue-600 hover:text-blue-800 text-xs flex items-center gap-1 cursor-pointer transition-colors"
                             >
                               <ChevronUp className="w-3 h-3" /> Show less
                             </button>
@@ -355,8 +380,11 @@ export default function ResearchOverlay({
                           <div>
                             <p className="mb-2">{paper.abstract.slice(0, 200)}...</p>
                             <button
-                              onClick={() => setExpandedPaper(idx)}
-                              className="text-blue-600 hover:text-blue-800 text-xs flex items-center gap-1"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setExpandedPaper(idx)
+                              }}
+                              className="text-blue-600 hover:text-blue-800 text-xs flex items-center gap-1 cursor-pointer transition-colors"
                             >
                               <ChevronDown className="w-3 h-3" /> Read more
                             </button>
