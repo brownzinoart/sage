@@ -1,16 +1,47 @@
 'use client'
 
-import { useState } from 'react'
-import { Leaf } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Leaf, BookOpen } from 'lucide-react'
 import LoadingScreen from './ui/LoadingScreen'
+import ResearchOverlay from './chat/ResearchOverlay'
+import { EducationalResources, EducationalSummary } from '@/types'
 // Typography components will be implemented in next phase
 
-const examplePrompts = [
-  "what is thca?",
-  "whats best for a cookout?", 
-  "i cant sleep!",
-  "what are NC's regulations?"
-]
+// Experience-based rotating prompts
+const promptExamples = {
+  new: [
+    "What is CBD and how does it work?",
+    "I'm new to hemp - where should I start?", 
+    "What's the difference between CBD and THC?",
+    "Are hemp products legal?",
+    "How do I know what dosage to take?",
+    "What's the difference between full spectrum and isolate?"
+  ],
+  casual: [
+    "I can't sleep, what helps?",
+    "What's best for stress relief?",
+    "I need something for after workouts",
+    "What helps with occasional anxiety?",
+    "Something for social situations?",
+    "Best products for daily wellness?"
+  ],
+  experienced: [
+    "Looking for high-potency options",
+    "What are your premium terpene blends?",
+    "Any new cannabinoid products?",
+    "Best ratio for pain management?",
+    "What's your strongest sleep formula?",
+    "Any limited edition or craft products?"
+  ],
+  general: [
+    "I can't sleep...",
+    "What helps with stress?",
+    "Something for pain relief?",
+    "Best for relaxation?",
+    "Help with focus?",
+    "What's good for beginners?"
+  ]
+}
 
 const experienceLevels = [
   {
@@ -40,6 +71,20 @@ export default function SageApp() {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedExperience, setSelectedExperience] = useState('')
   const [showDetailedEducation, setShowDetailedEducation] = useState(false)
+  const [currentPromptIndex, setCurrentPromptIndex] = useState(0)
+  const [educationalResources, setEducationalResources] = useState<EducationalResources | null>(null)
+  const [educationalSummary, setEducationalSummary] = useState<EducationalSummary | null>(null)
+  const [researchOverlayOpen, setResearchOverlayOpen] = useState(false)
+
+  // Debug: Log loading state changes
+  useEffect(() => {
+    console.log('Loading state changed:', isLoading)
+  }, [isLoading])
+
+  // Safety: Reset loading state on mount
+  useEffect(() => {
+    setIsLoading(false)
+  }, [])
   const [demoProducts, setDemoProducts] = useState([
     {
       id: 1,
@@ -64,6 +109,39 @@ export default function SageApp() {
     }
   ])
 
+  // Get current prompt examples based on experience level
+  const getCurrentPrompts = () => {
+    if (selectedExperience && promptExamples[selectedExperience as keyof typeof promptExamples]) {
+      return promptExamples[selectedExperience as keyof typeof promptExamples]
+    }
+    return promptExamples.general
+  }
+
+  // Get current placeholder text
+  const getCurrentPlaceholder = () => {
+    const prompts = getCurrentPrompts()
+    return prompts[currentPromptIndex] || prompts[0]
+  }
+
+  // Rotate prompts every 3 seconds when not searching and not focused
+  useEffect(() => {
+    if (!hasSearched) {
+      const interval = setInterval(() => {
+        setCurrentPromptIndex((prev) => {
+          const prompts = getCurrentPrompts()
+          return (prev + 1) % prompts.length
+        })
+      }, 3000) // Rotate every 3 seconds
+
+      return () => clearInterval(interval)
+    }
+  }, [selectedExperience, hasSearched])
+
+  // Reset prompt index when experience level changes
+  useEffect(() => {
+    setCurrentPromptIndex(0)
+  }, [selectedExperience])
+
   const handleSearch = async () => {
     if (!searchQuery.trim()) return
     
@@ -71,9 +149,19 @@ export default function SageApp() {
     setIsLoading(true)
     setHasSearched(true)
     
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.warn('Search timeout - resetting loading state')
+      setIsLoading(false)
+    }, 15000) // 15 second timeout
+    
     try {
       const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/sage/ask`
       console.log('Making request to:', apiUrl)
+      
+      if (!apiUrl || apiUrl.includes('undefined')) {
+        throw new Error('API URL is not configured properly')
+      }
       
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -92,16 +180,33 @@ export default function SageApp() {
         const data = await response.json()
         console.log('Response data:', data)
         setExplanation(data.explanation)
-        setDemoProducts(data.products)
+        if (data.products) {
+          setDemoProducts(data.products)
+        }
+        if (data.educational_resources) {
+          setEducationalResources(data.educational_resources)
+        }
+        if (data.educational_summary) {
+          setEducationalSummary(data.educational_summary)
+        }
+        
+        // Scroll to top when recommendations appear
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         console.error('API response not OK:', response.status)
         setExplanation('For sleep support, CBD and CBN work together to promote relaxation. Look for products with calming terpenes like myrcene and linalool for the most restful experience.')
+        // Scroll to top for fallback response too
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       }
     } catch (error) {
       console.error('Error calling Sage API:', error)
       setExplanation('For sleep support, CBD and CBN work together to promote relaxation. Look for products with calming terpenes like myrcene and linalool for the most restful experience.')
+      // Scroll to top for error fallback too
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } finally {
+      clearTimeout(timeoutId)
       setIsLoading(false)
+      console.log('Search completed, loading state reset')
     }
   }
 
@@ -195,6 +300,10 @@ export default function SageApp() {
         <LoadingScreen 
           message="Sage is analyzing your question..." 
           fullScreen={true}
+          onCancel={() => {
+            console.log('User cancelled search')
+            setIsLoading(false)
+          }}
         />
       )}
       
@@ -300,14 +409,17 @@ export default function SageApp() {
                 </div>
               </div>
             </div>
-          ) : (
-            <div className="flex items-center gap-4 justify-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                <Leaf className="w-6 h-6 text-white" />
+          ) : hasSearched && !isLoading ? (
+            // Show minimal header after search is complete
+            <div className="flex items-center gap-3 justify-center opacity-80">
+              <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-md">
+                <Leaf className="w-4 h-4 text-white" />
               </div>
-              <h1 className="text-4xl font-light text-slate-800 tracking-wide">Sage is thinking...</h1>
+              <h1 className="text-lg font-light text-white tracking-wide" style={{textShadow: '0 1px 3px rgba(0,0,0,0.4)'}}>
+                Sage's Recommendations
+              </h1>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Magical input section with 2025 trends */}
@@ -373,9 +485,14 @@ export default function SageApp() {
                       </div>
                       
                       {selectedExperience && (
-                        <p className="text-xs text-emerald-300/90 animate-fade-in">
-                          Perfect! Sage will tailor responses for your {experienceLevels.find(l => l.id === selectedExperience)?.description.toLowerCase()} 🎯
-                        </p>
+                        <div className="animate-fade-in space-y-2">
+                          <p className="text-xs text-emerald-300/90">
+                            Perfect! Sage will tailor responses for your {experienceLevels.find(l => l.id === selectedExperience)?.description.toLowerCase()} 🎯
+                          </p>
+                          <p className="text-xs text-slate-400/70 italic">
+                            Notice how the suggestions below change for your level ✨
+                          </p>
+                        </div>
                       )}
                     </div>
                   )}
@@ -402,8 +519,8 @@ export default function SageApp() {
                         onBlur={(e) => {
                           e.target.parentElement?.classList.remove('focused');
                         }}
-                        placeholder={hasSearched ? "Ask anything else..." : "I can't sleep... I'm stressed... What helps with pain?"}
-                        className="w-full bg-transparent text-2xl text-white placeholder-slate-300/60 focus:outline-none font-light text-center py-6 px-4 transition-all duration-300"
+                        placeholder={hasSearched ? "Ask anything else..." : getCurrentPlaceholder()}
+                        className="w-full bg-transparent text-2xl text-white placeholder-slate-300/60 focus:outline-none font-light text-center py-6 px-4 transition-all duration-500"
                       />
                       
                       {/* Animated underline that responds to typing */}
@@ -489,12 +606,23 @@ export default function SageApp() {
                         <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                         <span className="font-medium">Sage's insight for you</span>
                       </div>
-                      <button 
-                        onClick={() => setShowDetailedEducation(!showDetailedEducation)}
-                        className="text-sm text-emerald-700 hover:text-emerald-800 font-medium px-3 py-1 rounded-lg hover:bg-emerald-50 transition-all duration-200"
-                      >
-                        {showDetailedEducation ? 'Show less' : 'Learn more'}
-                      </button>
+                      <div className="flex items-center gap-3">
+                        {explanation && (
+                          <button 
+                            onClick={() => setResearchOverlayOpen(true)}
+                            className="flex items-center gap-2 text-sm text-blue-700 hover:text-blue-800 font-medium px-3 py-1 rounded-lg hover:bg-blue-50 transition-all duration-200"
+                          >
+                            <BookOpen className="w-4 h-4" />
+                            Research Insights
+                          </button>
+                        )}
+                        <button 
+                          onClick={() => setShowDetailedEducation(!showDetailedEducation)}
+                          className="text-sm text-emerald-700 hover:text-emerald-800 font-medium px-3 py-1 rounded-lg hover:bg-emerald-50 transition-all duration-200"
+                        >
+                          {showDetailedEducation ? 'Show less' : 'Learn more'}
+                        </button>
+                      </div>
                     </div>
                     
                     {showDetailedEducation && (
@@ -516,10 +644,10 @@ export default function SageApp() {
         {hasSearched && (
           <div className="space-y-8 animate-scale-in" style={{animationDelay: '0.2s'}}>
             <div className="text-center">
-              <h3 className="text-2xl font-light text-slate-800 mb-3">
+              <h3 className="text-2xl font-light text-white mb-3" style={{textShadow: '0 2px 4px rgba(0,0,0,0.6)'}}>
                 Thoughtfully selected for you
               </h3>
-              <p className="text-slate-500">Based on our conversation, here's what I recommend</p>
+              <p className="text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.5)'}}>Based on our conversation, here's what I recommend</p>
             </div>
             
             <div className="grid gap-6">
@@ -552,32 +680,32 @@ export default function SageApp() {
                         {product.description}
                       </p>
                       
-                      {product.potency && (
+                      {(product as any).potency && (
                         <div className="flex items-center gap-2 text-sm text-slate-600">
                           <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                          <span className="font-medium">Potency:</span> {product.potency}
+                          <span className="font-medium">Potency:</span> {(product as any).potency}
                         </div>
                       )}
                       
-                      {product.why_recommended && (
+                      {(product as any).why_recommended && (
                         <div className="bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-lg p-4 border-l-4 border-blue-400 mb-3">
                           <div className="flex items-start gap-2">
                             <span className="text-blue-600 text-lg">💡</span>
                             <div>
                               <p className="text-sm font-medium text-blue-800 mb-1">Why this matches your search</p>
-                              <p className="text-sm text-blue-700">{product.why_recommended}</p>
+                              <p className="text-sm text-blue-700">{(product as any).why_recommended}</p>
                             </div>
                           </div>
                         </div>
                       )}
 
-                      {product.usage_tip && (
+                      {(product as any).usage_tip && (
                         <div className="bg-gradient-to-r from-emerald-50 to-emerald-100/50 rounded-lg p-4 border-l-4 border-emerald-400">
                           <div className="flex items-start gap-2">
                             <span className="text-emerald-600 text-lg">🌿</span>
                             <div>
                               <p className="text-sm font-medium text-emerald-800 mb-1">Sage's guidance</p>
-                              <p className="text-sm text-emerald-700">{product.usage_tip}</p>
+                              <p className="text-sm text-emerald-700">{(product as any).usage_tip}</p>
                             </div>
                           </div>
                         </div>
@@ -607,6 +735,14 @@ export default function SageApp() {
         )}
 
       </div>
+      
+      {/* Research Overlay */}
+      <ResearchOverlay
+        isOpen={researchOverlayOpen}
+        onClose={() => setResearchOverlayOpen(false)}
+        educational_resources={educationalResources || undefined}
+        educational_summary={educationalSummary || undefined}
+      />
     </div>
   )
 }

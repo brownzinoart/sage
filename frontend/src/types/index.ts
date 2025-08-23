@@ -7,6 +7,8 @@ export interface Message {
   timestamp: Date;
   suggestions?: string[];
   educational?: EducationalContent;
+  educational_resources?: EducationalResources;
+  educational_summary?: EducationalSummary;
 }
 
 export interface Product {
@@ -40,6 +42,67 @@ export interface EducationalContent {
   related_topics: string[];
 }
 
+export interface ResearchPaper {
+  title: string;
+  authors: string[];
+  journal: string;
+  year: number;
+  doi?: string;
+  pmid?: string;
+  abstract: string;
+  study_type: string;
+  credibility_score: number;
+  source: string;
+  url?: string;
+}
+
+export interface EducationalResources {
+  research_studies?: {
+    papers: ResearchPaper[];
+    summary: Record<string, any>;
+    quality_analysis: Record<string, any>;
+    total_found: number;
+  };
+  dosage_guidelines?: {
+    guidelines: Record<string, any>;
+    recommendation: string;
+    evidence_base: string[];
+    safety_considerations: string[];
+  };
+  safety_information?: {
+    interactions: Record<string, any>;
+    general_warnings: string[];
+    recommendation: string;
+  };
+  legal_status?: {
+    federal_status: Record<string, any>;
+    state_status: Record<string, any>;
+    compliance_notes: string[];
+  };
+  mechanism_of_action?: {
+    compound: string;
+    condition: string;
+    explanation: string;
+    pathway: string;
+  };
+  source_credibility?: {
+    total_papers: number;
+    average_credibility: number;
+    high_credibility_count: number;
+    source_distribution: Record<string, number>;
+    credibility_level: string;
+  };
+}
+
+export interface EducationalSummary {
+  query: string;
+  compounds_researched: string[];
+  evidence_strength: 'limited' | 'moderate' | 'strong';
+  key_findings: string[];
+  research_gaps: string[];
+  confidence_level: 'low' | 'moderate' | 'high';
+}
+
 export interface ChatRequest {
   text: string;
   session_id?: string;
@@ -52,6 +115,8 @@ export interface ChatResponse {
   products: Product[];
   suggestions: string[];
   educational_content?: EducationalContent;
+  educational_resources?: EducationalResources;
+  educational_summary?: EducationalSummary;
 }
 
 export interface ProductFilter {

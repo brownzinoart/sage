@@ -64,7 +64,7 @@ function ProductCard({ product }: { product: Product }) {
               {product.name}
             </h3>
             {product.lab_tested && (
-              <ShieldCheck className="w-4 h-4 text-primary-500" title="Lab Tested" />
+              <ShieldCheck className="w-4 h-4 text-primary-500" />
             )}
           </div>
           <p className="text-sm text-neutral-500 mb-2">{product.brand}</p>

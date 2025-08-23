@@ -1,0 +1,12 @@
+[build]
+  publish = "out"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NEXT_PUBLIC_API_URL = "https://sage-api-demo.loca.lt"
+  
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

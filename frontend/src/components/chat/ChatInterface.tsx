@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Message, PrivacyLevelNames } from '@/types'
-import { Send, Shield } from 'lucide-react'
+import { Send, Shield, BookOpen } from 'lucide-react'
+import LoadingScreen from '../ui/LoadingScreen'
+import ResearchOverlay from './ResearchOverlay'
 
 interface ChatInterfaceProps {
   messages: Message[]
@@ -18,6 +20,8 @@ export default function ChatInterface({
   privacyLevel
 }: ChatInterfaceProps) {
   const [input, setInput] = useState('')
+  const [researchOverlayOpen, setResearchOverlayOpen] = useState(false)
+  const [selectedMessageResearch, setSelectedMessageResearch] = useState<Message | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -45,6 +49,16 @@ export default function ChatInterface({
 
   const handleSuggestionClick = (suggestion: string) => {
     onSendMessage(suggestion)
+  }
+
+  const handleOpenResearch = (message: Message) => {
+    setSelectedMessageResearch(message)
+    setResearchOverlayOpen(true)
+  }
+
+  const handleCloseResearch = () => {
+    setResearchOverlayOpen(false)
+    setSelectedMessageResearch(null)
   }
 
   // Get latest suggestions from bot messages
@@ -115,6 +129,25 @@ export default function ChatInterface({
                 : 'bg-white text-neutral-800 rounded-bl-sm border border-neutral-100 shadow-sm'
             }`}>
               <div className="whitespace-pre-wrap">{message.content}</div>
+              
+              {/* Research Resources Button for Assistant Messages */}
+              {message.role === 'assistant' && (message.educational_resources || message.educational_summary) && (
+                <div className="mt-3 pt-3 border-t border-neutral-100">
+                  <button
+                    onClick={() => handleOpenResearch(message)}
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors group"
+                  >
+                    <div className="p-1.5 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                      <BookOpen className="w-4 h-4" />
+                    </div>
+                    <span>View Research Insights</span>
+                  </button>
+                  <p className="text-xs text-neutral-500 mt-1">
+                    Evidence-based information from academic sources
+                  </p>
+                </div>
+              )}
+              
               {message.role === 'assistant' && message.timestamp && (
                 <div className="text-xs text-neutral-400 mt-2">
                   {message.timestamp.toLocaleTimeString()}
@@ -126,12 +159,8 @@ export default function ChatInterface({
 
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-white border border-neutral-100 rounded-2xl rounded-bl-sm p-4 shadow-sm">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-primary-300 rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-primary-300 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-                <div className="w-2 h-2 bg-primary-300 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
-              </div>
+            <div className="bg-white border border-neutral-100 rounded-2xl rounded-bl-sm p-6 shadow-sm max-w-sm">
+              <LoadingScreen message="Thinking..." fullScreen={false} />
             </div>
           </div>
         )}
@@ -178,6 +207,14 @@ export default function ChatInterface({
           </button>
         </div>
       </div>
+      
+      {/* Research Overlay */}
+      <ResearchOverlay
+        isOpen={researchOverlayOpen}
+        onClose={handleCloseResearch}
+        educational_resources={selectedMessageResearch?.educational_resources}
+        educational_summary={selectedMessageResearch?.educational_summary}
+      />
     </div>
   )
 }
