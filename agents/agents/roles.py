@@ -1,0 +1,23 @@
+# Capability tags used by the orchestrator to reason about coverage.
+ROLE_TAGS = {
+    "Product Design & Strategy Expert": ["product", "strategy", "design-thinking", "positioning"],
+    "UX Researcher": ["research", "users", "insights", "cultural-intel"],
+    "UX/UI Expert": ["ux", "ui", "web", "app", "information-architecture"],
+    "Graphic/Content Design Expert": ["brand", "visual", "content", "graphics"],
+    "Digital Animation Expert": ["motion", "cgi", "animation"],
+    "Information Architect": ["ia", "structure", "taxonomy"],
+    "Development Expert": ["backend", "frontend", "fullstack"],
+    "iOS App Expert": ["ios", "swift", "mobile"],
+    "Android App Expert": ["android", "kotlin", "mobile"],
+    "API Integration Expert": ["api", "integration"],
+    "ML/LLM Expert": ["ml", "ai", "llm", "prompting"],
+    "Testing/QA Expert": ["qa", "testing", "automation"],
+    "Marketing Strategist": ["marketing", "media", "ads", "performance"],
+    "Social/Creator/Influencer Expert": ["social", "creators", "influencers", "content"],
+    "Analytics & Reporting Expert": ["analytics", "reporting", "dashboards"],
+    "Growth & Acquisition Expert": ["growth", "lifecycle", "activation", "retention"],
+    "Project Management Expert": ["pm", "delivery", "roadmap"],
+    "Operations & People Expert": ["ops", "people", "hr"],
+    "Legal & Compliance Expert": ["legal", "privacy", "compliance"],
+    "Investor Relations & Fundraising": ["ir", "fundraising", "capital"],
+}

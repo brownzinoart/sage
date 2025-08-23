@@ -1,0 +1,1 @@
+# MCP Educational Server Package

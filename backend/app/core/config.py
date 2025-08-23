@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     
     # External APIs
     OPENAI_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
     
     # Analytics
     MIXPANEL_TOKEN: str = ""

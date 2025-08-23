@@ -1,0 +1,52 @@
+{
+  "dispensary": {
+    "name": "Premo Cannabis",
+    "website": "https://premocannabis.co",
+    "location": {
+      "city": "Multiple Locations",
+      "state": "Washington",
+      "timezone": "PST"
+    },
+    "branding": {
+      "primaryColor": "#000000",
+      "accentColor": "#6262F5",
+      "textPrimary": "#080808",
+      "textSecondary": "#626875",
+      "logo": "/logos/premo-cannabis.png",
+      "theme": "dark"
+    },
+    "categories": [
+      "Flower",
+      "Pre Rolls", 
+      "Vaporizers",
+      "Concentrates",
+      "Edibles",
+      "Tinctures",
+      "Topicals",
+      "Accessories",
+      "Beverages",
+      "Merchandise"
+    ],
+    "features": {
+      "detailed_cannabinoids": true,
+      "terpene_profiles": true,
+      "lab_testing": true,
+      "bulk_pricing": true,
+      "delivery": false,
+      "pickup": true
+    }
+  },
+  "sage_integration": {
+    "product_matching": true,
+    "price_integration": true,
+    "inventory_awareness": true,
+    "location_specific_laws": true,
+    "brand_recommendations": true
+  },
+  "demo_settings": {
+    "mock_inventory_levels": true,
+    "simulated_real_time": true,
+    "show_analytics": true,
+    "enable_ordering": false
+  }
+}

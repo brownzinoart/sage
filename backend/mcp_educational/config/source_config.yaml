@@ -1,0 +1,173 @@
+# Educational Source Configuration
+# Free academic and government APIs for hemp/CBD research
+
+research_sources:
+  pubmed:
+    base_url: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
+    databases: ["pubmed", "pmc"]
+    api_key: null  # Optional, increases rate limit
+    free: true
+    credibility: "peer-reviewed"
+    rate_limit: 3  # requests per second
+    
+  clinical_trials:
+    base_url: "https://clinicaltrials.gov/api/v2/"
+    free: true
+    credibility: "clinical"
+    rate_limit: 10
+    
+  fda:
+    base_url: "https://api.fda.gov/"
+    databases: ["drug/label", "drug/event", "food/enforcement"]
+    api_key: null  # Optional, increases rate limit
+    free: true
+    credibility: "government"
+    rate_limit: 1
+    
+  nih:
+    base_url: "https://api.nih.gov/"
+    endpoints: ["reporter", "clinicaltrials"]
+    free: true
+    credibility: "government"
+    rate_limit: 5
+    
+  europe_pmc:
+    base_url: "https://www.ebi.ac.uk/europepmc/webservices/rest/"
+    free: true
+    credibility: "peer-reviewed"
+    rate_limit: 10
+    enabled: true  # Now actively used
+    
+  doaj:  # Directory of Open Access Journals
+    base_url: "https://doaj.org/api/v2/"
+    free: true
+    credibility: "peer-reviewed"
+    rate_limit: 5
+    
+  core:  # CORE aggregates open access research
+    base_url: "https://api.core.ac.uk/v3/"
+    api_key: null  # Free tier available
+    free: true
+    credibility: "academic"
+    rate_limit: 10
+
+# Cannabis Industry Sources
+cannabis_sources:
+  leafly:
+    base_url: "https://web-gateway.leafly.com/api/"
+    api_key: null  # Optional for enhanced access
+    free: true  # Basic access available
+    credibility: "industry-data"
+    rate_limit: 5
+    enabled: true
+    
+  pubchem:
+    base_url: "https://pubchem.ncbi.nlm.nih.gov/rest/pug/"
+    free: true
+    credibility: "chemical-database"
+    rate_limit: 5  # 5 requests per second to be respectful
+    enabled: true
+    
+  terpene_database:
+    type: "internal"
+    credibility: "curated-data"
+    enabled: true
+    comprehensive: true
+
+state_sources:
+  nc_dhhs:
+    url: "https://www.ncdhhs.gov/"
+    type: "state_health"
+    credibility: "government"
+    scrape: true
+    
+  nc_legislature:
+    url: "https://www.ncleg.gov/"
+    type: "legal"
+    credibility: "government"
+    scrape: true
+    
+  nc_agriculture:
+    url: "https://www.ncagr.gov/"
+    type: "hemp_regulation"
+    credibility: "government"
+    scrape: true
+
+search_terms:
+  cannabinoids:
+    - "cannabidiol"
+    - "CBD"
+    - "cannabinol" 
+    - "CBN"
+    - "cannabigerol"
+    - "CBG"
+    - "cannabichromene"
+    - "CBC"
+    - "tetrahydrocannabinol"
+    - "THC"
+    - "hemp"
+    - "cannabis"
+    - "endocannabinoid"
+    
+  conditions:
+    anxiety:
+      - "anxiety disorder"
+      - "anxiolytic"
+      - "stress"
+      - "GAD"
+      
+    sleep:
+      - "insomnia"
+      - "sleep disorder"
+      - "sleep quality"
+      - "sleep latency"
+      - "hypnotic"
+      
+    pain:
+      - "chronic pain"
+      - "analgesic"
+      - "inflammation"
+      - "arthritis"
+      - "neuropathic pain"
+      
+    epilepsy:
+      - "seizure"
+      - "epilepsy"
+      - "anticonvulsant"
+      - "Dravet syndrome"
+      - "Lennox-Gastaut"
+
+credibility_weights:
+  peer-reviewed: 10
+  clinical-trial: 9
+  government: 8
+  academic: 7
+  chemical-database: 8  # PubChem has high chemical accuracy
+  medical-organization: 6
+  systematic-review: 10
+  meta-analysis: 10
+  industry-data: 5      # Leafly, Weedmaps - useful but commercial
+  curated-data: 7       # Our terpene database - well-researched
+  case-study: 5
+  preprint: 4
+  blog-post: 1
+
+quality_filters:
+  min_year: 2015  # Only papers from 2015 onwards
+  required_fields: ["title", "authors", "year", "abstract"]
+  min_citation_count: 1
+  exclude_predatory: true
+  
+output_formats:
+  citation_style: "apa"
+  include_doi: true
+  include_pubmed_id: true
+  include_abstract: true
+  max_studies_per_query: 15
+  max_abstract_length: 500
+
+cache_settings:
+  enabled: true
+  ttl_hours: 24  # Cache research for 24 hours
+  max_cache_size_mb: 100
+  database_file: "knowledge_base/research_cache.db"
