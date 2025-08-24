@@ -151,3 +151,5 @@ jspm_packages/
 local_test_*
 temp/
 tmp/
+# Local Netlify folder
+.netlify
