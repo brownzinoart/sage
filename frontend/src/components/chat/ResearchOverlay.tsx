@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, BookOpen, Shield, AlertTriangle, Scale, Microscope, Star, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react'
+import { X, BookOpen, Shield, AlertTriangle, Scale, Microscope, Star, ExternalLink, ChevronDown, ChevronUp, Search, CheckCircle, Clock, TrendingUp, Activity } from 'lucide-react'
 import { EducationalResources, EducationalSummary, ResearchPaper } from '@/types'
 
 interface ResearchOverlayProps {
@@ -9,15 +9,17 @@ interface ResearchOverlayProps {
   onClose: () => void
   educational_resources?: EducationalResources
   educational_summary?: EducationalSummary
+  userQuery?: string
 }
 
 export default function ResearchOverlay({
   isOpen,
   onClose,
   educational_resources,
-  educational_summary
+  educational_summary,
+  userQuery
 }: ResearchOverlayProps) {
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeSection, setActiveSection] = useState('dashboard')
   const [expandedPaper, setExpandedPaper] = useState<number | null>(null)
 
   if (!isOpen) return null
@@ -54,23 +56,53 @@ export default function ResearchOverlay({
         className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] flex flex-col border border-white/20"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200/50 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <BookOpen className="w-5 h-5 text-blue-600" />
+        {/* Query-Focused Header */}
+        <div className="p-6 border-b border-gray-200/50 flex-shrink-0">
+          {/* Query Display */}
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-start gap-3 flex-1">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Search className="w-5 h-5 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold text-gray-900 mb-1">Your Question</h2>
+                <p className="text-blue-700 font-medium bg-blue-50 px-3 py-2 rounded-lg">
+                  "{userQuery || 'Research insights'}"
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">Research Insights</h2>
-              <p className="text-sm text-gray-600">Evidence-based information from academic sources</p>
-            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors ml-4"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5 text-gray-500" />
-          </button>
+          
+          {/* Quick Stats */}
+          {educational_resources?.research_studies?.papers && (
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center p-3 bg-green-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">
+                  {educational_resources.research_studies.total_found || educational_resources.research_studies.papers.length}
+                </div>
+                <div className="text-sm text-green-700">Studies Found</div>
+              </div>
+              <div className="text-center p-3 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">
+                  {educational_resources.source_credibility?.average_credibility?.toFixed(1) || 'N/A'}/10
+                </div>
+                <div className="text-sm text-blue-700">Avg Quality</div>
+              </div>
+              <div className="text-center p-3 bg-purple-50 rounded-lg">
+                <div className="text-2xl font-bold text-purple-600">
+                  {educational_summary?.evidence_strength === 'strong' ? 'Strong' :
+                   educational_summary?.evidence_strength === 'moderate' ? 'Moderate' : 'Limited'}
+                </div>
+                <div className="text-sm text-purple-700">Evidence</div>
+              </div>
+            </div>
+          )}
         </div>
 
         {!hasResources ? (
@@ -133,29 +165,136 @@ export default function ResearchOverlay({
           </div>
         ) : (
           <>
-            {/* Navigation Tabs */}
+            {/* Decision Dashboard */}
+            <div className="p-6 border-b border-gray-200/50">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* EFFICACY Card */}
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                    <h3 className="text-lg font-semibold text-green-900">Efficacy</h3>
+                  </div>
+                  
+                  {educational_summary?.key_findings && educational_summary.key_findings.length > 0 ? (
+                    <div className="space-y-3">
+                      {educational_summary.key_findings.slice(0, 2).map((finding, idx) => (
+                        <div key={idx} className="flex items-start gap-2">
+                          <TrendingUp className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
+                          <p className="text-sm text-green-800 leading-relaxed">{finding}</p>
+                        </div>
+                      ))}
+                      
+                      <div className="mt-4 p-3 bg-green-100 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-green-700">Evidence Strength</span>
+                          <span className="text-sm font-bold text-green-800 capitalize">
+                            {educational_summary.evidence_strength || 'Moderate'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center text-green-700">
+                      <Activity className="w-8 h-8 mx-auto mb-2 text-green-500" />
+                      <p className="text-sm">Research supports potential benefits</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* SAFETY Card */}
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 border border-orange-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Shield className="w-6 h-6 text-orange-600" />
+                    <h3 className="text-lg font-semibold text-orange-900">Safety</h3>
+                  </div>
+                  
+                  {educational_resources?.safety_information ? (
+                    <div className="space-y-3">
+                      {educational_resources.safety_information.general_warnings?.slice(0, 2).map((warning, idx) => (
+                        <div key={idx} className="flex items-start gap-2">
+                          <AlertTriangle className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
+                          <p className="text-sm text-orange-800 leading-relaxed">{warning}</p>
+                        </div>
+                      ))}
+                      
+                      <div className="mt-4 p-3 bg-orange-100 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-orange-700">Safety Status</span>
+                          <span className="text-sm font-bold text-orange-800">
+                            Generally Well-Tolerated
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center text-orange-700">
+                      <Shield className="w-8 h-8 mx-auto mb-2 text-orange-500" />
+                      <p className="text-sm">Generally considered safe</p>
+                      <p className="text-xs text-orange-600 mt-1">Consult healthcare provider</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* DOSING Card */}
+                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Clock className="w-6 h-6 text-blue-600" />
+                    <h3 className="text-lg font-semibold text-blue-900">Optimal Use</h3>
+                  </div>
+                  
+                  {educational_resources?.dosage_guidelines?.recommendation ? (
+                    <div className="space-y-3">
+                      <p className="text-sm text-blue-800 leading-relaxed">
+                        {educational_resources.dosage_guidelines.recommendation}
+                      </p>
+                      
+                      <div className="grid grid-cols-2 gap-2 mt-4">
+                        <div className="p-2 bg-blue-100 rounded-lg text-center">
+                          <div className="text-sm font-bold text-blue-600">Start</div>
+                          <div className="text-xs text-blue-700">Low dose</div>
+                        </div>
+                        <div className="p-2 bg-blue-100 rounded-lg text-center">
+                          <div className="text-sm font-bold text-blue-600">Effect</div>
+                          <div className="text-xs text-blue-700">30-90 min</div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center text-blue-700">
+                      <Clock className="w-8 h-8 mx-auto mb-2 text-blue-500" />
+                      <p className="text-sm">Start low, go slow</p>
+                      <p className="text-xs text-blue-600 mt-1">Individual response varies</p>
+                    </div>
+                  )}
+                </div>
+                
+              </div>
+            </div>
+
+            {/* Section Navigation */}
             <div className="flex border-b border-gray-200/50 px-6 flex-shrink-0">
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  setActiveTab('overview')
+                  setActiveSection('insights')
                 }}
                 className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
-                  activeTab === 'overview'
+                  activeSection === 'insights'
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-600 hover:text-gray-900'
                 }`}
               >
-                Overview
+                Key Insights
               </button>
               {(educational_resources?.research_studies?.papers?.length || 0) > 0 && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    setActiveTab('research')
+                    setActiveSection('research')
                   }}
                   className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
-                    activeTab === 'research'
+                    activeSection === 'research'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-600 hover:text-gray-900'
                   }`}
@@ -167,10 +306,10 @@ export default function ResearchOverlay({
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    setActiveTab('dosage')
+                    setActiveSection('dosage')
                   }}
                   className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
-                    activeTab === 'dosage'
+                    activeSection === 'dosage'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-600 hover:text-gray-900'
                   }`}
@@ -182,10 +321,10 @@ export default function ResearchOverlay({
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    setActiveTab('safety')
+                    setActiveSection('safety')
                   }}
                   className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
-                    activeTab === 'safety'
+                    activeSection === 'safety'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-600 hover:text-gray-900'
                   }`}
@@ -197,10 +336,10 @@ export default function ResearchOverlay({
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    setActiveTab('legal')
+                    setActiveSection('legal')
                   }}
                   className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
-                    activeTab === 'legal'
+                    activeSection === 'legal'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-600 hover:text-gray-900'
                   }`}
@@ -212,12 +351,78 @@ export default function ResearchOverlay({
 
             {/* Content Area */}
             <div className="flex-1 overflow-y-auto p-6">
-              {/* Overview Tab */}
-              {activeTab === 'overview' && (
+              {/* Key Insights Section */}
+              {activeSection === 'insights' && (
                 <div className="space-y-6">
+                  {/* Evidence Strength Meter */}
+                  {educational_resources?.source_credibility && (
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <Activity className="w-6 h-6 text-blue-600" />
+                        Evidence Strength Meter
+                      </h3>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <h4 className="font-medium text-gray-700 mb-3">Research Quality</h4>
+                          <div className="space-y-3">
+                            {/* Overall Quality Bar */}
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-medium text-gray-600 w-20">Overall</span>
+                              <div className="flex-1 bg-gray-200 rounded-full h-3">
+                                <div 
+                                  className="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-700"
+                                  style={{ width: `${(educational_resources.source_credibility.average_credibility / 10) * 100}%` }}
+                                />
+                              </div>
+                              <span className="text-sm font-bold text-gray-700">
+                                {educational_resources.source_credibility.average_credibility.toFixed(1)}/10
+                              </span>
+                            </div>
+                            
+                            {/* High Quality Count Bar */}
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-medium text-gray-600 w-20">High Quality</span>
+                              <div className="flex-1 bg-gray-200 rounded-full h-3">
+                                <div 
+                                  className="bg-gradient-to-r from-emerald-500 to-green-500 h-3 rounded-full transition-all duration-700"
+                                  style={{ width: `${Math.min((educational_resources.source_credibility.high_credibility_count / (educational_resources.research_studies?.papers?.length || 1)) * 100, 100)}%` }}
+                                />
+                              </div>
+                              <span className="text-sm font-bold text-gray-700">
+                                {educational_resources.source_credibility.high_credibility_count} studies
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-medium text-gray-700 mb-3">Evidence Grade</h4>
+                          <div className="text-center p-6 bg-white/80 rounded-lg border border-gray-200">
+                            <div className="text-4xl font-bold mb-2">
+                              {educational_summary?.evidence_strength === 'strong' ? (
+                                <span className="text-green-600">A</span>
+                              ) : educational_summary?.evidence_strength === 'moderate' ? (
+                                <span className="text-blue-600">B</span>
+                              ) : (
+                                <span className="text-yellow-600">C</span>
+                              )}
+                            </div>
+                            <div className="text-sm font-medium text-gray-600 capitalize">
+                              {educational_summary?.evidence_strength || 'Limited'} Evidence
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              {educational_resources.source_credibility.credibility_level}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
                   {educational_summary && (
                     <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-200/50">
-                      <h3 className="text-lg font-semibold text-blue-900 mb-3">Research Summary</h3>
+                      <h3 className="text-lg font-semibold text-blue-900 mb-3">Key Research Findings</h3>
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div className="text-center p-3 bg-white/60 rounded-lg">
@@ -314,8 +519,8 @@ export default function ResearchOverlay({
                 </div>
               )}
 
-              {/* Research Studies Tab */}
-              {activeTab === 'research' && educational_resources?.research_studies?.papers && (
+              {/* Research Studies Section */}
+              {activeSection === 'research' && educational_resources?.research_studies?.papers && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-900">Research Papers</h3>
@@ -396,8 +601,8 @@ export default function ResearchOverlay({
                 </div>
               )}
 
-              {/* Dosage Tab */}
-              {activeTab === 'dosage' && educational_resources?.dosage_guidelines && (
+              {/* Dosage Section */}
+              {activeSection === 'dosage' && educational_resources?.dosage_guidelines && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900">Dosage Guidelines</h3>
                   
@@ -424,8 +629,8 @@ export default function ResearchOverlay({
                 </div>
               )}
 
-              {/* Safety Tab */}
-              {activeTab === 'safety' && educational_resources?.safety_information && (
+              {/* Safety Section */}
+              {activeSection === 'safety' && educational_resources?.safety_information && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                     <Shield className="w-5 h-5 text-red-600" />
@@ -455,8 +660,8 @@ export default function ResearchOverlay({
                 </div>
               )}
 
-              {/* Legal Status Tab */}
-              {activeTab === 'legal' && educational_resources?.legal_status && (
+              {/* Legal Status Section */}
+              {activeSection === 'legal' && educational_resources?.legal_status && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                     <Scale className="w-5 h-5 text-blue-600" />

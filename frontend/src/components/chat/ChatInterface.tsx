@@ -56,6 +56,23 @@ export default function ChatInterface({
     setResearchOverlayOpen(true)
   }
 
+  // Get the user query that corresponds to the selected research
+  const getUserQueryForResearch = () => {
+    if (!selectedMessageResearch) return undefined
+    
+    // Find the index of the selected assistant message
+    const messageIndex = messages.findIndex(m => m.id === selectedMessageResearch.id)
+    
+    // Look for the previous user message
+    for (let i = messageIndex - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') {
+        return messages[i].content
+      }
+    }
+    
+    return undefined
+  }
+
   const handleCloseResearch = () => {
     setResearchOverlayOpen(false)
     setSelectedMessageResearch(null)
@@ -214,6 +231,7 @@ export default function ChatInterface({
         onClose={handleCloseResearch}
         educational_resources={selectedMessageResearch?.educational_resources}
         educational_summary={selectedMessageResearch?.educational_summary}
+        userQuery={getUserQueryForResearch()}
       />
     </div>
   )
