@@ -3,16 +3,9 @@ from typing import Dict, Any, List, Optional
 from pydantic import BaseModel
 from datetime import datetime
 
-# Try to import enhanced service, fallback to advanced
-try:
-    from app.services.enhanced_sage_service import EnhancedSageService
-    sage_service = EnhancedSageService()
-    ENHANCED_AVAILABLE = True
-except ImportError as e:
-    print(f"Enhanced service not available, using fallback: {e}")
-    from app.services.advanced_gemini_service import AdvancedGeminiService
-    sage_service = AdvancedGeminiService()
-    ENHANCED_AVAILABLE = False
+# Use clean, simple sage service
+from app.services.sage_service import SageService
+sage_service = SageService()
 
 router = APIRouter()
 
@@ -23,39 +16,24 @@ class SageQuery(BaseModel):
 class SageResponse(BaseModel):
     explanation: str
     products: List[Dict[str, Any]]
-    intent: Optional[str] = None
-    persona: Optional[str] = None
-    follow_up_questions: Optional[List[str]] = None
-    educational_resources: Optional[Dict[str, Any]] = None
     educational_summary: Optional[Dict[str, Any]] = None
 
 @router.post("/ask", response_model=SageResponse)
 async def ask_sage(query: SageQuery):
     """
-    Enhanced Sage endpoint with AI reasoning and educational research
+    Simple Sage endpoint: Question + Research → Gemini → Answer
     """
     
     try:
-        # Use enhanced service if available, otherwise fallback
-        if ENHANCED_AVAILABLE and hasattr(sage_service, 'generate_enhanced_sage_response'):
-            response_data = await sage_service.generate_enhanced_sage_response(
-                query.query, 
-                experience_level=query.experience_level
-            )
-        else:
-            # Fallback to standard response
-            response_data = sage_service.generate_sage_response(
-                query.query, 
-                experience_level=query.experience_level
-            )
+        # Simple flow: ask_sage handles everything
+        response_data = await sage_service.ask_sage(
+            query.query, 
+            experience_level=query.experience_level
+        )
         
         return SageResponse(
             explanation=response_data['explanation'],
             products=response_data['products'],
-            intent=response_data.get('intent'),
-            persona=response_data.get('persona'),
-            follow_up_questions=response_data.get('follow_up_questions', []),
-            educational_resources=response_data.get('educational_resources'),
             educational_summary=response_data.get('educational_summary')
         )
         
