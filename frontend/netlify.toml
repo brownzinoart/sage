@@ -1,6 +1,7 @@
 [build]
   publish = "out"
   command = "npm run build"
+  # Force redeploy - Aug 24 2025
 
 [build.environment]
   NODE_VERSION = "18"
