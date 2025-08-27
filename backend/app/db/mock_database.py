@@ -33,29 +33,71 @@ class MockDatabase:
             print(f"⚠️  Could not load sample products: {e}")
     
     async def search_products(self, query: str, filters: Optional[Dict] = None, limit: int = 5) -> List[Dict]:
-        """Mock product search"""
+        """Smart product search with cannabinoid matching"""
         results = []
         query_lower = query.lower()
+        
+        # Intent-based cannabinoid matching
+        intent_mapping = {
+            'high': ['delta-8', 'delta-9', 'hhc', 'thca', 'thcp'],
+            'legal high': ['delta-8', 'hhc', 'delta-10', 'thca'],
+            'euphoria': ['delta-8', 'hhc', 'delta-9', 'thcp'],
+            'buzz': ['delta-8', 'hhc', 'delta-10'],
+            'party': ['delta-8', 'hhc', 'delta-10', 'blend'],
+            'social': ['delta-8', 'hhc', 'blend'],
+            'creative': ['delta-10', 'thcv', 'cbg'],
+            'focus': ['thcv', 'cbg', 'delta-10'],
+            'energy': ['thcv', 'cbg', 'delta-10'],
+            'sleep': ['cbn', 'delta-8', 'thc'],
+            'pain': ['thc', 'cbd', 'cbc', 'ratio'],
+            'anxiety': ['cbd', 'delta-8'],
+            'microdose': ['delta-9'],
+            'appetite': ['thcv'],
+            'weight': ['thcv']
+        }
         
         for product in self.products:
             score = 0
             
-            # Simple text matching
+            # Direct name/description matching
             if query_lower in product['name'].lower():
-                score += 10
+                score += 15
             if query_lower in product.get('description', '').lower():
-                score += 5
+                score += 8
+            
+            # Intent-based subcategory matching
+            subcategory = product.get('subcategory', '').lower()
+            for intent, preferred_types in intent_mapping.items():
+                if intent in query_lower:
+                    if subcategory in preferred_types:
+                        score += 25  # High priority for intent matches
+                    break
+            
+            # Direct cannabinoid matching
+            cannabinoid_terms = ['cbd', 'thc', 'delta-8', 'delta-9', 'delta-10', 'hhc', 'thcp', 'thcv', 'cbg', 'cbn', 'cbc', 'thca']
+            for term in cannabinoid_terms:
+                if term in query_lower and term in subcategory:
+                    score += 20
             
             # Effect matching
             for effect in product.get('effects', []):
-                if query_lower in effect.lower() or effect.lower() in query_lower:
-                    score += 8
+                effect_words = effect.replace('-', ' ').split()
+                for word in effect_words:
+                    if word in query_lower:
+                        score += 10
             
             # Category matching
             if query_lower in product.get('category', '').lower():
-                score += 6
+                score += 5
             
-            # Add some randomness for variety
+            # Product type preferences
+            if any(term in query_lower for term in ['gummy', 'gummies', 'edible']) and product.get('product_type') == 'edible':
+                score += 8
+            if any(term in query_lower for term in ['vape', 'cartridge', 'cart']) and product.get('product_type') == 'vape':
+                score += 8
+            if any(term in query_lower for term in ['tincture', 'drops', 'oil']) and product.get('product_type') == 'tincture':
+                score += 8
+            
             if score > 0:
                 product_copy = product.copy()
                 product_copy['match_score'] = score

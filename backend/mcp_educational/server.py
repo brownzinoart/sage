@@ -492,19 +492,62 @@ class EducationalMCPServer:
         compounds = []
         query_lower = query.lower()
         
+        # Comprehensive cannabinoid detection patterns
         compound_patterns = {
             'CBD': ['cbd', 'cannabidiol'],
             'CBN': ['cbn', 'cannabinol'],
             'CBG': ['cbg', 'cannabigerol'],
             'CBC': ['cbc', 'cannabichromene'],
-            'THC': ['thc', 'tetrahydrocannabinol']
+            'THC': ['thc', 'tetrahydrocannabinol', 'delta-9', 'delta 9', 'd9', 'delta9'],
+            'THCA': ['thca', 'thc-a', 'tetrahydrocannabinolic acid', 'raw thc'],
+            'Delta-8': ['delta-8', 'delta 8', 'd8', 'delta8', 'delta-8-thc'],
+            'Delta-10': ['delta-10', 'delta 10', 'd10', 'delta10', 'delta-10-thc'],
+            'HHC': ['hhc', 'hexahydrocannabinol'],
+            'THCP': ['thcp', 'thc-p', 'tetrahydrocannabiphorol'],
+            'THCV': ['thcv', 'thc-v', 'tetrahydrocannabivarin'],
+            'CBDV': ['cbdv', 'cbd-v', 'cannabidivarin'],
+            'CBL': ['cbl', 'cannabicyclol'],
+            'CBGA': ['cbga', 'cannabigerolic acid'],
+            'CBDA': ['cbda', 'cannabidiolic acid']
         }
         
+        # Intent-based compound inference for slang/effects
+        effect_to_compounds = {
+            'high': ['THC', 'THCA', 'Delta-8', 'Delta-10', 'HHC'],
+            'stoned': ['THC', 'THCA', 'CBN'],
+            'euphoria': ['THC', 'Delta-8', 'HHC', 'THCP'],
+            'buzz': ['Delta-8', 'HHC', 'Delta-10'],
+            'legal high': ['Delta-8', 'HHC', 'THCA', 'Delta-10'],
+            'party': ['Delta-8', 'THCV', 'Delta-10'],
+            'microdose': ['THC', 'Delta-8'],
+            'creative': ['THCV', 'Delta-10', 'CBG'],
+            'focus': ['THCV', 'CBG', 'Delta-10'],
+            'energy': ['THCV', 'CBG', 'Delta-10'],
+            'appetite': ['THCV'],  # THCV suppresses appetite
+            'weight': ['THCV'],
+            'sleep': ['CBN', 'THC', 'Delta-8'],
+            'pain': ['THC', 'CBD', 'CBC'],
+            'anxiety': ['CBD', 'Delta-8'],
+            'inflammation': ['CBD', 'CBC', 'CBG']
+        }
+        
+        # Check for direct compound mentions
         for compound, patterns in compound_patterns.items():
             if any(pattern in query_lower for pattern in patterns):
                 compounds.append(compound)
         
-        return compounds or ['CBD']  # Default to CBD
+        # Check for effect-based compound inference
+        if not compounds:
+            for effect, effect_compounds in effect_to_compounds.items():
+                if effect in query_lower:
+                    compounds.extend(effect_compounds)
+                    break
+        
+        # Remove duplicates and return
+        compounds = list(set(compounds))
+        
+        # Default fallback - include both CBD and THC for comprehensive research
+        return compounds or ['CBD', 'THC']
     
     def _dict_to_paper(self, paper_dict: Dict) -> ResearchPaper:
         """Convert dictionary to ResearchPaper object"""

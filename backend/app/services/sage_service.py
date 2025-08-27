@@ -175,13 +175,26 @@ TASK: Provide helpful, evidence-based guidance about hemp products that may supp
 
 CORE PRINCIPLE: Help users understand how hemp products might fit into their wellness routine. Be informative and supportive, not pushy.
 
+CANNABINOID KNOWLEDGE BASE:
+• CBD: Non-psychoactive, anxiety/pain relief, legal everywhere
+• THC/Delta-9: Traditional psychoactive cannabinoid, euphoria, pain relief
+• THCa: Raw form, converts to THC when heated, legal hemp-derived
+• Delta-8: Mild psychoactive, legal hemp-derived, smooth euphoria
+• Delta-10: Creative/energizing effects, clear-headed high
+• HHC: Hemp-derived, stable shelf life, THC-like effects
+• CBG: "Mother cannabinoid", focus and clarity, non-psychoactive
+• CBN: Sedating, sleep-promoting, "couch lock" effects
+• CBC: Mood support, anti-inflammatory, works with other cannabinoids
+• THCP: Highly potent, 33x stronger binding than THC
+• THCV: Energy, appetite suppressant, "diet weed"
+
 REQUIREMENTS:
-1. EDUCATIONAL APPROACH: Explain how cannabinoids and terpenes work in the body
-2. EVIDENCE-BASED: Reference research findings when available to support recommendations
-3. BALANCED PERSPECTIVE: Present both potential benefits and considerations
-4. PRACTICAL GUIDANCE: Show how products might integrate into their lifestyle
-5. TRANSPARENT: Be clear about what research shows and where knowledge is limited
-6. SUPPORTIVE: Acknowledge their goals and provide helpful information
+1. COMPREHENSIVE COVERAGE: Discuss ALL relevant cannabinoids, not just CBD
+2. EFFECT-BASED MATCHING: Match cannabinoids to user's desired effects
+3. LEGAL EDUCATION: Explain legal status and compliance for each compound
+4. EVIDENCE-BASED: Reference research for ALL cannabinoids mentioned
+5. PRACTICAL GUIDANCE: Dosing and usage for different cannabinoids
+6. TRANSPARENCY: Clear about psychoactive vs non-psychoactive effects
 
 RESPONSE FORMAT: Use this EXACT structure with markdown formatting:
 
@@ -204,7 +217,9 @@ RESPONSE FORMAT: Use this EXACT structure with markdown formatting:
 • Integration with lifestyle tips
 
 ⚠️ **Important Notes**
-• Key safety considerations
+• Key safety considerations and legal compliance
+• Age requirements (21+ for psychoactive products)
+• State law variations and responsible use
 • Consult healthcare provider reminder
 
 REQUIREMENTS:
@@ -318,13 +333,23 @@ TONE: Helpful, knowledgeable, concise. Skip filler words and reassurances."""
         query = user_query.lower()
         
         if 'sleep' in query:
-            return 'For sleep support, CBD and CBN work together to promote relaxation. Look for products with calming terpenes like myrcene and linalool for the most restful experience.'
-        elif 'thca' in query:
+            return 'For sleep support, CBN and Delta-8 work together to promote relaxation. Look for products with calming terpenes like myrcene and linalool for the most restful experience.'
+        elif any(word in query for word in ['thca', 'thc-a']):
             return 'THCA is the raw, non-psychoactive precursor to THC found in fresh hemp. When heated, it converts to THC. THCA products offer potential therapeutic benefits without the high.'
-        elif any(word in query for word in ['party', 'social', 'cookout']):
-            return 'For social gatherings, consider low-dose edibles or beverages that promote relaxation without overwhelming effects. Start low and go slow for the best experience.'
+        elif any(word in query for word in ['delta-8', 'delta 8', 'd8']):
+            return 'Delta-8 THC offers a milder, legal alternative to traditional THC. Users report smooth, clear-headed effects with less anxiety. Perfect for legal euphoria.'
+        elif any(word in query for word in ['hhc', 'hexahydrocannabinol']):
+            return 'HHC provides THC-like effects with greater stability and shelf life. Many users enjoy its balanced euphoria and clear-headed high.'
+        elif any(word in query for word in ['thcv', 'diet weed']):
+            return 'THCV is known as "diet weed" for its appetite-suppressing properties. It provides energy and focus without traditional munchies.'
+        elif any(word in query for word in ['high', 'euphoria', 'buzz']):
+            return 'For legal euphoria, consider Delta-8, HHC, or THCA products. Each offers different effects - Delta-8 for smooth relaxation, HHC for balanced high, THCA when heated.'
+        elif any(word in query for word in ['party', 'social', 'fun']):
+            return 'For social gatherings, Delta-8 edibles or HHC vapes offer balanced euphoria perfect for good vibes. Start low and go slow for the best experience.'
+        elif any(word in query for word in ['focus', 'energy', 'creative']):
+            return 'For focus and creativity, try THCV capsules, CBG products, or Delta-10 vapes. These cannabinoids promote alertness without sedation.'
         else:
-            return 'Based on your question, here are some thoughtfully selected options that align with your wellness journey. Each product is lab-tested and NC compliant.'
+            return 'We offer the full spectrum of cannabinoids - CBD, THC, Delta-8, HHC, THCV, CBG, CBN, and more. Each product is lab-tested and compliant with applicable laws.'
 
     def _fallback_products(self, user_query: str) -> List[Dict[str, Any]]:
         """Simple fallback products"""

@@ -909,6 +909,42 @@ export default function SageApp() {
                                     <span className="text-sm text-green-800 font-bold">{product.thc_mg}mg</span>
                                   </div>
                                 )}
+                                {(product as any).delta_8_thc_mg && (product as any).delta_8_thc_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">Delta-8</span>
+                                    <span className="text-sm text-green-800 font-bold">{(product as any).delta_8_thc_mg}mg</span>
+                                  </div>
+                                )}
+                                {(product as any).delta_9_thc_mg && (product as any).delta_9_thc_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">Delta-9</span>
+                                    <span className="text-sm text-green-800 font-bold">{(product as any).delta_9_thc_mg}mg</span>
+                                  </div>
+                                )}
+                                {(product as any).delta_10_thc_mg && (product as any).delta_10_thc_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">Delta-10</span>
+                                    <span className="text-sm text-green-800 font-bold">{(product as any).delta_10_thc_mg}mg</span>
+                                  </div>
+                                )}
+                                {(product as any).hhc_mg && (product as any).hhc_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">HHC</span>
+                                    <span className="text-sm text-green-800 font-bold">{(product as any).hhc_mg}mg</span>
+                                  </div>
+                                )}
+                                {(product as any).thcp_mg && (product as any).thcp_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">THCP</span>
+                                    <span className="text-sm text-green-800 font-bold">{(product as any).thcp_mg}mg</span>
+                                  </div>
+                                )}
+                                {(product as any).thcv_mg && (product as any).thcv_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">THCV</span>
+                                    <span className="text-sm text-green-800 font-bold">{(product as any).thcv_mg}mg</span>
+                                  </div>
+                                )}
                                 {product.cbg_mg && product.cbg_mg > 0 && (
                                   <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-green-700">CBG</span>
