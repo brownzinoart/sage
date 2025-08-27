@@ -12,6 +12,15 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
+# Import mock database
+try:
+    from app.db.mock_database import mock_db
+    DB_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Mock database not available: {e}")
+    DB_AVAILABLE = False
+    mock_db = None
+
 # Try to import MCP educational server
 try:
     mcp_path = os.path.join(os.path.dirname(__file__), '../../mcp_educational')
@@ -76,8 +85,8 @@ class SageService:
         # Generate explanation with Gemini
         explanation = self.generate_explanation(user_query, educational_data, experience_level)
         
-        # Generate products
-        products = self.generate_products(user_query, explanation)
+        # Search for real products
+        products = await self.search_products(user_query, explanation)
 
         return {
             "explanation": explanation,
@@ -99,21 +108,37 @@ class SageService:
                 papers = educational_data.get('studies', []) or educational_data.get('papers', [])
                 if papers:
                     key_findings = []
-                    for paper in papers[:5]:  # Use top 5 papers
+                    safety_notes = []
+                    mechanism_info = []
+                    
+                    for paper in papers[:6]:  # Use top 6 papers
                         title = paper.get('title', '')
                         summary = paper.get('summary', '') or paper.get('abstract', '')
+                        
                         if title and summary:
-                            key_findings.append(f"• Study: {title}\n  Finding: {summary[:200]}...")
-                        elif title:
-                            key_findings.append(f"• Study: {title}")
+                            # Categorize research findings
+                            if any(word in summary.lower() for word in ['effective', 'beneficial', 'improved', 'reduced', 'significant']):
+                                key_findings.append(f"• {title}: {summary[:150]}...")
+                            elif any(word in summary.lower() for word in ['safe', 'adverse', 'side effect', 'tolerance', 'well-tolerated']):
+                                safety_notes.append(f"• {title}: {summary[:150]}...")
+                            elif any(word in summary.lower() for word in ['mechanism', 'receptor', 'pathway', 'endocannabinoid']):
+                                mechanism_info.append(f"• {title}: {summary[:150]}...")
                     
+                    research_sections = []
                     if key_findings:
+                        research_sections.append(f"EFFECTIVENESS RESEARCH:\n{chr(10).join(key_findings[:3])}")
+                    if safety_notes:
+                        research_sections.append(f"SAFETY RESEARCH:\n{chr(10).join(safety_notes[:2])}")
+                    if mechanism_info:
+                        research_sections.append(f"MECHANISM RESEARCH:\n{chr(10).join(mechanism_info[:2])}")
+                    
+                    if research_sections:
                         research_context = f"""
 
-RESEARCH EVIDENCE from recent scientific studies:
-{chr(10).join(key_findings)}
+SCIENTIFIC EVIDENCE from peer-reviewed studies:
+{chr(10).join(research_sections)}
 
-INSTRUCTIONS: Use this research to provide evidence-based recommendations. Cite specific findings when relevant, but translate complex medical terms into accessible language.
+INSTRUCTIONS: Reference this research naturally in your response. Explain what the studies suggest about effectiveness and safety. Use accessible language and acknowledge both benefits and limitations shown in research.
 """
 
             # Tone based on experience level (from Frontend Experience Agent philosophy)
@@ -149,35 +174,37 @@ Question: "{user_query}"
 
 {research_context}
 
-TASK: Create a hemp/cannabis-focused response that positions these products as THE solution to enhance what they're trying to achieve.
+TASK: Provide helpful, evidence-based guidance about hemp products that may support their wellness goals.
 
-CORE PRINCIPLE: Hemp products don't replace activities - they ENHANCE them. If they want to sleep better, show how CBD+CBN makes sleep deeper. If they want to focus, show how specific terpenes boost concentration during their existing activities.
+CORE PRINCIPLE: Help users understand how hemp products might fit into their wellness routine. Be informative and supportive, not pushy.
 
 REQUIREMENTS:
-1. HEMP-CENTRIC APPROACH: Every recommendation must tie back to how hemp/cannabis products specifically help their goal
-2. ENHANCEMENT MINDSET: Don't suggest alternatives - show how hemp makes their current activities better
-3. RESEARCH AUTHORITY: Use studies to prove hemp's effectiveness for their specific need
-4. PRODUCT SELLING: Position these products as essential tools, not optional supplements
-5. MECHANISM EXPLANATION: Explain HOW cannabinoids and terpenes work in their body
-6. LIFESTYLE INTEGRATION: Show how products fit seamlessly into what they already do
+1. EDUCATIONAL APPROACH: Explain how cannabinoids and terpenes work in the body
+2. EVIDENCE-BASED: Reference research findings when available to support recommendations
+3. BALANCED PERSPECTIVE: Present both potential benefits and considerations
+4. PRACTICAL GUIDANCE: Show how products might integrate into their lifestyle
+5. TRANSPARENT: Be clear about what research shows and where knowledge is limited
+6. SUPPORTIVE: Acknowledge their goals and provide helpful information
 
-SELLING STRATEGY:
-- Start with the problem hemp solves for them
-- Explain the science behind why hemp works
-- Paint the picture of their enhanced experience
-- Create urgency around the specific benefits they'll miss without these products
+RESPONSE APPROACH:
+- Acknowledge their question and goals
+- Explain relevant hemp science in accessible terms
+- Share what research suggests about effectiveness
+- Describe how products might help with their specific situation
+- Provide practical usage guidance
+- Encourage informed decision-making
 
 RESPONSE STRUCTURE:
-Write a natural, flowing response that seamlessly integrates:
-1. Open with how hemp transforms their specific goal
-2. Explain the science behind why hemp works for them
-3. Paint the enhanced experience they'll have
-4. Reference research evidence naturally
-5. End with compelling reason to choose these products
+Write a natural, conversational response that:
+1. Validates their question and interest
+2. Explains the science behind how hemp might help
+3. References research evidence naturally when available
+4. Describes potential benefits for their specific situation
+5. Includes practical considerations and guidance
 
-CRITICAL: Write as one smooth, conversational response. DO NOT include section headers, bullet points, or numbered lists. DO NOT use labels like "Hook:" or "Science:" in your response. Write naturally as if speaking to them directly.
+TONE: Be knowledgeable but approachable, helpful but not pushy. Focus on education and empowerment rather than selling.
 
-AVOID: Suggesting non-hemp alternatives, section headers, bullet formatting, generic wellness advice"""
+AVOID: High-pressure sales language, overstating benefits, ignoring limitations, being overly technical"""
 
             response = self.model.generate_content(prompt)
             return response.text.strip()
@@ -186,66 +213,61 @@ AVOID: Suggesting non-hemp alternatives, section headers, bullet formatting, gen
             logger.error(f"Gemini API error: {e}")
             return self._fallback_explanation(user_query)
 
-    def generate_products(self, user_query: str, explanation: str) -> List[Dict[str, Any]]:
-        """Generate 3 relevant product recommendations"""
+    async def search_products(self, user_query: str, explanation: str) -> List[Dict[str, Any]]:
+        """Search for relevant products from real database"""
         
-        if not self.model:
+        if not DB_AVAILABLE or not mock_db:
             return self._fallback_products(user_query)
 
         try:
-            prompt = f"""HEMP PRODUCT SELLING TASK:
-
-User's Goal: "{user_query}"
-Hemp Benefits Explained: "{explanation}"
-
-Create 3 hemp products that are ESSENTIAL for achieving their specific goal. These aren't just "nice to have" - they're the key to unlocking their desired outcome.
-
-SELLING PRINCIPLES:
-1. ENHANCEMENT FOCUS: Show how each product makes their existing efforts MORE effective
-2. SPECIFIC BENEFITS: Don't just say "relaxing" - explain exactly what changes in their experience
-3. LIFESTYLE INTEGRATION: Show how it fits perfectly into what they already do
-4. URGENCY: Create FOMO - what they're missing without these products
-5. SCIENTIFIC BACKING: Reference how the cannabinoids/terpenes specifically work
-
-PRODUCT STRATEGY:
-- Product 1: IMMEDIATE solution (fast-acting, dramatic difference)
-- Product 2: SUSTAINED solution (long-lasting, builds on their routine)
-- Product 3: TARGETED solution (specific mechanism, unique advantage)
-
-DESCRIPTION FORMULA:
-"[Product Name] - Instead of just [their current approach], this [specific cannabinoid profile] lets you [enhanced version of their goal]. The [specific terpenes] work by [mechanism] to [specific benefit they can't get elsewhere]. [Usage integration into their lifestyle]."
-
-PRICING: $25-65 range for premium, effective products
-
-AVOID: Generic benefits, weak language like "may help", positioning as optional supplements
-
-Return ONLY the Python list, no other text:"""
-
-            response = self.model.generate_content(prompt)
+            # Search products based on query
+            products = await mock_db.search_products(user_query, limit=3)
             
-            # Parse response
-            try:
-                product_text = response.text.strip()
-                # Clean up code blocks
-                if product_text.startswith('```'):
-                    product_text = product_text.split('```')[1]
-                    if product_text.startswith('python'):
-                        product_text = product_text[6:]
+            if not products:
+                # Fallback to basic query terms if no matches
+                query_terms = ['cbd', 'sleep', 'pain', 'anxiety']
+                for term in query_terms:
+                    if term in user_query.lower():
+                        products = await mock_db.search_products(term, limit=3)
+                        break
+            
+            # If still no products, get first 3 products as fallback
+            if not products:
+                products = mock_db.products[:3]
+                for product in products:
+                    product['match_score'] = 1
+            
+            # Format products for frontend
+            formatted_products = []
+            for product in products:
+                formatted_product = {
+                    'id': product.get('id', str(len(formatted_products) + 1)),
+                    'name': product.get('name', 'Hemp Product'),
+                    'description': product.get('description', ''),
+                    'price': f"${product.get('price', 0):.2f}",
+                    'category': product.get('category', 'wellness').title(),
+                    'cbd_mg': product.get('cbd_mg', 0),
+                    'thc_mg': product.get('thc_mg', 0),
+                    'cbg_mg': product.get('cbg_mg', 0),
+                    'cbn_mg': product.get('cbn_mg', 0),
+                    'cbc_mg': product.get('cbc_mg', 0),
+                    'thca_percentage': product.get('thca_percentage'),
+                    'effects': product.get('effects', []),
+                    'terpenes': product.get('terpenes', {}),
+                    'lab_tested': product.get('lab_tested', True),
+                    'lab_report_url': product.get('lab_report_url'),
+                    'in_stock': product.get('in_stock', True),
+                    'match_score': product.get('match_score', 0),
+                    'brand': product.get('brand', 'Hemp Generation'),
+                    'size': product.get('size', ''),
+                    'product_type': product.get('product_type', 'supplement')
+                }
+                formatted_products.append(formatted_product)
                 
-                products = eval(product_text.strip())
-                
-                # Add IDs
-                for i, product in enumerate(products):
-                    product['id'] = i + 1
-                    
-                return products
-                
-            except Exception as parse_error:
-                logger.error(f"Failed to parse products: {parse_error}")
-                return self._fallback_products(user_query)
+            return formatted_products
                 
         except Exception as e:
-            logger.error(f"Gemini API error for products: {e}")
+            logger.error(f"Database search error: {e}")
             return self._fallback_products(user_query)
 
     def _create_educational_summary(self, educational_data: Dict) -> Dict[str, Any]:

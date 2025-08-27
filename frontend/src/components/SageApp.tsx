@@ -742,7 +742,12 @@ export default function SageApp() {
                         </div>
                         <div className="text-right">
                           <span className="text-2xl font-bold text-gray-800 block">{product.price}</span>
-                          <span className="text-sm text-gray-600">per item</span>
+                          <span className="text-sm text-gray-600">
+                            {product.size ? `${product.size} - per item` : 'per item'}
+                          </span>
+                          {product.brand && (
+                            <div className="text-xs text-gray-500 mt-1">by {product.brand}</div>
+                          )}
                         </div>
                       </div>
 
@@ -770,22 +775,136 @@ export default function SageApp() {
                           </div>
                         </div>
                       </div>
+
+                      {/* Cannabinoid Profile */}
+                      {(product.cbd_mg || product.thc_mg || product.cbg_mg || product.cbn_mg || product.cbc_mg || product.thca_percentage) && (
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <span className="text-green-600">🧬</span>
+                            </div>
+                            <div className="flex-1">
+                              <h5 className="font-semibold text-green-800 mb-3">Cannabinoid Profile</h5>
+                              <div className="grid grid-cols-2 gap-2">
+                                {product.cbd_mg && product.cbd_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">CBD</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.cbd_mg}mg</span>
+                                  </div>
+                                )}
+                                {product.thc_mg && product.thc_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">THC</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.thc_mg}mg</span>
+                                  </div>
+                                )}
+                                {product.cbg_mg && product.cbg_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">CBG</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.cbg_mg}mg</span>
+                                  </div>
+                                )}
+                                {product.cbn_mg && product.cbn_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">CBN</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.cbn_mg}mg</span>
+                                  </div>
+                                )}
+                                {product.cbc_mg && product.cbc_mg > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">CBC</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.cbc_mg}mg</span>
+                                  </div>
+                                )}
+                                {product.thca_percentage && product.thca_percentage > 0 && (
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-green-700">THCA</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.thca_percentage}%</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Terpene Profile */}
+                      {product.terpenes && Object.keys(product.terpenes).length > 0 && (
+                        <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <span className="text-orange-600">🌸</span>
+                            </div>
+                            <div className="flex-1">
+                              <h5 className="font-semibold text-orange-800 mb-3">Terpene Profile</h5>
+                              <div className="grid grid-cols-2 gap-2">
+                                {Object.entries(product.terpenes).map(([terpene, amount]) => (
+                                  <div key={terpene} className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-orange-700 capitalize">{terpene.replace('_', ' ')}</span>
+                                    <span className="text-sm text-orange-800 font-bold">{amount}mg</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Effects & Benefits */}
+                      {product.effects && product.effects.length > 0 && (
+                        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4 border border-purple-200">
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <span className="text-purple-600">✨</span>
+                            </div>
+                            <div>
+                              <h5 className="font-semibold text-purple-800 mb-3">Effects & Benefits</h5>
+                              <div className="flex flex-wrap gap-2">
+                                {product.effects.map((effect, idx) => (
+                                  <span 
+                                    key={idx}
+                                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200"
+                                  >
+                                    {effect.replace('-', ' ').replace('_', ' ')}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       
                       {/* Enhanced specs and features */}
                       <div className="grid grid-cols-2 gap-3">
                         <div className="bg-green-50 rounded-lg p-3 border border-green-100">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-green-600">✅</span>
-                            <span className="text-xs font-semibold text-green-800">QUALITY</span>
+                            <span className="text-xs font-semibold text-green-800">LAB TESTED</span>
                           </div>
-                          <p className="text-xs text-green-700">3rd Party Tested</p>
+                          <p className="text-xs text-green-700">
+                            {product.lab_tested ? 'Third-party verified' : 'Quality assured'}
+                          </p>
+                          {product.lab_report_url && (
+                            <a 
+                              href={product.lab_report_url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-xs text-green-600 hover:text-green-800 underline"
+                            >
+                              View COA
+                            </a>
+                          )}
                         </div>
                         <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-blue-600">⚡</span>
-                            <span className="text-xs font-semibold text-blue-800">POTENCY</span>
+                            <span className="text-blue-600">📊</span>
+                            <span className="text-xs font-semibold text-blue-800">RESEARCH</span>
                           </div>
-                          <p className="text-xs text-blue-700">{(product as any).potency || 'Premium Grade'}</p>
+                          <p className="text-xs text-blue-700">
+                            {educationalResources?.research_studies?.papers?.length 
+                              ? `${educationalResources.research_studies.papers.length} studies found`
+                              : 'Evidence-based'}
+                          </p>
                         </div>
                       </div>
 
