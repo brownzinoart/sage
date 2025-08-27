@@ -751,12 +751,6 @@ export default function SageApp() {
                         </div>
                       </div>
 
-                      {/* Decorative pattern */}
-                      <div className="flex justify-center gap-2 text-xl opacity-40 mb-2">
-                        {visual.pattern.split('').map((emoji, i) => (
-                          <span key={i} className="animate-pulse" style={{animationDelay: `${i * 0.2}s`}}>{emoji}</span>
-                        ))}
-                      </div>
                     </div>
 
                     {/* Enhanced product details */}

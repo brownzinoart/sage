@@ -7,6 +7,9 @@ from datetime import datetime
 from app.services.sage_service import SageService
 sage_service = SageService()
 
+# Check if enhanced features are available
+ENHANCED_AVAILABLE = hasattr(sage_service, 'educational_mcp') and sage_service.educational_mcp is not None
+
 router = APIRouter()
 
 class SageQuery(BaseModel):
