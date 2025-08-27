@@ -75,6 +75,18 @@ export default function SageApp() {
   const [educationalResources, setEducationalResources] = useState<EducationalResources | null>(null)
   const [educationalSummary, setEducationalSummary] = useState<EducationalSummary | null>(null)
   const [researchOverlayOpen, setResearchOverlayOpen] = useState(false)
+  const [particles, setParticles] = useState<Array<{left: string, top: string, delay: string, duration: string}>>([])
+
+  // Initialize particles on client side only
+  useEffect(() => {
+    const particleData = Array.from({ length: 12 }, () => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 3}s`,
+      duration: `${3 + Math.random() * 2}s`
+    }))
+    setParticles(particleData)
+  }, [])
 
   // Debug: Log loading state changes
   useEffect(() => {
@@ -316,15 +328,15 @@ export default function SageApp() {
             <div className="space-y-16 animate-fade-in">
               {/* Floating particles effect */}
               <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(12)].map((_, i) => (
+                {particles.map((particle, i) => (
                   <div
                     key={i}
                     className="absolute w-2 h-2 bg-emerald-400/30 rounded-full animate-pulse"
                     style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
-                      animationDelay: `${Math.random() * 3}s`,
-                      animationDuration: `${3 + Math.random() * 2}s`
+                      left: particle.left,
+                      top: particle.top,
+                      animationDelay: particle.delay,
+                      animationDuration: particle.duration
                     }}
                   />
                 ))}

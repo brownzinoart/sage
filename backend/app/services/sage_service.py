@@ -60,13 +60,21 @@ class SageService:
         if self.educational_mcp:
             try:
                 educational_data = await self.educational_mcp._fetch_research_evidence(user_query, "general")
-                logger.info(f"Retrieved educational data with {len(educational_data.get('studies', []))} studies")
+                # Debug logging to understand data structure
+                logger.info(f"Educational data keys: {list(educational_data.keys()) if educational_data else 'None'}")
+                if educational_data:
+                    papers = educational_data.get('studies', []) or educational_data.get('papers', [])
+                    logger.info(f"Retrieved educational data with {len(papers)} papers/studies")
+                    if papers:
+                        logger.info(f"First paper keys: {list(papers[0].keys())}")
+                else:
+                    logger.info("No educational data retrieved")
             except Exception as e:
                 logger.error(f"Failed to get educational data: {e}")
                 educational_data = None
 
         # Generate explanation with Gemini
-        explanation = self.generate_explanation(user_query, educational_data)
+        explanation = self.generate_explanation(user_query, educational_data, experience_level)
         
         # Generate products
         products = self.generate_products(user_query, explanation)
@@ -77,7 +85,7 @@ class SageService:
             "educational_summary": self._create_educational_summary(educational_data) if educational_data else None
         }
 
-    def generate_explanation(self, user_query: str, educational_data: Optional[Dict] = None) -> str:
+    def generate_explanation(self, user_query: str, educational_data: Optional[Dict] = None, experience_level: str = "curious") -> str:
         """Generate explanation with optional research context"""
         
         if not self.model:
@@ -86,19 +94,26 @@ class SageService:
         try:
             # Build prompt with optional research context
             research_context = ""
-            if educational_data and educational_data.get('studies'):
-                key_findings = []
-                for study in educational_data['studies'][:3]:  # Use top 3 studies
-                    if study.get('summary'):
-                        key_findings.append(f"• {study['summary']}")
-                
-                if key_findings:
-                    research_context = f"""
+            if educational_data:
+                # Try both 'studies' and 'papers' keys for compatibility
+                papers = educational_data.get('studies', []) or educational_data.get('papers', [])
+                if papers:
+                    key_findings = []
+                    for paper in papers[:5]:  # Use top 5 papers
+                        title = paper.get('title', '')
+                        summary = paper.get('summary', '') or paper.get('abstract', '')
+                        if title and summary:
+                            key_findings.append(f"• Study: {title}\n  Finding: {summary[:200]}...")
+                        elif title:
+                            key_findings.append(f"• Study: {title}")
                     
-Research context from recent studies:
+                    if key_findings:
+                        research_context = f"""
+
+RESEARCH EVIDENCE from recent scientific studies:
 {chr(10).join(key_findings)}
 
-Use this research to inform your response, but keep it conversational and accessible.
+INSTRUCTIONS: Use this research to provide evidence-based recommendations. Cite specific findings when relevant, but translate complex medical terms into accessible language.
 """
 
             # Tone based on experience level (from Frontend Experience Agent philosophy)
@@ -128,18 +143,41 @@ Use this research to inform your response, but keep it conversational and access
 
             prompt = f"""{tone_guide}
 
-A user asked: "{user_query}"
+USER CONTEXT:
+Experience Level: {experience_level}
+Question: "{user_query}"
 
 {research_context}
 
-Provide a response that:
-1. Matches the tone described above for their experience level
-2. Directly addresses their hemp/CBD/wellness question  
-3. Incorporates research insights naturally when available
-4. Is 2-3 sentences maximum
-5. Feels authentic to that experience level
+TASK: Create a hemp/cannabis-focused response that positions these products as THE solution to enhance what they're trying to achieve.
 
-Focus on education and understanding, not medical advice."""
+CORE PRINCIPLE: Hemp products don't replace activities - they ENHANCE them. If they want to sleep better, show how CBD+CBN makes sleep deeper. If they want to focus, show how specific terpenes boost concentration during their existing activities.
+
+REQUIREMENTS:
+1. HEMP-CENTRIC APPROACH: Every recommendation must tie back to how hemp/cannabis products specifically help their goal
+2. ENHANCEMENT MINDSET: Don't suggest alternatives - show how hemp makes their current activities better
+3. RESEARCH AUTHORITY: Use studies to prove hemp's effectiveness for their specific need
+4. PRODUCT SELLING: Position these products as essential tools, not optional supplements
+5. MECHANISM EXPLANATION: Explain HOW cannabinoids and terpenes work in their body
+6. LIFESTYLE INTEGRATION: Show how products fit seamlessly into what they already do
+
+SELLING STRATEGY:
+- Start with the problem hemp solves for them
+- Explain the science behind why hemp works
+- Paint the picture of their enhanced experience
+- Create urgency around the specific benefits they'll miss without these products
+
+RESPONSE STRUCTURE:
+Write a natural, flowing response that seamlessly integrates:
+1. Open with how hemp transforms their specific goal
+2. Explain the science behind why hemp works for them
+3. Paint the enhanced experience they'll have
+4. Reference research evidence naturally
+5. End with compelling reason to choose these products
+
+CRITICAL: Write as one smooth, conversational response. DO NOT include section headers, bullet points, or numbered lists. DO NOT use labels like "Hook:" or "Science:" in your response. Write naturally as if speaking to them directly.
+
+AVOID: Suggesting non-hemp alternatives, section headers, bullet formatting, generic wellness advice"""
 
             response = self.model.generate_content(prompt)
             return response.text.strip()
@@ -155,15 +193,33 @@ Focus on education and understanding, not medical advice."""
             return self._fallback_products(user_query)
 
         try:
-            prompt = f"""Based on this user query: "{user_query}" and explanation: "{explanation}"
+            prompt = f"""HEMP PRODUCT SELLING TASK:
 
-Generate exactly 3 hemp/CBD product recommendations as a Python list. Each product needs:
-- name: Product name (realistic and appealing)
-- description: Brief description (1-2 sentences)  
-- price: Price as string (like "$25")
-- category: Product type ("Gummies", "Tinctures", "Tea", etc.)
+User's Goal: "{user_query}"
+Hemp Benefits Explained: "{explanation}"
 
-Make them relevant to the user's specific need. Return ONLY the Python list, no other text:"""
+Create 3 hemp products that are ESSENTIAL for achieving their specific goal. These aren't just "nice to have" - they're the key to unlocking their desired outcome.
+
+SELLING PRINCIPLES:
+1. ENHANCEMENT FOCUS: Show how each product makes their existing efforts MORE effective
+2. SPECIFIC BENEFITS: Don't just say "relaxing" - explain exactly what changes in their experience
+3. LIFESTYLE INTEGRATION: Show how it fits perfectly into what they already do
+4. URGENCY: Create FOMO - what they're missing without these products
+5. SCIENTIFIC BACKING: Reference how the cannabinoids/terpenes specifically work
+
+PRODUCT STRATEGY:
+- Product 1: IMMEDIATE solution (fast-acting, dramatic difference)
+- Product 2: SUSTAINED solution (long-lasting, builds on their routine)
+- Product 3: TARGETED solution (specific mechanism, unique advantage)
+
+DESCRIPTION FORMULA:
+"[Product Name] - Instead of just [their current approach], this [specific cannabinoid profile] lets you [enhanced version of their goal]. The [specific terpenes] work by [mechanism] to [specific benefit they can't get elsewhere]. [Usage integration into their lifestyle]."
+
+PRICING: $25-65 range for premium, effective products
+
+AVOID: Generic benefits, weak language like "may help", positioning as optional supplements
+
+Return ONLY the Python list, no other text:"""
 
             response = self.model.generate_content(prompt)
             

@@ -7,6 +7,10 @@ export const size = {
 
 export const contentType = 'image/png'
 
+export function generateStaticParams() {
+  return []
+}
+
 export default function Icon() {
   return new ImageResponse(
     (
