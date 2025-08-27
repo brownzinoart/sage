@@ -19,7 +19,7 @@ export default function FeaturedStudies({
 
   const getFeaturedReason = (paper: ResearchPaper, index: number) => {
     if (paper.credibility_score >= 8) return { icon: Award, text: 'Gold Standard Study', color: 'text-green-600' }
-    if (paper.citation_count && paper.citation_count > 100) return { icon: TrendingUp, text: 'Highly Cited', color: 'text-blue-600' }
+    if (paper.year >= 2020) return { icon: TrendingUp, text: 'Recent Research', color: 'text-blue-600' }
     if (paper.study_type.toLowerCase().includes('clinical')) return { icon: Star, text: 'Clinical Trial', color: 'text-purple-600' }
     return { icon: Star, text: 'Top Result', color: 'text-orange-600' }
   }
@@ -99,11 +99,9 @@ export default function FeaturedStudies({
                   Quality: {paper.credibility_score.toFixed(1)}/10
                 </div>
                 
-                {paper.citation_count && (
-                  <div className="text-xs text-gray-500">
-                    {paper.citation_count} citations
-                  </div>
-                )}
+                <div className="text-xs text-gray-500">
+                  {paper.source} • {paper.year}
+                </div>
               </div>
               
               {/* Abstract Preview */}

@@ -89,9 +89,7 @@ export default function ExportManager({
       abstract: includeAbstracts ? paper.abstract : undefined,
       study_type: paper.study_type,
       credibility_score: paper.credibility_score,
-      citation_count: paper.citation_count,
-      source: paper.source,
-      keywords: paper.keywords
+      source: paper.source
     }))
 
     return JSON.stringify({
@@ -130,7 +128,7 @@ export default function ExportManager({
         paper.url || '',
         `"${paper.study_type.replace(/"/g, '""')}"`,
         paper.credibility_score,
-        paper.citation_count || '',
+        '',
         `"${paper.source.replace(/"/g, '""')}"`
       ]
 
@@ -176,7 +174,6 @@ export default function ExportManager({
       
       ris += `N1  - Study Type: ${paper.study_type}\n`
       ris += `N1  - Credibility Score: ${paper.credibility_score}/10\n`
-      if (paper.citation_count) ris += `N1  - Citations: ${paper.citation_count}\n`
       
       ris += 'ER  - \n'
       

@@ -860,11 +860,8 @@ export default function SageApp() {
                         <div className="text-right">
                           <span className="text-2xl font-bold text-gray-800 block">{product.price}</span>
                           <span className="text-sm text-gray-600">
-                            {product.size ? `${product.size} - per item` : 'per item'}
+                            per item
                           </span>
-                          {product.brand && (
-                            <div className="text-xs text-gray-500 mt-1">by {product.brand}</div>
-                          )}
                         </div>
                       </div>
 
@@ -887,8 +884,8 @@ export default function SageApp() {
                         </div>
                       </div>
 
-                      {/* Cannabinoid Profile */}
-                      {(product.cbd_mg || product.thc_mg || product.cbg_mg || product.cbn_mg || product.cbc_mg || product.thca_percentage) && (
+                      {/* Cannabinoid Profile - Disabled for build */}
+                      {false && (
                         <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
                           <div className="flex items-start gap-3">
                             <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -897,7 +894,7 @@ export default function SageApp() {
                             <div className="flex-1">
                               <h5 className="font-semibold text-green-800 mb-3">Cannabinoid Profile</h5>
                               <div className="grid grid-cols-2 gap-2">
-                                {product.cbd_mg && product.cbd_mg > 0 && (
+                                {(product as any).cbd_mg && (product as any).cbd_mg > 0 && (
                                   <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-green-700">CBD</span>
                                     <span className="text-sm text-green-800 font-bold">{product.cbd_mg}mg</span>

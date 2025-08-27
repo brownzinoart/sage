@@ -82,8 +82,7 @@ export default function StudyCard({
   const studyTypeStyle = getStudyTypeStyle(paper.study_type)
 
   const handleCopyCitation = async () => {
-    const citation = paper.full_citation || 
-      `${paper.authors.slice(0, 3).join(', ')}${paper.authors.length > 3 ? ' et al.' : ''}. ${paper.title}. ${paper.journal}. ${paper.year}.${paper.doi ? ` DOI: ${paper.doi}` : ''}`
+    const citation = `${paper.authors.slice(0, 3).join(', ')}${paper.authors.length > 3 ? ' et al.' : ''}. ${paper.title}. ${paper.journal}. ${paper.year}.${paper.doi ? ` DOI: ${paper.doi}` : ''}`
     
     try {
       await navigator.clipboard.writeText(citation)
@@ -175,12 +174,6 @@ export default function StudyCard({
                 {formatStudyType(paper.study_type)}
               </span>
               <span className="text-xs text-gray-500">{paper.source}</span>
-              {paper.citation_count && (
-                <span className="text-xs text-gray-500 flex items-center gap-1">
-                  <TrendingUp className="w-3 h-3" />
-                  {paper.citation_count} citations
-                </span>
-              )}
             </div>
 
             {/* Abstract Preview */}
@@ -285,23 +278,17 @@ export default function StudyCard({
         </div>
       </div>
 
-      {/* Citations & Metrics */}
-      {(paper.citation_count || paper.relevance_score) && (
-        <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
-          {paper.citation_count && (
-            <div className="flex items-center gap-1">
-              <TrendingUp className="w-4 h-4 text-gray-400" />
-              <span>{paper.citation_count} citations</span>
-            </div>
-          )}
-          {paper.relevance_score && (
-            <div className="flex items-center gap-1">
-              <Eye className="w-4 h-4 text-gray-400" />
-              <span>{Math.round(paper.relevance_score * 100)}% relevance</span>
-            </div>
-          )}
+      {/* Study Info */}
+      <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
+        <div className="flex items-center gap-1">
+          <Calendar className="w-4 h-4 text-gray-400" />
+          <span>{paper.year}</span>
         </div>
-      )}
+        <div className="flex items-center gap-1">
+          <Award className="w-4 h-4 text-gray-400" />
+          <span>Score: {paper.credibility_score.toFixed(1)}/10</span>
+        </div>
+      </div>
 
       {/* Abstract */}
       <div className="mb-4">
@@ -331,23 +318,6 @@ export default function StudyCard({
         )}
       </div>
 
-      {/* Keywords */}
-      {paper.keywords && paper.keywords.length > 0 && (
-        <div className="border-t border-gray-100 pt-3">
-          <div className="flex flex-wrap gap-1">
-            {paper.keywords.slice(0, 4).map((keyword, idx) => (
-              <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
-                {highlightText(keyword, searchTerm)}
-              </span>
-            ))}
-            {paper.keywords.length > 4 && (
-              <span className="px-2 py-1 text-gray-500 text-xs">
-                +{paper.keywords.length - 4} more
-              </span>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -32,6 +32,7 @@ interface ResearchLibraryProps {
   userQuery?: string
   isOpen: boolean
   onClose: () => void
+  embedded?: boolean
 }
 
 interface FilterState {
@@ -90,10 +91,7 @@ export default function ResearchLibrary({
     if (filters.searchTerm) {
       filtered = filtered.filter(paper =>
         paper.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-        paper.abstract.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-        paper.keywords?.some(keyword => 
-          keyword.toLowerCase().includes(filters.searchTerm.toLowerCase())
-        )
+        paper.abstract.toLowerCase().includes(filters.searchTerm.toLowerCase())
       )
     }
 
@@ -153,10 +151,10 @@ export default function ResearchLibrary({
         case 'credibility':
           return b.credibility_score - a.credibility_score
         case 'citations':
-          return (b.citation_count || 0) - (a.citation_count || 0)
+          return b.year - a.year  // Sort by year instead of citations
         case 'relevance':
         default:
-          return (b.relevance_score || 0) - (a.relevance_score || 0)
+          return b.credibility_score - a.credibility_score  // Sort by credibility instead
       }
     })
 

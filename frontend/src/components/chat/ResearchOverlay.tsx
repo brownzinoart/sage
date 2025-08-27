@@ -591,14 +591,14 @@ Always check your local laws before purchasing.`
                     </div>
                   )}
                   
-                  {educational_summary.limitations && educational_summary.limitations.length > 0 && (
+                  {educational_summary.research_gaps && educational_summary.research_gaps.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Study Limitations</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Research Gaps</h3>
                       <div className="space-y-3">
-                        {educational_summary.limitations.map((limitation, idx) => (
+                        {educational_summary.research_gaps.map((gap, idx) => (
                           <div key={idx} className="flex items-start gap-3 p-4 bg-yellow-50 rounded-lg">
                             <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-                            <p className="text-yellow-800">{limitation}</p>
+                            <p className="text-yellow-800">{gap}</p>
                           </div>
                         ))}
                       </div>
@@ -690,14 +690,14 @@ Always check your local laws before purchasing.`
                     </div>
                   </div>
                   
-                  {educational_resources.dosage_guidelines.factors && (
+                  {educational_resources.dosage_guidelines.safety_considerations && educational_resources.dosage_guidelines.safety_considerations.length > 0 && (
                     <div>
-                      <h4 className="text-md font-semibold text-gray-900 mb-3">Factors to Consider</h4>
+                      <h4 className="text-md font-semibold text-gray-900 mb-3">Safety Considerations</h4>
                       <div className="space-y-2">
-                        {educational_resources.dosage_guidelines.factors.map((factor, idx) => (
+                        {educational_resources.dosage_guidelines.safety_considerations.map((consideration, idx) => (
                           <div key={idx} className="flex items-start gap-2">
                             <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                            <p className="text-gray-700">{factor}</p>
+                            <p className="text-gray-700">{consideration}</p>
                           </div>
                         ))}
                       </div>
