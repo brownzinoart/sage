@@ -46,7 +46,11 @@ app.add_middleware(
         "http://localhost:3002", 
         "http://localhost:3003", 
         "http://localhost:3004", 
+        "http://localhost:6000", 
+        "http://localhost:6001", 
         "http://127.0.0.1:3000",
+        "http://127.0.0.1:6000",
+        "http://127.0.0.1:6001",
         "https://sagedev.netlify.app",
         "https://*.netlify.app",
         "https://sage-backend-v2.loca.lt"
@@ -82,6 +86,6 @@ if __name__ == "__main__":
     uvicorn.run(
         "main_simple:app",
         host="0.0.0.0",
-        port=8000,
+        port=5001,
         reload=True
     )

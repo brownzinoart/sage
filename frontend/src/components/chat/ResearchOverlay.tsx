@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, BookOpen, Shield, AlertTriangle, Scale, Microscope, Star, ExternalLink, ChevronDown, ChevronUp, Search, CheckCircle, Clock, TrendingUp, Activity } from 'lucide-react'
+import { X, BookOpen, Shield, AlertTriangle, Scale, Microscope, Star, ExternalLink, ChevronDown, ChevronUp, Search, CheckCircle, Clock, TrendingUp, Activity, ArrowLeft, Filter } from 'lucide-react'
 import { EducationalResources, EducationalSummary, ResearchPaper } from '@/types'
+import ResearchLibrary from '../research/ResearchLibrary'
 
 interface ResearchOverlayProps {
   isOpen: boolean
@@ -21,6 +22,213 @@ export default function ResearchOverlay({
 }: ResearchOverlayProps) {
   const [activeSection, setActiveSection] = useState('dashboard')
   const [expandedPaper, setExpandedPaper] = useState<number | null>(null)
+  const [activeTab, setActiveTab] = useState<'how-works' | 'safety' | 'fit' | 'legal' | 'research'>('how-works')
+
+  const educationalTabs = {
+    'how-works': {
+      title: 'How It Works',
+      shortTitle: 'How It Works',
+      icon: Microscope,
+      color: 'blue',
+      description: 'Hemp compounds interact with your body\'s endocannabinoid system, a network of receptors that help maintain balance. CBD, CBN, and terpenes each have unique properties that may support wellness in different ways.',
+      sections: [
+        {
+          title: 'The Endocannabinoid System',
+          content: `Your body has a complex network called the endocannabinoid system (ECS) that helps maintain balance. This system includes:
+
+• **CB1 receptors** - Found mainly in the brain and central nervous system
+• **CB2 receptors** - Located primarily in immune cells and peripheral tissues
+• **Endocannabinoids** - Natural compounds your body produces
+• **Enzymes** - Break down cannabinoids after they've done their job
+
+The ECS regulates sleep, mood, appetite, pain response, and immune function.`
+        },
+        {
+          title: 'Major Cannabinoids',
+          content: `Different hemp compounds interact with your ECS in unique ways:
+
+• **CBD (Cannabidiol)** - Non-psychoactive, may support calm and focus
+• **CBN (Cannabinol)** - Known for potential sleep-promoting properties
+• **CBG (Cannabigerol)** - The "mother cannabinoid," may support focus
+• **CBC (Cannabichromene)** - May work synergistically with other cannabinoids
+
+Each compound has different effects and works better in combination.`
+        },
+        {
+          title: 'Terpene Profiles',
+          content: `Terpenes are aromatic compounds that influence effects:
+
+• **Myrcene** - Relaxing, sedating effects
+• **Limonene** - Uplifting, mood-supporting
+• **Pinene** - May support alertness and memory
+• **Linalool** - Calming, similar to lavender
+• **Caryophyllene** - May support pain relief
+
+The combination of cannabinoids and terpenes creates the "entourage effect."`
+        }
+      ]
+    },
+    'safety': {
+      title: 'Safety',
+      shortTitle: 'Safety',
+      icon: Shield,
+      color: 'emerald',
+      description: 'Hemp products should be third-party tested for purity and potency. Start with small amounts and consult healthcare providers, especially if you take medications.',
+      sections: [
+        {
+          title: 'Third-Party Testing',
+          content: `Quality hemp products should always be tested for:
+
+• **Potency** - Verify cannabinoid content matches labels
+• **Pesticides** - Ensure no harmful chemicals were used
+• **Heavy metals** - Test for lead, mercury, cadmium, arsenic
+• **Residual solvents** - Check for extraction chemical residues
+• **Microbials** - Screen for bacteria, yeast, mold, E. coli
+
+Always look for current Certificates of Analysis (COAs) from independent labs.`
+        },
+        {
+          title: 'Starting Safely',
+          content: `Follow the "start low, go slow" approach:
+
+• **Begin with low doses** - 2.5-5mg for beginners
+• **Wait 2 hours** - Effects can take time to appear
+• **Track your response** - Keep a journal of doses and effects
+• **Be consistent** - Use same products and timing
+• **Consult healthcare providers** - Especially if taking medications
+
+Everyone's endocannabinoid system is different.`
+        },
+        {
+          title: 'Drug Interactions',
+          content: `Hemp products may interact with certain medications:
+
+• **Blood thinners** - CBD may increase bleeding risk
+• **Seizure medications** - Dosing adjustments may be needed
+• **Heart medications** - Monitor blood pressure changes
+• **Sedatives** - Increased drowsiness possible
+
+Always inform your doctor about hemp product use before procedures or new medications.`
+        }
+      ]
+    },
+    'fit': {
+      title: 'Find Your Fit',
+      shortTitle: 'Fit',
+      icon: Star,
+      color: 'purple',
+      description: 'Everyone\'s endocannabinoid system is unique. What works for others may not work for you. Track your experience and adjust accordingly.',
+      sections: [
+        {
+          title: 'Product Selection Guide',
+          content: `Choose products based on your goals:
+
+**For Sleep:**
+• CBN-dominant products
+• Full-spectrum with myrcene terpenes
+• Edibles for longer-lasting effects
+
+**For Daily Wellness:**
+• Broad-spectrum CBD
+• Balanced terpene profiles
+• Consistent daily dosing
+
+**For Occasional Stress:**
+• Fast-acting tinctures
+• Linalool and limonene terpenes
+• As-needed usage`
+        },
+        {
+          title: 'Delivery Methods',
+          content: `Different methods provide different experiences:
+
+• **Tinctures/Oils** - Fast absorption, precise dosing (15-45 min onset)
+• **Edibles/Gummies** - Longer effects, easier dosing (30-90 min onset)
+• **Capsules** - Consistent dosing, no taste (45-90 min onset)
+• **Topicals** - Localized effects, no systemic absorption
+• **Vapes** - Fastest onset but shortest duration (1-5 min onset)
+
+Consider your lifestyle and preferences when choosing.`
+        },
+        {
+          title: 'Timing & Routine',
+          content: `Optimize your hemp routine:
+
+**Morning:** Lower doses for focus and calm energy
+**Afternoon:** Moderate doses for stress management
+**Evening:** Higher doses for relaxation and sleep preparation
+
+**With food:** May improve absorption and reduce stomach upset
+**Consistency:** Same time daily helps your body adjust
+**Tracking:** Note effects, timing, and any lifestyle factors`
+        }
+      ]
+    },
+    'legal': {
+      title: 'Legal',
+      shortTitle: 'Legal',
+      icon: Scale,
+      color: 'orange',
+      description: 'Hemp-derived products with less than 0.3% THC are federally legal in the US. However, state laws vary, so check your local regulations.',
+      sections: [
+        {
+          title: 'Federal vs State Laws',
+          content: `Navigate the complex legal landscape:
+
+**Federal Level (2018 Farm Bill):**
+• Hemp with <0.3% THC is legal
+• Must be grown by licensed farmers
+• Interstate commerce is allowed
+
+**State Level Variations:**
+• Some states have stricter THC limits
+• Different licensing requirements
+• Varying retail regulations
+• Some prohibit certain product types
+
+Always check your local laws before purchasing.`
+        },
+        {
+          title: 'Travel Considerations',
+          content: `Hemp product travel guidelines:
+
+**Domestic Travel:**
+• TSA allows hemp products with <0.3% THC
+• Carry original packaging and COAs
+• Some states prohibit possession despite federal law
+
+**International Travel:**
+• Many countries prohibit all cannabis products
+• Even legal hemp products may be confiscated
+• Check destination country laws thoroughly
+• Consider not traveling with hemp products internationally`
+        },
+        {
+          title: 'Workplace Policies',
+          content: `Hemp products and employment:
+
+**Drug Testing:**
+• Full-spectrum products may show THC traces
+• Broad-spectrum and isolate products safer for testing
+• No guarantee any product won't trigger positive results
+
+**Company Policies:**
+• Some employers prohibit all cannabis products
+• Federal contractors often have stricter rules
+• Check your employee handbook
+• Consult HR if uncertain about policies`
+        }
+      ]
+    },
+    'research': {
+      title: 'Research',
+      shortTitle: 'Research',
+      icon: BookOpen,
+      color: 'indigo',
+      description: 'Explore scientific studies and research papers related to hemp and cannabinoids.',
+      sections: []
+    }
+  }
 
   if (!isOpen) return null
 
@@ -81,89 +289,135 @@ export default function ResearchOverlay({
           
           {/* Quick Stats */}
           {educational_resources?.research_studies?.papers && (
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-3 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">
-                  {educational_resources.research_studies.total_found || educational_resources.research_studies.papers.length}
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center p-3 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">
+                    {educational_resources.research_studies.total_found || educational_resources.research_studies.papers.length}
+                  </div>
+                  <div className="text-sm text-green-700">Studies Found</div>
                 </div>
-                <div className="text-sm text-green-700">Studies Found</div>
-              </div>
-              <div className="text-center p-3 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">
-                  {educational_resources.source_credibility?.average_credibility?.toFixed(1) || 'N/A'}/10
+                <div className="text-center p-3 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {educational_resources.source_credibility?.average_credibility?.toFixed(1) || 'N/A'}/10
+                  </div>
+                  <div className="text-sm text-blue-700">Avg Quality</div>
                 </div>
-                <div className="text-sm text-blue-700">Avg Quality</div>
-              </div>
-              <div className="text-center p-3 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">
-                  {educational_summary?.evidence_strength === 'strong' ? 'Strong' :
-                   educational_summary?.evidence_strength === 'moderate' ? 'Moderate' : 'Limited'}
+                <div className="text-center p-3 bg-purple-50 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {educational_summary?.evidence_strength === 'strong' ? 'Strong' :
+                     educational_summary?.evidence_strength === 'moderate' ? 'Moderate' : 'Limited'}
+                  </div>
+                  <div className="text-sm text-purple-700">Evidence</div>
                 </div>
-                <div className="text-sm text-purple-700">Evidence</div>
               </div>
             </div>
           )}
         </div>
 
-        {!hasResources ? (
-          <div className="flex-1 overflow-y-auto p-8">
-            <div className="text-center mb-6">
-              <div className="p-4 bg-emerald-100 rounded-lg w-fit mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-emerald-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Hemp & Wellness Education</h3>
-              <p className="text-gray-600">Learn about the science behind hemp compounds and how they work</p>
-            </div>
+        {/* Tab Navigation */}
+        <div className="flex border-b border-gray-200/50 px-6 flex-shrink-0 overflow-x-auto">
+          {Object.entries(educationalTabs).map(([tabKey, tab]) => {
+            const IconComponent = tab.icon
+            const isActive = activeTab === tabKey
             
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-                <div className="flex items-center gap-3 mb-3">
-                  <Microscope className="w-6 h-6 text-blue-600" />
-                  <h4 className="font-semibold text-blue-900">How Hemp Works</h4>
-                </div>
-                <p className="text-blue-800 text-sm leading-relaxed">
-                  Hemp compounds interact with your body's endocannabinoid system, a network of receptors that help maintain balance. CBD, CBN, and terpenes each have unique properties that may support wellness in different ways.
-                </p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-6 border border-emerald-200">
-                <div className="flex items-center gap-3 mb-3">
-                  <Shield className="w-6 h-6 text-emerald-600" />
-                  <h4 className="font-semibold text-emerald-900">Safety & Quality</h4>
-                </div>
-                <p className="text-emerald-800 text-sm leading-relaxed">
-                  Hemp products should be third-party tested for purity and potency. Start with small amounts and consult healthcare providers, especially if you take medications.
-                </p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
-                <div className="flex items-center gap-3 mb-3">
-                  <Star className="w-6 h-6 text-purple-600" />
-                  <h4 className="font-semibold text-purple-900">Finding Your Fit</h4>
-                </div>
-                <p className="text-purple-800 text-sm leading-relaxed">
-                  Everyone's endocannabinoid system is unique. What works for others may not work for you. Track your experience and adjust accordingly.
-                </p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 border border-orange-200">
-                <div className="flex items-center gap-3 mb-3">
-                  <Scale className="w-6 h-6 text-orange-600" />
-                  <h4 className="font-semibold text-orange-900">Legal & Compliance</h4>
-                </div>
-                <p className="text-orange-800 text-sm leading-relaxed">
-                  Hemp-derived products with less than 0.3% THC are federally legal in the US. However, state laws vary, so check your local regulations.
-                </p>
-              </div>
-            </div>
-            
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-xs text-gray-600 text-center">
-                💡 This information is for educational purposes only and is not intended as medical advice. Consult with healthcare professionals for personalized guidance.
-              </p>
-            </div>
+            return (
+              <button
+                key={tabKey}
+                onClick={() => setActiveTab(tabKey as typeof activeTab)}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
+                  isActive
+                    ? 'border-blue-500 text-blue-600 bg-blue-50/50'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <IconComponent className={`w-4 h-4 ${
+                  isActive ? 'text-blue-600' : 'text-gray-500'
+                }`} />
+                <span>{tab.shortTitle}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === 'research' ? (
+          <div className="flex-1 overflow-hidden">
+            <ResearchLibrary
+              educational_resources={educational_resources}
+              educational_summary={educational_summary}
+              userQuery={userQuery}
+              isOpen={true}
+              onClose={() => setActiveTab('how-works')}
+              embedded={true}
+            />
           </div>
         ) : (
+          <div className="flex-1 overflow-y-auto p-8">
+            {(() => {
+              const tab = educationalTabs[activeTab]
+              const IconComponent = tab.icon
+              const colorClasses = {
+                blue: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-900', icon: 'text-blue-600' },
+                emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-900', icon: 'text-emerald-600' },
+                purple: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-900', icon: 'text-purple-600' },
+                orange: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-900', icon: 'text-orange-600' },
+                indigo: { bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-900', icon: 'text-indigo-600' }
+              }
+              const colors = colorClasses[tab.color as keyof typeof colorClasses]
+              
+              return (
+                <div>
+                  {/* Tab Header */}
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className={`p-3 ${colors.bg} rounded-lg ${colors.border} border`}>
+                      <IconComponent className={`w-6 h-6 ${colors.icon}`} />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900">{tab.title}</h2>
+                      <p className="text-gray-600 text-sm">{tab.description}</p>
+                    </div>
+                  </div>
+
+                  {/* Content sections */}
+                  <div className="space-y-6">
+                    {tab.sections.map((section, idx) => (
+                      <div key={idx} className={`${colors.bg} rounded-xl p-6 ${colors.border} border`}>
+                        <h3 className={`text-lg font-semibold ${colors.text} mb-4`}>{section.title}</h3>
+                        <div className={`${colors.text.replace('900', '800')} text-sm leading-relaxed whitespace-pre-line`}>
+                          {section.content}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Explore Research Button */}
+                  <div className="mt-8 text-center">
+                    <button
+                      onClick={() => setActiveTab('research')}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
+                    >
+                      <Filter className="w-5 h-5" />
+                      <span className="font-medium">Explore Related Research</span>
+                    </button>
+                    <p className="text-xs text-gray-600 mt-2">
+                      Find studies related to {tab.title.toLowerCase()}
+                    </p>
+                  </div>
+                  
+                  {/* Educational disclaimer */}
+                  <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-xs text-gray-600 text-center">
+                      💡 This information is for educational purposes only and is not intended as medical advice. Consult with healthcare professionals for personalized guidance.
+                    </p>
+                  </div>
+                </div>
+              )
+            })()} 
+          </div>
+        )}
+
+        {hasResources && activeTab !== 'research' && (
           <>
             {/* Decision Dashboard */}
             <div className="p-6 border-b border-gray-200/50">
@@ -317,282 +571,106 @@ export default function ResearchOverlay({
                   Dosage
                 </button>
               )}
-              {educational_resources?.safety_information && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setActiveSection('safety')
-                  }}
-                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
-                    activeSection === 'safety'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Safety
-                </button>
-              )}
-              {educational_resources?.legal_status && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setActiveSection('legal')
-                  }}
-                  className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
-                    activeSection === 'legal'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Legal Status
-                </button>
-              )}
             </div>
 
-            {/* Content Area */}
+            {/* Dynamic Content Sections */}
             <div className="flex-1 overflow-y-auto p-6">
-              {/* Key Insights Section */}
-              {activeSection === 'insights' && (
+              {activeSection === 'insights' && educational_summary && (
                 <div className="space-y-6">
-                  {/* Evidence Strength Meter */}
-                  {educational_resources?.source_credibility && (
-                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        <Activity className="w-6 h-6 text-blue-600" />
-                        Evidence Strength Meter
-                      </h3>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <h4 className="font-medium text-gray-700 mb-3">Research Quality</h4>
-                          <div className="space-y-3">
-                            {/* Overall Quality Bar */}
-                            <div className="flex items-center gap-3">
-                              <span className="text-sm font-medium text-gray-600 w-20">Overall</span>
-                              <div className="flex-1 bg-gray-200 rounded-full h-3">
-                                <div 
-                                  className="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-700"
-                                  style={{ width: `${(educational_resources.source_credibility.average_credibility / 10) * 100}%` }}
-                                />
-                              </div>
-                              <span className="text-sm font-bold text-gray-700">
-                                {educational_resources.source_credibility.average_credibility.toFixed(1)}/10
-                              </span>
-                            </div>
-                            
-                            {/* High Quality Count Bar */}
-                            <div className="flex items-center gap-3">
-                              <span className="text-sm font-medium text-gray-600 w-20">High Quality</span>
-                              <div className="flex-1 bg-gray-200 rounded-full h-3">
-                                <div 
-                                  className="bg-gradient-to-r from-emerald-500 to-green-500 h-3 rounded-full transition-all duration-700"
-                                  style={{ width: `${Math.min((educational_resources.source_credibility.high_credibility_count / (educational_resources.research_studies?.papers?.length || 1)) * 100, 100)}%` }}
-                                />
-                              </div>
-                              <span className="text-sm font-bold text-gray-700">
-                                {educational_resources.source_credibility.high_credibility_count} studies
-                              </span>
-                            </div>
+                  {educational_summary.key_findings && educational_summary.key_findings.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Research Findings</h3>
+                      <div className="space-y-3">
+                        {educational_summary.key_findings.map((finding, idx) => (
+                          <div key={idx} className="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
+                            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                            <p className="text-green-800">{finding}</p>
                           </div>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-medium text-gray-700 mb-3">Evidence Grade</h4>
-                          <div className="text-center p-6 bg-white/80 rounded-lg border border-gray-200">
-                            <div className="text-4xl font-bold mb-2">
-                              {educational_summary?.evidence_strength === 'strong' ? (
-                                <span className="text-green-600">A</span>
-                              ) : educational_summary?.evidence_strength === 'moderate' ? (
-                                <span className="text-blue-600">B</span>
-                              ) : (
-                                <span className="text-yellow-600">C</span>
-                              )}
-                            </div>
-                            <div className="text-sm font-medium text-gray-600 capitalize">
-                              {educational_summary?.evidence_strength || 'Limited'} Evidence
-                            </div>
-                            <div className="text-xs text-gray-500 mt-1">
-                              {educational_resources.source_credibility.credibility_level}
-                            </div>
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </div>
                   )}
                   
-                  {educational_summary && (
-                    <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-200/50">
-                      <h3 className="text-lg font-semibold text-blue-900 mb-3">Key Research Findings</h3>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div className="text-center p-3 bg-white/60 rounded-lg">
-                          <div className="text-2xl font-bold text-blue-600">
-                            {educational_summary.compounds_researched?.length || 0}
+                  {educational_summary.limitations && educational_summary.limitations.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Study Limitations</h3>
+                      <div className="space-y-3">
+                        {educational_summary.limitations.map((limitation, idx) => (
+                          <div key={idx} className="flex items-start gap-3 p-4 bg-yellow-50 rounded-lg">
+                            <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                            <p className="text-yellow-800">{limitation}</p>
                           </div>
-                          <div className="text-sm text-gray-600">Compounds</div>
-                        </div>
-                        <div className="text-center p-3 bg-white/60 rounded-lg">
-                          <div className={`text-2xl font-bold capitalize ${getEvidenceStrengthColor(educational_summary.evidence_strength).split(' ')[0]}`}>
-                            {educational_summary.evidence_strength}
-                          </div>
-                          <div className="text-sm text-gray-600">Evidence</div>
-                        </div>
-                        <div className="text-center p-3 bg-white/60 rounded-lg">
-                          <div className="text-2xl font-bold text-blue-600 capitalize">
-                            {educational_summary.confidence_level}
-                          </div>
-                          <div className="text-sm text-gray-600">Confidence</div>
-                        </div>
-                      </div>
-
-                      {educational_summary.key_findings?.length > 0 && (
-                        <div className="mb-4">
-                          <h4 className="font-medium text-blue-900 mb-2">Key Findings</h4>
-                          <ul className="space-y-1">
-                            {educational_summary.key_findings.map((finding, idx) => (
-                              <li key={idx} className="text-sm text-blue-800 flex items-start gap-2">
-                                <Star className="w-3 h-3 mt-0.5 text-blue-500 flex-shrink-0" />
-                                {finding}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {educational_summary.research_gaps?.length > 0 && (
-                        <div>
-                          <h4 className="font-medium text-blue-900 mb-2">Research Limitations</h4>
-                          <ul className="space-y-1">
-                            {educational_summary.research_gaps.map((gap, idx) => (
-                              <li key={idx} className="text-sm text-blue-800 flex items-start gap-2">
-                                <AlertTriangle className="w-3 h-3 mt-0.5 text-yellow-500 flex-shrink-0" />
-                                {gap}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {educational_resources?.mechanism_of_action && (
-                    <div className="bg-purple-50/50 rounded-xl p-4 border border-purple-200/50">
-                      <h3 className="text-lg font-semibold text-purple-900 mb-3 flex items-center gap-2">
-                        <Microscope className="w-5 h-5" />
-                        How It Works
-                      </h3>
-                      <div className="text-purple-800 mb-2">
-                        <strong>{educational_resources.mechanism_of_action.compound}</strong> for{' '}
-                        <strong>{educational_resources.mechanism_of_action.condition}</strong>
-                      </div>
-                      <p className="text-purple-700 mb-2">
-                        {educational_resources.mechanism_of_action.explanation}
-                      </p>
-                      <div className="text-sm text-purple-600">
-                        <strong>Primary Pathway:</strong> {educational_resources.mechanism_of_action.pathway}
-                      </div>
-                    </div>
-                  )}
-
-                  {educational_resources?.source_credibility && (
-                    <div className="bg-green-50/50 rounded-xl p-4 border border-green-200/50">
-                      <h3 className="text-lg font-semibold text-green-900 mb-3">Source Quality</h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <div className="text-2xl font-bold text-green-600">
-                            {educational_resources.source_credibility.average_credibility.toFixed(1)}/10
-                          </div>
-                          <div className="text-sm text-green-700">Average Quality Score</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold text-green-600">
-                            {educational_resources.source_credibility.high_credibility_count}
-                          </div>
-                          <div className="text-sm text-green-700">High-Quality Studies</div>
-                        </div>
-                      </div>
-                      <div className="text-sm text-green-700 mt-2">
-                        {educational_resources.source_credibility.credibility_level}
+                        ))}
                       </div>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Research Studies Section */}
               {activeSection === 'research' && educational_resources?.research_studies?.papers && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900">Research Papers</h3>
-                    <div className="text-sm text-gray-600">
-                      {educational_resources.research_studies.papers.length} of {educational_resources.research_studies.total_found} papers
-                    </div>
-                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Research Studies ({educational_resources.research_studies.papers.length})
+                  </h3>
                   
                   {educational_resources.research_studies.papers.map((paper: ResearchPaper, idx: number) => (
-                    <div key={idx} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium text-gray-900 text-sm leading-tight flex-1 mr-4">
-                          {paper.title}
-                        </h4>
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className={`text-xs px-2 py-1 rounded-full bg-gray-100 ${getCredibilityColor(paper.credibility_score)}`}>
-                            {paper.credibility_score.toFixed(1)}/10
-                          </span>
-                          {paper.url && (
+                    <div key={idx} className="border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="p-4">
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="text-md font-semibold text-gray-900 leading-tight">
+                            {paper.title}
+                          </h4>
+                          {paper.credibility_score && (
+                            <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${getCredibilityColor(paper.credibility_score)} bg-opacity-10`}>
+                              {paper.credibility_score}/10
+                            </span>
+                          )}
+                        </div>
+                        
+                        <p className="text-sm text-gray-600 mb-2">
+                          {paper.authors} • {paper.journal} • {paper.year}
+                        </p>
+                        
+                        {paper.abstract && (
+                          <div>
+                            <button
+                              onClick={() => setExpandedPaper(expandedPaper === idx ? null : idx)}
+                              className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                            >
+                              {expandedPaper === idx ? (
+                                <>
+                                  <ChevronUp className="w-4 h-4" />
+                                  Hide Abstract
+                                </>
+                              ) : (
+                                <>
+                                  <ChevronDown className="w-4 h-4" />
+                                  Show Abstract
+                                </>
+                              )}
+                            </button>
+                            
+                            {expandedPaper === idx && (
+                              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                                <p className="text-sm text-gray-700 leading-relaxed">
+                                  {paper.abstract}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        
+                        {paper.url && (
+                          <div className="mt-3">
                             <a
                               href={paper.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 cursor-pointer transition-colors"
-                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
                             >
-                              <ExternalLink className="w-4 h-4" />
+                              View Study
+                              <ExternalLink className="w-3 h-3" />
                             </a>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div className="text-sm text-gray-600 mb-2">
-                        <span className="font-medium">{paper.authors.slice(0, 3).join(', ')}</span>
-                        {paper.authors.length > 3 && ' et al.'} • {paper.journal} ({paper.year})
-                      </div>
-                      
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">
-                          {paper.study_type.replace('-', ' ')}
-                        </span>
-                        <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded">
-                          {paper.source}
-                        </span>
-                      </div>
-                      
-                      <div className="text-sm text-gray-700">
-                        {expandedPaper === idx ? (
-                          <div>
-                            <p className="mb-2">{paper.abstract}</p>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setExpandedPaper(null)
-                              }}
-                              className="text-blue-600 hover:text-blue-800 text-xs flex items-center gap-1 cursor-pointer transition-colors"
-                            >
-                              <ChevronUp className="w-3 h-3" /> Show less
-                            </button>
-                          </div>
-                        ) : (
-                          <div>
-                            <p className="mb-2">{paper.abstract.slice(0, 200)}...</p>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setExpandedPaper(idx)
-                              }}
-                              className="text-blue-600 hover:text-blue-800 text-xs flex items-center gap-1 cursor-pointer transition-colors"
-                            >
-                              <ChevronDown className="w-3 h-3" /> Read more
-                            </button>
                           </div>
                         )}
                       </div>
@@ -601,141 +679,28 @@ export default function ResearchOverlay({
                 </div>
               )}
 
-              {/* Dosage Section */}
               {activeSection === 'dosage' && educational_resources?.dosage_guidelines && (
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Dosage Guidelines</h3>
-                  
-                  {educational_resources.dosage_guidelines.recommendation && (
-                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                      <h4 className="font-medium text-blue-900 mb-2">Clinical Recommendation</h4>
-                      <p className="text-blue-800">{educational_resources.dosage_guidelines.recommendation}</p>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Dosage Recommendations</h3>
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <p className="text-blue-800">
+                        {educational_resources.dosage_guidelines.recommendation}
+                      </p>
                     </div>
-                  )}
-                  
-                  {educational_resources.dosage_guidelines.safety_considerations?.length > 0 && (
-                    <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
-                      <h4 className="font-medium text-yellow-900 mb-2">Safety Considerations</h4>
-                      <ul className="space-y-1">
-                        {educational_resources.dosage_guidelines.safety_considerations.map((consideration, idx) => (
-                          <li key={idx} className="text-yellow-800 text-sm flex items-start gap-2">
-                            <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                            {consideration}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Safety Section */}
-              {activeSection === 'safety' && educational_resources?.safety_information && (
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-red-600" />
-                    Safety Information
-                  </h3>
-                  
-                  {educational_resources.safety_information.recommendation && (
-                    <div className="bg-red-50 rounded-lg p-4 border border-red-200">
-                      <h4 className="font-medium text-red-900 mb-2">Safety Recommendation</h4>
-                      <p className="text-red-800">{educational_resources.safety_information.recommendation}</p>
-                    </div>
-                  )}
-                  
-                  {educational_resources.safety_information.general_warnings?.length > 0 && (
-                    <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-                      <h4 className="font-medium text-orange-900 mb-2">General Warnings</h4>
-                      <ul className="space-y-2">
-                        {educational_resources.safety_information.general_warnings.map((warning, idx) => (
-                          <li key={idx} className="text-orange-800 text-sm flex items-start gap-2">
-                            <AlertTriangle className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
-                            {warning}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Legal Status Section */}
-              {activeSection === 'legal' && educational_resources?.legal_status && (
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <Scale className="w-5 h-5 text-blue-600" />
-                    Legal Status
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {educational_resources.legal_status.federal_status && (
-                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                        <h4 className="font-medium text-blue-900 mb-3">Federal Status</h4>
-                        <div className="space-y-3">
-                          {Object.entries(educational_resources.legal_status.federal_status).map(([key, value]) => (
-                            <div key={key}>
-                              <div className="font-medium text-blue-800 capitalize text-sm mb-1">
-                                {key.replace(/_/g, ' ')}
-                              </div>
-                              <div className="text-blue-700 text-sm pl-2 border-l-2 border-blue-200">
-                                {typeof value === 'object' ? (
-                                  <div className="space-y-1">
-                                    {Object.entries(value as Record<string, any>).map(([subKey, subValue]) => (
-                                      <div key={subKey}>
-                                        <span className="font-medium capitalize">{subKey.replace(/_/g, ' ')}: </span>
-                                        <span>{String(subValue)}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  String(value)
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {educational_resources.legal_status.state_status && (
-                      <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                        <h4 className="font-medium text-green-900 mb-3">State Status</h4>
-                        <div className="space-y-3">
-                          {Object.entries(educational_resources.legal_status.state_status).map(([key, value]) => (
-                            <div key={key}>
-                              <div className="font-medium text-green-800 capitalize text-sm mb-1">
-                                {key.replace(/_/g, ' ')}
-                              </div>
-                              <div className="text-green-700 text-sm pl-2 border-l-2 border-green-200">
-                                {typeof value === 'object' ? (
-                                  <div className="space-y-1">
-                                    {Object.entries(value as Record<string, any>).map(([subKey, subValue]) => (
-                                      <div key={subKey}>
-                                        <span className="font-medium capitalize">{subKey.replace(/_/g, ' ')}: </span>
-                                        <span>{String(subValue)}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  String(value)
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                   
-                  {educational_resources.legal_status.compliance_notes?.length > 0 && (
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                      <h4 className="font-medium text-gray-900 mb-2">Compliance Notes</h4>
-                      <ul className="space-y-1">
-                        {educational_resources.legal_status.compliance_notes.map((note, idx) => (
-                          <li key={idx} className="text-gray-700 text-sm">{note}</li>
+                  {educational_resources.dosage_guidelines.factors && (
+                    <div>
+                      <h4 className="text-md font-semibold text-gray-900 mb-3">Factors to Consider</h4>
+                      <div className="space-y-2">
+                        {educational_resources.dosage_guidelines.factors.map((factor, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <p className="text-gray-700">{factor}</p>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   )}
                 </div>
