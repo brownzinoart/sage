@@ -19,6 +19,7 @@ class SageQuery(BaseModel):
 class SageResponse(BaseModel):
     explanation: str
     products: List[Dict[str, Any]]
+    educational_resources: Optional[Dict[str, Any]] = None
     educational_summary: Optional[Dict[str, Any]] = None
 
 @router.post("/ask", response_model=SageResponse)
@@ -37,6 +38,7 @@ async def ask_sage(query: SageQuery):
         return SageResponse(
             explanation=response_data['explanation'],
             products=response_data['products'],
+            educational_resources=response_data.get('educational_resources'),
             educational_summary=response_data.get('educational_summary')
         )
         

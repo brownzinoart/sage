@@ -476,13 +476,13 @@ export default function SageApp() {
                       </p>
                       
                       {/* Magical experience level selector */}
-                      <div className="flex justify-center gap-3 opacity-60 hover:opacity-100 transition-opacity duration-500">
+                      <div className="flex justify-center gap-3 opacity-80 hover:opacity-100 transition-opacity duration-500">
                         {experienceLevels.map((level) => (
                           <button
                             key={level.id}
                             type="button"
                             onClick={() => setSelectedExperience(level.id)}
-                            className={`group/level relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                            className={`group/level relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
                               selectedExperience === level.id
                                 ? 'bg-emerald-400/20 text-emerald-200 shadow-lg scale-105 border border-emerald-300/30'
                                 : 'bg-white/10 text-slate-300 hover:bg-white/20 hover:scale-105 border border-white/20'

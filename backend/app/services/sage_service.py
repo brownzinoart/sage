@@ -91,6 +91,7 @@ class SageService:
         return {
             "explanation": explanation,
             "products": products,
+            "educational_resources": educational_data if educational_data else None,
             "educational_summary": self._create_educational_summary(educational_data) if educational_data else None
         }
 
