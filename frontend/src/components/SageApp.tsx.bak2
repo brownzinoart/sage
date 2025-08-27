@@ -982,10 +982,10 @@ export default function SageApp() {
                             <div className="flex-1">
                               <h5 className="font-semibold text-orange-800 mb-3">Terpene Profile</h5>
                               <div className="grid grid-cols-2 gap-2">
-                                {Object.entries((product as any).terpenes).map(([terpene, amount]) => (
+                                {Object.entries(product.terpenes).map(([terpene, amount]) => (
                                   <div key={terpene} className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-orange-700 capitalize">{terpene.replace('_', ' ')}</span>
-                                    <span className="text-sm text-orange-800 font-bold">{amount as number}mg</span>
+                                    <span className="text-sm text-orange-800 font-bold">{amount}mg</span>
                                   </div>
                                 ))}
                               </div>
@@ -995,7 +995,7 @@ export default function SageApp() {
                       )}
 
                       {/* Effects & Benefits */}
-                      {(product as any).effects && (product as any).effects.length > 0 && (
+                      {product.effects && product.effects.length > 0 && (
                         <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4 border border-purple-200">
                           <div className="flex items-start gap-3">
                             <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -1004,7 +1004,7 @@ export default function SageApp() {
                             <div>
                               <h5 className="font-semibold text-purple-800 mb-3">Effects & Benefits</h5>
                               <div className="flex flex-wrap gap-2">
-                                {(product as any).effects.map((effect: string, idx: number) => (
+                                {product.effects.map((effect, idx) => (
                                   <span 
                                     key={idx}
                                     className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200"

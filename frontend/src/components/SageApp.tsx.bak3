@@ -1004,7 +1004,7 @@ export default function SageApp() {
                             <div>
                               <h5 className="font-semibold text-purple-800 mb-3">Effects & Benefits</h5>
                               <div className="flex flex-wrap gap-2">
-                                {(product as any).effects.map((effect: string, idx: number) => (
+                                {product.effects.map((effect, idx) => (
                                   <span 
                                     key={idx}
                                     className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200"

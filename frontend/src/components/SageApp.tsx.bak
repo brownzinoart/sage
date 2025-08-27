@@ -900,10 +900,10 @@ export default function SageApp() {
                                     <span className="text-sm text-green-800 font-bold">{(product as any).cbd_mg}mg</span>
                                   </div>
                                 )}
-                                {(product as any).thc_mg && (product as any).thc_mg > 0 && (
+                                {product.thc_mg && product.thc_mg > 0 && (
                                   <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-green-700">THC</span>
-                                    <span className="text-sm text-green-800 font-bold">{(product as any).thc_mg}mg</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.thc_mg}mg</span>
                                   </div>
                                 )}
                                 {(product as any).delta_8_thc_mg && (product as any).delta_8_thc_mg > 0 && (
@@ -942,28 +942,28 @@ export default function SageApp() {
                                     <span className="text-sm text-green-800 font-bold">{(product as any).thcv_mg}mg</span>
                                   </div>
                                 )}
-                                {(product as any).cbg_mg && (product as any).cbg_mg > 0 && (
+                                {product.cbg_mg && product.cbg_mg > 0 && (
                                   <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-green-700">CBG</span>
-                                    <span className="text-sm text-green-800 font-bold">{(product as any).cbg_mg}mg</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.cbg_mg}mg</span>
                                   </div>
                                 )}
-                                {(product as any).cbn_mg && (product as any).cbn_mg > 0 && (
+                                {product.cbn_mg && product.cbn_mg > 0 && (
                                   <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-green-700">CBN</span>
-                                    <span className="text-sm text-green-800 font-bold">{(product as any).cbn_mg}mg</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.cbn_mg}mg</span>
                                   </div>
                                 )}
-                                {(product as any).cbc_mg && (product as any).cbc_mg > 0 && (
+                                {product.cbc_mg && product.cbc_mg > 0 && (
                                   <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-green-700">CBC</span>
-                                    <span className="text-sm text-green-800 font-bold">{(product as any).cbc_mg}mg</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.cbc_mg}mg</span>
                                   </div>
                                 )}
-                                {(product as any).thca_percentage && (product as any).thca_percentage > 0 && (
+                                {product.thca_percentage && product.thca_percentage > 0 && (
                                   <div className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-green-700">THCA</span>
-                                    <span className="text-sm text-green-800 font-bold">{(product as any).thca_percentage}%</span>
+                                    <span className="text-sm text-green-800 font-bold">{product.thca_percentage}%</span>
                                   </div>
                                 )}
                               </div>
@@ -973,7 +973,7 @@ export default function SageApp() {
                       )}
 
                       {/* Terpene Profile */}
-                      {(product as any).terpenes && Object.keys((product as any).terpenes).length > 0 && (
+                      {product.terpenes && Object.keys(product.terpenes).length > 0 && (
                         <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
                           <div className="flex items-start gap-3">
                             <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -982,10 +982,10 @@ export default function SageApp() {
                             <div className="flex-1">
                               <h5 className="font-semibold text-orange-800 mb-3">Terpene Profile</h5>
                               <div className="grid grid-cols-2 gap-2">
-                                {Object.entries((product as any).terpenes).map(([terpene, amount]) => (
+                                {Object.entries(product.terpenes).map(([terpene, amount]) => (
                                   <div key={terpene} className="flex justify-between items-center">
                                     <span className="text-sm font-medium text-orange-700 capitalize">{terpene.replace('_', ' ')}</span>
-                                    <span className="text-sm text-orange-800 font-bold">{amount as number}mg</span>
+                                    <span className="text-sm text-orange-800 font-bold">{amount}mg</span>
                                   </div>
                                 ))}
                               </div>
@@ -995,7 +995,7 @@ export default function SageApp() {
                       )}
 
                       {/* Effects & Benefits */}
-                      {(product as any).effects && (product as any).effects.length > 0 && (
+                      {product.effects && product.effects.length > 0 && (
                         <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4 border border-purple-200">
                           <div className="flex items-start gap-3">
                             <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -1004,7 +1004,7 @@ export default function SageApp() {
                             <div>
                               <h5 className="font-semibold text-purple-800 mb-3">Effects & Benefits</h5>
                               <div className="flex flex-wrap gap-2">
-                                {(product as any).effects.map((effect: string, idx: number) => (
+                                {product.effects.map((effect, idx) => (
                                   <span 
                                     key={idx}
                                     className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200"
