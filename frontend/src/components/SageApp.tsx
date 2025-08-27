@@ -610,10 +610,127 @@ export default function SageApp() {
                     <Leaf className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-lg text-slate-700 leading-relaxed font-medium mb-4">
-                      {explanation}
-                    </p>
-                    <div className="flex justify-between items-center">
+                    <div className="space-y-4 text-slate-700">
+                      {explanation.split('\n\n').map((section, idx) => {
+                        if (section.trim().startsWith('🌿 **Quick Answer**')) {
+                          return (
+                            <div key={idx} className="bg-green-50 rounded-lg p-4 border border-green-200">
+                              <div className="flex items-start gap-2 mb-2">
+                                <span className="text-xl">🌿</span>
+                                <h3 className="font-bold text-green-800 text-lg">Quick Answer</h3>
+                              </div>
+                              <div className="text-green-700 space-y-1">
+                                {section.split('\n').slice(1).map((line, lineIdx) => 
+                                  line.trim().startsWith('•') ? (
+                                    <div key={lineIdx} className="flex items-start gap-2">
+                                      <span className="text-green-600 mt-1">•</span>
+                                      <span>{line.replace('•', '').trim()}</span>
+                                    </div>
+                                  ) : null
+                                )}
+                              </div>
+                            </div>
+                          )
+                        }
+                        
+                        if (section.trim().startsWith('📚 **Key Benefits**')) {
+                          return (
+                            <div key={idx} className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                              <div className="flex items-start gap-2 mb-2">
+                                <span className="text-xl">📚</span>
+                                <h3 className="font-bold text-blue-800 text-lg">Key Benefits</h3>
+                              </div>
+                              <div className="text-blue-700 space-y-1">
+                                {section.split('\n').slice(1).map((line, lineIdx) => 
+                                  line.trim().startsWith('•') ? (
+                                    <div key={lineIdx} className="flex items-start gap-2">
+                                      <span className="text-blue-600 mt-1">•</span>
+                                      <span>{line.replace('•', '').trim()}</span>
+                                    </div>
+                                  ) : null
+                                )}
+                              </div>
+                            </div>
+                          )
+                        }
+                        
+                        if (section.trim().startsWith('🔬 **Research Insights**')) {
+                          return (
+                            <div key={idx} className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex items-start gap-2">
+                                  <span className="text-xl">🔬</span>
+                                  <h3 className="font-bold text-purple-800 text-lg">Research Insights</h3>
+                                </div>
+                                {educationalResources?.research_studies?.papers?.length && (
+                                  <button
+                                    onClick={() => setResearchOverlayOpen(true)}
+                                    className="text-xs text-purple-600 hover:text-purple-800 bg-purple-100 hover:bg-purple-200 px-3 py-1 rounded-full transition-colors"
+                                  >
+                                    View {educationalResources.research_studies.papers.length} Studies
+                                  </button>
+                                )}
+                              </div>
+                              <div className="text-purple-700 space-y-1">
+                                {section.split('\n').slice(1).map((line, lineIdx) => 
+                                  line.trim().startsWith('•') ? (
+                                    <div key={lineIdx} className="flex items-start gap-2">
+                                      <span className="text-purple-600 mt-1">•</span>
+                                      <span>{line.replace('•', '').trim()}</span>
+                                    </div>
+                                  ) : null
+                                )}
+                              </div>
+                            </div>
+                          )
+                        }
+                        
+                        if (section.trim().startsWith('💡 **How to Use**')) {
+                          return (
+                            <div key={idx} className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                              <div className="flex items-start gap-2 mb-2">
+                                <span className="text-xl">💡</span>
+                                <h3 className="font-bold text-orange-800 text-lg">How to Use</h3>
+                              </div>
+                              <div className="text-orange-700 space-y-1">
+                                {section.split('\n').slice(1).map((line, lineIdx) => 
+                                  line.trim().startsWith('•') ? (
+                                    <div key={lineIdx} className="flex items-start gap-2">
+                                      <span className="text-orange-600 mt-1">•</span>
+                                      <span>{line.replace('•', '').trim()}</span>
+                                    </div>
+                                  ) : null
+                                )}
+                              </div>
+                            </div>
+                          )
+                        }
+                        
+                        if (section.trim().startsWith('⚠️ **Important Notes**')) {
+                          return (
+                            <div key={idx} className="bg-red-50 rounded-lg p-4 border border-red-200">
+                              <div className="flex items-start gap-2 mb-2">
+                                <span className="text-xl">⚠️</span>
+                                <h3 className="font-bold text-red-800 text-lg">Important Notes</h3>
+                              </div>
+                              <div className="text-red-700 space-y-1">
+                                {section.split('\n').slice(1).map((line, lineIdx) => 
+                                  line.trim().startsWith('•') ? (
+                                    <div key={lineIdx} className="flex items-start gap-2">
+                                      <span className="text-red-600 mt-1">•</span>
+                                      <span>{line.replace('•', '').trim()}</span>
+                                    </div>
+                                  ) : null
+                                )}
+                              </div>
+                            </div>
+                          )
+                        }
+                        
+                        return null
+                      })}
+                    </div>
+                    <div className="flex justify-between items-center mt-6">
                       <div className="flex items-center gap-2 text-sm text-emerald-600">
                         <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                         <span className="font-medium">Sage's insight for you</span>
