@@ -5,29 +5,57 @@ import uuid
 from app.models.schemas import ChatMessage, ChatResponse, ProductInfo
 from app.db.mock_database import mock_db
 from app.services.gemini_service import GeminiService
+from app.services.clean_sage_service import CleanSageService
 
 router = APIRouter()
 
-# Initialize Gemini service
+# Initialize services
 gemini_service = GeminiService()
+sage_service = CleanSageService()
 
 @router.post("/message", response_model=ChatResponse)
 async def process_message(message: ChatMessage, request: Request):
-    """Process a chat message and return response with recommendations"""
+    """Process a chat message and return response with recommendations and educational content"""
     
     try:
         # Get or create session
         session_id = message.session_id or str(uuid.uuid4())
         
-        # Generate AI explanation using Gemini
-        explanation = gemini_service.generate_hemp_explanation(message.text)
-        
-        # Generate AI product recommendations
-        ai_products = gemini_service.generate_product_recommendations(message.text, explanation)
+        # Use Sage service to get comprehensive response with educational content
+        try:
+            sage_response = await sage_service.ask_sage(
+                message.text, 
+                experience_level="curious"
+            )
+            
+            explanation = sage_response['explanation']
+            educational_resources = sage_response.get('educational_resources')
+            educational_summary = sage_response.get('educational_summary')
+            ai_products = sage_response['products']
+            
+        except Exception as sage_error:
+            print(f"Sage service error, falling back to Gemini: {sage_error}")
+            # Fallback to Gemini service
+            explanation = gemini_service.generate_hemp_explanation(message.text)
+            educational_resources = None
+            educational_summary = None
+            ai_products = gemini_service.generate_product_recommendations(message.text, explanation)
         
         # Convert AI products to ProductInfo format
         product_list = []
         for p in ai_products:
+            # Parse price from string format
+            price_str = p.get('price', '0')
+            if isinstance(price_str, str):
+                # Remove $ and convert to float
+                price_clean = price_str.replace('$', '').replace(',', '')
+                try:
+                    price = float(price_clean)
+                except (ValueError, TypeError):
+                    price = 0.0
+            else:
+                price = float(price_str) if price_str else 0.0
+                
             product_info = ProductInfo(
                 id=p.get('id', 1),
                 name=p.get('name', ''),
@@ -39,7 +67,7 @@ async def process_message(message: ChatMessage, request: Request):
                 cbn_mg=None,
                 cbc_mg=None,
                 thca_percentage=None,
-                price=p.get('price', '$0'),
+                price=price,
                 effects=[],
                 terpenes={},
                 lab_tested=True,
@@ -58,7 +86,11 @@ async def process_message(message: ChatMessage, request: Request):
             session_id=session_id,
             response=explanation,
             products=product_list,
-            suggestions=[]
+            suggestions=generate_suggestions(detect_simple_intent(message.text)),
+            educational_resources=educational_resources,
+            educational_summary=educational_summary,
+            service_status=sage_response.get('service_status'),
+            status_message=sage_response.get('status_message')
         )
         
     except Exception as e:

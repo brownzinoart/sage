@@ -44,6 +44,10 @@ class ChatResponse(BaseModel):
     products: List[ProductInfo] = []
     suggestions: List[str] = []
     educational_content: Optional[EducationalContent] = None
+    educational_resources: Optional[Dict[str, Any]] = None
+    educational_summary: Optional[Dict[str, Any]] = None
+    service_status: Optional[int] = None
+    status_message: Optional[str] = None
 
 class ConversationSummary(BaseModel):
     session_id: str

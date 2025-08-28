@@ -302,7 +302,8 @@ TONE: Helpful, knowledgeable, concise. Skip filler words and reassurances."""
         if not educational_data:
             return None
 
-        studies = educational_data.get('studies', [])
+        # Try both 'papers' and 'studies' keys for compatibility
+        studies = educational_data.get('papers', []) or educational_data.get('studies', [])
         if not studies:
             return None
 
@@ -312,22 +313,33 @@ TONE: Helpful, knowledgeable, concise. Skip filler words and reassurances."""
         dosing_info = []
 
         for study in studies[:5]:  # Top 5 studies
-            summary = study.get('summary', '')
+            # Use abstract instead of summary since papers have abstract field
+            text_content = study.get('abstract', '') or study.get('summary', '')
+            if not text_content:
+                continue
+                
+            content_lower = text_content.lower()
+            title = study.get('title', 'Study')
             
-            # Categorize findings
-            if any(word in summary.lower() for word in ['effective', 'beneficial', 'improved', 'reduced']):
-                key_findings.append(summary)
-            elif any(word in summary.lower() for word in ['safe', 'adverse', 'side effect', 'tolerance']):
-                safety_notes.append(summary)
-            elif any(word in summary.lower() for word in ['dose', 'dosage', 'mg', 'administration']):
-                dosing_info.append(summary)
+            # Categorize findings based on abstract content
+            if any(word in content_lower for word in ['effective', 'beneficial', 'improved', 'reduced', 'significant']):
+                key_findings.append(f"{title}: {text_content[:150]}...")
+            elif any(word in content_lower for word in ['safe', 'adverse', 'side effect', 'tolerance', 'warning']):
+                safety_notes.append(f"{title}: {text_content[:150]}...")  
+            elif any(word in content_lower for word in ['dose', 'dosage', 'mg', 'administration']):
+                dosing_info.append(f"{title}: {text_content[:150]}...")
 
-        return {
+        summary_result = {
             "total_studies": len(studies),
             "key_findings": key_findings[:3],
             "safety_notes": safety_notes[:2] if safety_notes else None,
             "dosing_insights": dosing_info[:2] if dosing_info else None
         }
+        
+        # Debug logging
+        logger.info(f"Educational summary created: {len(studies)} studies, {len(key_findings)} findings, {len(safety_notes)} safety notes")
+        
+        return summary_result
 
     def _fallback_explanation(self, user_query: str) -> str:
         """Simple fallback when Gemini unavailable"""

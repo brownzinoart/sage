@@ -17,6 +17,15 @@ export function useChat({ privacyLevel = 1 }: UseChatProps = {}) {
   const [lastQuery, setLastQuery] = useState<string>('')
 
   const sendMessage = useCallback(async (text: string) => {
+    // Add user message immediately
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content: text,
+      timestamp: new Date()
+    }
+    setMessages(prev => [...prev, userMessage])
+    
     // Store the query
     setLastQuery(text)
     setIsLoading(true)
@@ -47,26 +56,48 @@ export function useChat({ privacyLevel = 1 }: UseChatProps = {}) {
         setSessionId(data.session_id)
       }
 
-      // Store response data (no chat messages, just data)
+      // Create assistant message with educational content
+      const assistantMessage: Message = {
+        id: `assistant-${Date.now()}`,
+        role: 'assistant',
+        content: data.response,
+        timestamp: new Date(),
+        suggestions: data.suggestions,
+        educational_resources: data.educational_resources,
+        educational_summary: data.educational_summary
+      }
+      
+      setMessages(prev => [...prev, assistantMessage])
+
+      // Store products
       if (data.products && data.products.length > 0) {
         setProducts(data.products)
       }
 
     } catch (error) {
-      console.error('Search error:', error)
-      // Just log the error, no chat messages needed
+      console.error('Chat error:', error)
+      // Add error message
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again.',
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, errorMessage])
     } finally {
       setIsLoading(false)
     }
   }, [sessionId, privacyLevel])
 
   const clearResults = useCallback(() => {
+    setMessages([])
     setProducts([])
     setSessionId(null)
     setLastQuery('')
   }, [])
 
   return {
+    messages,
     products,
     sendMessage,
     isLoading,
