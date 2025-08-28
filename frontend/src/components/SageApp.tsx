@@ -168,7 +168,34 @@ export default function SageApp() {
     }, 15000) // 15 second timeout
     
     try {
-      const apiUrl = `/.netlify/functions/sage`
+      // Check if in development mode
+      const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost'
+      const backendUrl = 'http://localhost:5001/api/v1/sage/ask'
+      
+      let apiUrl = isDevelopment ? '/api/sage' : '/.netlify/functions/sage'
+      let requestBody = { 
+        query: searchQuery,
+        experience_level: selectedExperience || 'casual'
+      }
+      
+      // Try to use backend API in development if available
+      if (isDevelopment) {
+        try {
+          const healthCheck = await fetch('http://localhost:5001/health', { 
+            method: 'GET',
+            signal: AbortSignal.timeout(2000) // 2 second timeout
+          })
+          if (healthCheck.ok) {
+            apiUrl = backendUrl
+            console.log('Using backend API for development')
+          } else {
+            console.log('Backend not available, using Next.js API route')
+          }
+        } catch {
+          console.log('Backend not available, using Next.js API route')
+        }
+      }
+      
       console.log('Making request to:', apiUrl)
       
       if (!apiUrl || apiUrl.includes('undefined')) {
@@ -180,10 +207,7 @@ export default function SageApp() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          query: searchQuery,
-          experience_level: selectedExperience || 'casual'
-        }),
+        body: JSON.stringify(requestBody),
       })
       
       console.log('Response status:', response.status)

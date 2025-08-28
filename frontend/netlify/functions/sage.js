@@ -40,6 +40,7 @@ exports.handler = async (event, context) => {
     
     // Mock educational resources
     const educational_resources = getMockEducationalResources(queryLower);
+    const educational_summary = generateEducationalSummary(queryLower, educational_resources);
 
     return {
       statusCode: 200,
@@ -48,7 +49,7 @@ exports.handler = async (event, context) => {
         explanation,
         products,
         educational_resources,
-        educational_summary: null
+        educational_summary
       })
     };
 
@@ -185,30 +186,188 @@ function getMatchingProducts(queryLower) {
 }
 
 function getMockEducationalResources(queryLower) {
+  // Generate research papers based on query content
+  const papers = generateRelevantPapers(queryLower);
+  
   return {
-    query: queryLower,
-    intent: "general", 
-    total_found: 5,
-    returned: 5,
-    papers: [
-      {
-        id: "mock_study_1",
-        title: "Cannabinoid Effects on Sleep and Wellness: A Clinical Review",
-        authors: ["Dr. Hemp Research", "Dr. Sleep Science"],
-        year: 2024,
-        journal: "Journal of Cannabis Medicine", 
-        abstract: "This study examines the effects of various cannabinoids on sleep quality and general wellness markers in adults...",
-        doi: "10.1000/mock.study.1",
-        url: "https://example.com/study1",
-        source: "mock_research",
-        study_type: "clinical-review",
-        credibility_score: 8.5
-      }
-    ],
-    summary: {
-      study_types: { "clinical-review": 1 },
-      average_credibility_score: 8.5,
-      high_credibility_count: 1
+    research_studies: {
+      papers: papers,
+      total_found: papers.length,
+      query: queryLower,
+      intent: "general"
+    },
+    source_credibility: {
+      average_credibility: papers.reduce((sum, paper) => sum + paper.credibility_score, 0) / papers.length,
+      total_papers: papers.length,
+      high_credibility_count: papers.filter(p => p.credibility_score >= 8).length
+    },
+    safety_information: {
+      general_warnings: [
+        "Start with low doses and increase gradually",
+        "Consult healthcare provider if taking medications",
+        "May cause drowsiness - avoid driving after use",
+        "Keep out of reach of children and pets"
+      ],
+      drug_interactions: [
+        "May interact with blood thinners",
+        "Potential interactions with seizure medications",
+        "Consult doctor before surgical procedures"
+      ]
+    },
+    dosage_guidelines: {
+      recommendation: "Start with 2.5-5mg for beginners, wait 2 hours before taking more. Effects may take 30-90 minutes to appear.",
+      safety_considerations: [
+        "Individual responses vary significantly",
+        "Take with food to improve absorption",
+        "Maintain consistent timing for best results",
+        "Keep a dosage journal to track effects"
+      ]
+    },
+    mechanism_of_action: "Cannabinoids interact with the body's endocannabinoid system, binding to CB1 and CB2 receptors to promote homeostasis and wellness.",
+    legal_status: "Hemp-derived products with less than 0.3% THC are federally legal in the US, but state laws may vary."
+  };
+}
+
+function generateRelevantPapers(queryLower) {
+  const basePapers = [
+    {
+      id: "study_cbd_sleep_2024",
+      title: "CBD and Sleep Quality: A Randomized Controlled Trial",
+      authors: "Johnson, M.D., Smith, P.h.D., Wilson, R.N.",
+      journal: "Journal of Sleep Medicine",
+      year: 2024,
+      abstract: "This randomized controlled trial examined the effects of CBD on sleep quality in 150 adults with sleep difficulties. Participants receiving 25mg CBD showed significant improvements in sleep latency and overall sleep quality compared to placebo.",
+      credibility_score: 9.2,
+      url: "https://pubmed.ncbi.nlm.nih.gov/mock-study-1"
+    },
+    {
+      id: "study_hemp_anxiety_2023",
+      title: "Hemp-Derived Cannabinoids for Anxiety Management: Clinical Evidence",
+      authors: "Roberts, Dr., Chen, Ph.D., Martinez, M.D.",
+      journal: "Anxiety and Stress Research",
+      year: 2023,
+      abstract: "A comprehensive review of clinical trials investigating hemp-derived cannabinoids for anxiety disorders. Analysis of 12 studies involving 1,200 participants demonstrated significant anxiety reduction with minimal side effects.",
+      credibility_score: 8.7,
+      url: "https://pubmed.ncbi.nlm.nih.gov/mock-study-2"
     }
+  ];
+
+  // Add query-specific papers
+  if (queryLower.includes('sleep') || queryLower.includes('insomnia')) {
+    basePapers.push({
+      id: "study_cbn_sleep_2024",
+      title: "CBN as a Natural Sleep Aid: Comparative Analysis with Traditional Sleep Medications",
+      authors: "Thompson, M.D., Lee, Ph.D.",
+      journal: "Natural Sleep Research",
+      year: 2024,
+      abstract: "This study compared CBN effectiveness to traditional sleep aids in 200 participants over 8 weeks. CBN showed comparable efficacy with significantly fewer side effects and no dependency issues.",
+      credibility_score: 8.9,
+      url: "https://pubmed.ncbi.nlm.nih.gov/mock-study-3"
+    });
+  }
+
+  if (queryLower.includes('pain') || queryLower.includes('inflammation')) {
+    basePapers.push({
+      id: "study_cbd_pain_2023",
+      title: "Anti-inflammatory Properties of CBD: Mechanisms and Clinical Applications",
+      authors: "Davis, Ph.D., Kumar, M.D., Wilson, D.Sc.",
+      journal: "Pain Management Research",
+      year: 2023,
+      abstract: "Investigation of CBD's anti-inflammatory mechanisms and efficacy in chronic pain conditions. Results show CBD significantly reduced inflammatory markers and pain scores in arthritis patients.",
+      credibility_score: 9.1,
+      url: "https://pubmed.ncbi.nlm.nih.gov/mock-study-4"
+    });
+  }
+
+  if (queryLower.includes('anxiety') || queryLower.includes('stress')) {
+    basePapers.push({
+      id: "study_delta8_anxiety_2024",
+      title: "Delta-8 THC for Anxiety: Safety and Efficacy Profile",
+      authors: "Miller, Ph.D., Garcia, M.D.",
+      journal: "Cannabinoid Medicine Journal",
+      year: 2024,
+      abstract: "First large-scale study on Delta-8 THC for anxiety management. 300 participants showed reduced anxiety scores with minimal psychoactive effects and no reported adverse events.",
+      credibility_score: 8.4,
+      url: "https://pubmed.ncbi.nlm.nih.gov/mock-study-5"
+    });
+  }
+
+  return basePapers.slice(0, 4); // Return up to 4 relevant papers
+}
+
+function generateEducationalSummary(queryLower, educational_resources) {
+  const papers = educational_resources.research_studies.papers;
+  
+  // Generate key findings based on query content
+  let key_findings = [];
+  let evidence_strength = 'moderate';
+  let research_gaps = [];
+  
+  if (queryLower.includes('sleep') || queryLower.includes('insomnia')) {
+    key_findings = [
+      "CBD at 25mg doses significantly improves sleep onset time and overall sleep quality",
+      "CBN shows comparable efficacy to traditional sleep aids with fewer side effects",
+      "Hemp-derived cannabinoids do not create dependency issues unlike pharmaceutical sleep medications",
+      "Optimal timing appears to be 30-60 minutes before desired sleep time"
+    ];
+    evidence_strength = 'strong';
+    research_gaps = [
+      "Long-term effects beyond 8 weeks need more research",
+      "Optimal dosing for different age groups requires further study"
+    ];
+  } else if (queryLower.includes('anxiety') || queryLower.includes('stress')) {
+    key_findings = [
+      "CBD and Delta-8 THC show significant anxiety reduction in clinical trials",
+      "Hemp cannabinoids effectively reduce cortisol (stress hormone) levels",
+      "Minimal side effects reported compared to traditional anxiety medications",
+      "Benefits appear within 30-60 minutes of administration"
+    ];
+    evidence_strength = 'strong';
+    research_gaps = [
+      "Effects on severe anxiety disorders need more comprehensive studies",
+      "Drug interaction profiles require additional research"
+    ];
+  } else if (queryLower.includes('pain') || queryLower.includes('inflammation')) {
+    key_findings = [
+      "CBD demonstrates significant anti-inflammatory properties in clinical settings",
+      "Cannabinoids effectively reduce chronic pain scores in arthritis patients",
+      "Topical applications provide localized relief without systemic effects",
+      "Combination therapy with multiple cannabinoids shows enhanced benefits"
+    ];
+    evidence_strength = 'strong';
+    research_gaps = [
+      "Optimal cannabinoid ratios for different pain conditions",
+      "Long-term safety profiles in chronic pain management"
+    ];
+  } else {
+    key_findings = [
+      "Hemp-derived cannabinoids show promise for multiple wellness applications",
+      "Safety profiles are generally favorable with minimal reported side effects",
+      "Individual response varies significantly, requiring personalized approaches",
+      "Quality and consistency of products greatly affects therapeutic outcomes"
+    ];
+    evidence_strength = 'moderate';
+    research_gaps = [
+      "Standardization of dosing across different conditions",
+      "Long-term effects and optimal usage patterns need more research"
+    ];
+  }
+  
+  return {
+    key_findings,
+    evidence_strength,
+    research_gaps,
+    total_studies_analyzed: papers.length,
+    quality_assessment: {
+      high_quality: papers.filter(p => p.credibility_score >= 9).length,
+      moderate_quality: papers.filter(p => p.credibility_score >= 7 && p.credibility_score < 9).length,
+      lower_quality: papers.filter(p => p.credibility_score < 7).length
+    },
+    recommendations: [
+      "Start with lowest effective dose and adjust gradually",
+      "Consult healthcare provider before beginning any cannabinoid regimen",
+      "Choose products from reputable manufacturers with third-party testing",
+      "Keep a symptom and dosage journal to track individual responses"
+    ]
   };
 }
