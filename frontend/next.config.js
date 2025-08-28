@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove export mode during development to allow API routes
-  ...(process.env.NODE_ENV === 'production' ? { output: 'export' } : {}),
+  // Use export mode for Netlify deployment, but allow API routes in development
+  output: process.env.NETLIFY ? 'export' : undefined,
   trailingSlash: false,
   images: {
     unoptimized: true,
