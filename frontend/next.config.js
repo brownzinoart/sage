@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Use export mode for Netlify deployment, but allow API routes in development
-  output: process.env.NETLIFY ? 'export' : undefined,
+  // Use export mode only for Netlify, allow normal build for Railway
+  output: process.env.NETLIFY === 'true' ? 'export' : undefined,
   trailingSlash: false,
   images: {
     unoptimized: true,

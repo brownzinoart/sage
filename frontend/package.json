@@ -10,6 +10,9 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "next": "14.0.4",
     "react": "^18.2.0",

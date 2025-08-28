@@ -1,0 +1,10 @@
+[build]
+  builder = "NIXPACKS"
+
+[deploy]
+  startCommand = "npm start"
+  healthcheckPath = "/"
+
+[environment]
+  NETLIFY = "false"
+  NODE_ENV = "production"
