@@ -1,6 +1,6 @@
 [build]
   publish = "out"
-  command = "rm -rf .next out node_modules/.cache && npm ci && npm run build"
+  command = "rm -rf .next out node_modules/.cache && npm ci && npx next telemetry disable && npm run build"
 
 [build.environment]
   NETLIFY = "true"
