@@ -168,7 +168,7 @@ export default function SageApp() {
     }, 15000) // 15 second timeout
     
     try {
-      const apiUrl = `/.netlify/functions/sage`
+      const apiUrl = `https://sage-backend-v6.loca.lt/api/v1/sage/ask`
       console.log('Making request to:', apiUrl)
       
       if (!apiUrl || apiUrl.includes('undefined')) {
