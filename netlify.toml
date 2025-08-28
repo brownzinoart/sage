@@ -5,7 +5,6 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  NEXT_PUBLIC_API_URL = "https://sage-backend-v4.loca.lt"
 
 # Handle client-side routing for Single Page Application
 [[redirects]]

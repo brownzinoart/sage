@@ -84,6 +84,12 @@ next-env.d.ts
 *.swp
 *.swo
 
+# Backup files
+*.bak
+*.bak2
+*.bak3
+*.bak4
+
 # OS
 .DS_Store
 .DS_Store?

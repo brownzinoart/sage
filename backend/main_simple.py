@@ -40,22 +40,8 @@ app = FastAPI(
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000", 
-        "http://localhost:3001", 
-        "http://localhost:3002", 
-        "http://localhost:3003", 
-        "http://localhost:3004", 
-        "http://localhost:6000", 
-        "http://localhost:6001", 
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:6000",
-        "http://127.0.0.1:6001",
-        "https://sagedev.netlify.app",
-        "https://*.netlify.app",
-        "https://sage-backend-v2.loca.lt"
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],  # Temporarily allow all origins for debugging
+    allow_credentials=False,  # Must be False when using allow_origins=["*"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
