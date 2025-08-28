@@ -8,18 +8,22 @@
   NODE_VERSION = "18"
 
 # Handle client-side routing for Single Page Application
-# Exclude Netlify Functions from SPA redirect
+# Make sure API and static assets are not caught by SPA redirect
 [[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
+  from = "/api/*"
+  to = "/api/:splat"
   status = 200
-  force = false
 
+[[redirects]]
+  from = "/_next/*"
+  to = "/_next/:splat"
+  status = 200
+
+# SPA fallback for all other routes (must be last)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = false
 
 # Ensure proper MIME types for static assets
 [[headers]]
