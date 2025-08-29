@@ -647,31 +647,46 @@ export default function SageApp() {
                         
                         // New pathway options section
                         if (section.trim().startsWith('🎯 **Your') || section.trim().startsWith('🎯 **Pathways')) {
+                          const lines = section.split('\n');
+                          const title = lines[0].replace('🎯 **', '').replace('**', '');
+                          const pathwayContent = lines.slice(1).join('\n');
+                          
+                          // Parse pathways - they start with **Bold Title**
+                          const pathways = [];
+                          let currentPathway = null;
+                          
+                          pathwayContent.split('\n').forEach(line => {
+                            if (line.startsWith('**') && line.includes('**')) {
+                              if (currentPathway) pathways.push(currentPathway);
+                              currentPathway = {
+                                title: line,
+                                details: []
+                              };
+                            } else if (currentPathway && line.trim()) {
+                              currentPathway.details.push(line);
+                            }
+                          });
+                          if (currentPathway) pathways.push(currentPathway);
+                          
                           return (
                             <div key={idx} className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
                               <div className="flex items-start gap-2 mb-3">
                                 <span className="text-xl">🎯</span>
-                                <h3 className="font-bold text-emerald-800 text-lg">
-                                  {section.split('\n')[0].replace('🎯 **', '').replace('**', '')}
-                                </h3>
+                                <h3 className="font-bold text-emerald-800 text-lg">{title}</h3>
                               </div>
                               <div className="space-y-3">
-                                {section.split('\n\n').slice(1).map((pathway, pathIdx) => {
-                                  const lines = pathway.split('\n');
-                                  const title = lines[0];
-                                  return (
-                                    <div key={pathIdx} className="bg-white/70 rounded-md p-3 border-l-4 border-emerald-400">
-                                      <div className="font-semibold text-emerald-700 mb-1">{title}</div>
-                                      {lines.slice(1).map((line, lineIdx) => 
-                                        line.trim().startsWith('•') ? (
-                                          <div key={lineIdx} className="text-sm text-slate-600 ml-2">
-                                            {line}
-                                          </div>
-                                        ) : null
-                                      )}
+                                {pathways.map((pathway, pathIdx) => (
+                                  <div key={pathIdx} className="bg-white/70 rounded-md p-3 border-l-4 border-emerald-400">
+                                    <div className="font-semibold text-emerald-700 mb-1">
+                                      {pathway.title.replace(/\*\*/g, '')}
                                     </div>
-                                  );
-                                })}
+                                    <div className="text-sm text-slate-600 space-y-1">
+                                      {pathway.details.map((detail, detailIdx) => (
+                                        <div key={detailIdx}>{detail}</div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
                             </div>
                           )
