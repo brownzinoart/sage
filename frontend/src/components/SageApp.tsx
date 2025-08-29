@@ -636,25 +636,18 @@ export default function SageApp() {
                   <div className="flex-1">
                     <div className="space-y-4 text-slate-700">
                       {explanation.split('\n\n').map((section, idx) => {
-                        if (section.trim().startsWith('🌿 **Quick Answer**')) {
+                        // Skip the Quick Answer section and show natural language intro at the top
+                        if (idx === 0 && !section.trim().startsWith('📚') && !section.trim().startsWith('🔬') && !section.trim().startsWith('💡') && !section.trim().startsWith('⚠️')) {
                           return (
-                            <div key={idx} className="bg-green-50 rounded-lg p-4 border border-green-200">
-                              <div className="flex items-start gap-2 mb-2">
-                                <span className="text-xl">🌿</span>
-                                <h3 className="font-bold text-green-800 text-lg">Quick Answer</h3>
-                              </div>
-                              <div className="text-green-700 space-y-1">
-                                {section.split('\n').slice(1).map((line, lineIdx) => 
-                                  line.trim().startsWith('•') ? (
-                                    <div key={lineIdx} className="flex items-start gap-2">
-                                      <span className="text-green-600 mt-1">•</span>
-                                      <span>{line.replace('•', '').trim()}</span>
-                                    </div>
-                                  ) : null
-                                )}
-                              </div>
+                            <div key={idx} className="text-lg leading-relaxed text-slate-700 mb-6">
+                              {section}
                             </div>
                           )
+                        }
+                        
+                        if (section.trim().startsWith('🌿 **Quick Answer**')) {
+                          // Skip this section - we don't want the Quick Answer card
+                          return null
                         }
                         
                         if (section.trim().startsWith('📚 **Key Benefits**')) {
