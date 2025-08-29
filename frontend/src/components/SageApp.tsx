@@ -651,22 +651,29 @@ export default function SageApp() {
                           const title = lines[0].replace('🎯 **', '').replace('**', '');
                           const pathwayContent = lines.slice(1).join('\n');
                           
+                          console.log('Parsing pathways section:', { title, pathwayContent });
+                          
                           // Parse pathways - they start with **Bold Title**
                           const pathways: Array<{title: string, details: string[]}> = [];
                           let currentPathway: {title: string, details: string[]} | null = null;
                           
                           pathwayContent.split('\n').forEach(line => {
+                            // Skip empty lines
+                            if (!line.trim()) return;
+                            
                             if (line.startsWith('**') && line.includes('**')) {
                               if (currentPathway) pathways.push(currentPathway);
                               currentPathway = {
                                 title: line,
                                 details: []
                               };
-                            } else if (currentPathway && line.trim()) {
+                            } else if (currentPathway) {
                               currentPathway.details.push(line);
                             }
                           });
                           if (currentPathway) pathways.push(currentPathway);
+                          
+                          console.log('Parsed pathways:', pathways);
                           
                           return (
                             <div key={idx} className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
