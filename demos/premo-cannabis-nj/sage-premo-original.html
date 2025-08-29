@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sage - Powered by Premo Cannabis</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        .floating-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #10b981;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        .experience-card {
+            transition: all 0.3s ease;
+        }
+        .experience-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .research-badge {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Premo Cannabis THC Products Database
+        const premoProducts = {
+            sleep: [
+                {
+                    id: "premo_indica_001",
+                    name: "Purple Punch",
+                    description: "22.5% THC Indica. Sweet grape notes, perfect for deep sleep. Lab tested.",
+                    price: "$55/eighth",
+                    category: "Flower",
+                    strain_type: "indica",
+                    thc: "22.5%",
+                    effects: ["Sleep", "Relaxation", "Pain Relief"]
+                },
+                {
+                    id: "premo_concentrate_001",
+                    name: "Wedding Cake Live Resin",
+                    description: "78.5% THC concentrate. Premium indica for maximum relaxation.",
+                    price: "$70/g",
+                    category: "Concentrates",
+                    strain_type: "indica",
+                    thc: "78.5%",
+                    effects: ["Deep Sleep", "Euphoria", "Appetite"]
+                },
+                {
+                    id: "premo_edible_sleep",
+                    name: "Nighttime Gummies",
+                    description: "10mg THC per piece with CBN. Extended release for all-night relief.",
+                    price: "$30/pack",
+                    category: "Edibles",
+                    strain_type: "indica",
+                    thc: "100mg total",
+                    effects: ["Sleep", "Relaxation"]
+                }
+            ],
+            energy: [
+                {
+                    id: "premo_sativa_001",
+                    name: "Sour Diesel",
+                    description: "24.8% THC Sativa. Energizing diesel aroma for daytime productivity.",
+                    price: "$60/eighth",
+                    category: "Flower",
+                    strain_type: "sativa",
+                    thc: "24.8%",
+                    effects: ["Energy", "Focus", "Creativity"]
+                },
+                {
+                    id: "premo_vape_energy",
+                    name: "Green Crack Cartridge",
+                    description: "82% THC distillate. Sharp focus and mental clarity.",
+                    price: "$50/0.5g",
+                    category: "Vapes",
+                    strain_type: "sativa",
+                    thc: "82%",
+                    effects: ["Energy", "Focus", "Mood Boost"]
+                }
+            ],
+            pain: [
+                {
+                    id: "premo_hybrid_001",
+                    name: "Blue Dream",
+                    description: "21% THC Hybrid. Balanced relief without heavy sedation.",
+                    price: "$50/eighth",
+                    category: "Flower",
+                    strain_type: "hybrid",
+                    thc: "21%",
+                    effects: ["Pain Relief", "Relaxation", "Mood"]
+                },
+                {
+                    id: "premo_topical_001",
+                    name: "THC Relief Balm",
+                    description: "200mg THC topical. Direct application for localized relief.",
+                    price: "$40",
+                    category: "Topicals",
+                    thc: "200mg",
+                    effects: ["Pain Relief", "Anti-inflammatory"]
+                }
+            ],
+            anxiety: [
+                {
+                    id: "premo_cbd_blend",
+                    name: "1:1 THC:CBD Tincture",
+                    description: "Balanced 10mg THC / 10mg CBD per ml. Gentle anxiety relief.",
+                    price: "$65/bottle",
+                    category: "Tinctures",
+                    thc: "300mg",
+                    cbd: "300mg",
+                    effects: ["Anxiety Relief", "Calm", "Balance"]
+                },
+                {
+                    id: "premo_edible_calm",
+                    name: "Watermelon Gummies",
+                    description: "5mg THC microdose. Perfect for social situations.",
+                    price: "$25/pack",
+                    category: "Edibles",
+                    strain_type: "hybrid",
+                    thc: "50mg total",
+                    effects: ["Relaxation", "Social", "Mood"]
+                }
+            ],
+            beginner: [
+                {
+                    id: "premo_preroll_001",
+                    name: "GSC Pre-Roll Pack",
+                    description: "21.2% THC. Pack of 5 mini pre-rolls, 0.5g each. Perfect for beginners.",
+                    price: "$35/pack",
+                    category: "Pre-rolls",
+                    strain_type: "hybrid",
+                    thc: "21.2%",
+                    effects: ["Balanced", "Happy", "Creative"]
+                },
+                {
+                    id: "premo_edible_micro",
+                    name: "Micro-dose Mints",
+                    description: "2.5mg THC per mint. Start low and go slow.",
+                    price: "$20/tin",
+                    category: "Edibles",
+                    thc: "50mg total",
+                    effects: ["Mild Relief", "Focus", "Calm"]
+                }
+            ]
+        };
+
+        // Experience-based rotating prompts
+        const promptExamples = {
+            new: [
+                "I'm new to cannabis - where should I start?",
+                "What's the difference between indica and sativa?",
+                "How much THC should a beginner try?",
+                "Are there low-dose options?",
+                "What's safest for first-timers?"
+            ],
+            casual: [
+                "I can't sleep, what helps?",
+                "What's best for stress relief?",
+                "I need something for after work",
+                "What helps with social anxiety?",
+                "Best for weekend relaxation?"
+            ],
+            experienced: [
+                "Looking for high-potency concentrates",
+                "What's your strongest indica?",
+                "Any live resin available?",
+                "Best terp profiles for pain?",
+                "Premium flower recommendations?"
+            ]
+        };
+
+        const experienceLevels = [
+            {
+                id: 'new',
+                label: 'New',
+                description: 'First time with cannabis',
+                icon: '🌱'
+            },
+            {
+                id: 'casual',
+                label: 'Casual',
+                description: 'Some experience, want guidance',
+                icon: '🌿'
+            },
+            {
+                id: 'experienced',
+                label: 'Experienced',
+                description: 'Know what works, want options',
+                icon: '🧠'
+            }
+        ];
+
+        // Age Verification Component
+        const AgeGate = ({ onVerified }) => {
+            const [birthDate, setBirthDate] = useState('');
+            const [error, setError] = useState('');
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                const age = Math.floor((new Date() - new Date(birthDate)) / 31557600000);
+                
+                if (age < 21) {
+                    setError('You must be 21 or older to access this content');
+                } else {
+                    localStorage.setItem('age_verified_premo', 'true');
+                    onVerified();
+                }
+            };
+
+            return (
+                <div className="fixed inset-0 bg-gradient-to-br from-emerald-900 via-green-800 to-emerald-900 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-2xl max-w-md w-full mx-4 p-8 shadow-2xl">
+                        <div className="text-center mb-6">
+                            <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
+                                <i className="fas fa-cannabis text-3xl text-green-600"></i>
+                            </div>
+                            <h2 className="text-3xl font-bold mb-2">Age Verification</h2>
+                            <p className="text-gray-600">Premo Cannabis • Keyport, NJ</p>
+                            <p className="text-sm text-gray-500 mt-2">Must be 21+ to enter</p>
+                        </div>
+                        
+                        <form onSubmit={handleSubmit}>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Date of Birth
+                            </label>
+                            <input
+                                type="date"
+                                value={birthDate}
+                                onChange={(e) => setBirthDate(e.target.value)}
+                                max={new Date().toISOString().split('T')[0]}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-green-500"
+                                required
+                            />
+                            
+                            {error && (
+                                <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">
+                                    <i className="fas fa-exclamation-circle mr-2"></i>{error}
+                                </div>
+                            )}
+                            
+                            <button
+                                type="submit"
+                                className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all"
+                            >
+                                Verify Age & Enter
+                            </button>
+                        </form>
+                        
+                        <p className="text-xs text-gray-500 text-center mt-6">
+                            By entering, you agree to comply with NJ cannabis laws.
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
+        // Main Sage App Component
+        const SageApp = () => {
+            const [searchQuery, setSearchQuery] = useState('');
+            const [hasSearched, setHasSearched] = useState(false);
+            const [explanation, setExplanation] = useState('');
+            const [isLoading, setIsLoading] = useState(false);
+            const [selectedExperience, setSelectedExperience] = useState('');
+            const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
+            const [demoProducts, setDemoProducts] = useState([]);
+            const [ageVerified, setAgeVerified] = useState(false);
+
+            useEffect(() => {
+                const verified = localStorage.getItem('age_verified_premo');
+                if (verified === 'true') {
+                    setAgeVerified(true);
+                }
+            }, []);
+
+            // Get current prompts based on experience
+            const getCurrentPrompts = () => {
+                if (selectedExperience && promptExamples[selectedExperience]) {
+                    return promptExamples[selectedExperience];
+                }
+                return promptExamples.casual;
+            };
+
+            // Rotate prompts
+            useEffect(() => {
+                if (!hasSearched) {
+                    const interval = setInterval(() => {
+                        setCurrentPromptIndex((prev) => {
+                            const prompts = getCurrentPrompts();
+                            return (prev + 1) % prompts.length;
+                        });
+                    }, 3000);
+                    return () => clearInterval(interval);
+                }
+            }, [selectedExperience, hasSearched]);
+
+            const handleSearch = async () => {
+                if (!searchQuery.trim()) return;
+                
+                setIsLoading(true);
+                setHasSearched(true);
+                
+                // Simulate AI processing
+                setTimeout(() => {
+                    const query = searchQuery.toLowerCase();
+                    let products = [];
+                    let response = '';
+                    
+                    if (query.includes('sleep') || query.includes('insomnia')) {
+                        products = premoProducts.sleep;
+                        response = "For better sleep, I recommend indica strains with higher THC content. These products from Premo Cannabis can help:";
+                    } else if (query.includes('energy') || query.includes('focus') || query.includes('productive')) {
+                        products = premoProducts.energy;
+                        response = "For energy and focus, sativa strains work best. Here are some energizing options:";
+                    } else if (query.includes('pain')) {
+                        products = premoProducts.pain;
+                        response = "For pain relief, consider these THC products with proven effectiveness:";
+                    } else if (query.includes('anxiety') || query.includes('stress') || query.includes('calm')) {
+                        products = premoProducts.anxiety;
+                        response = "For anxiety relief, balanced THC:CBD ratios or lower THC doses work well:";
+                    } else if (query.includes('beginner') || query.includes('first') || query.includes('new')) {
+                        products = premoProducts.beginner;
+                        response = "Welcome! For beginners, start with lower THC doses and work your way up:";
+                    } else {
+                        // Default to showing variety
+                        products = [
+                            premoProducts.beginner[0],
+                            premoProducts.anxiety[1],
+                            premoProducts.sleep[0]
+                        ];
+                        response = "Based on your search, here are some recommended products from Premo Cannabis:";
+                    }
+                    
+                    setExplanation(response);
+                    setDemoProducts(products);
+                    setIsLoading(false);
+                }, 1500);
+            };
+
+            if (!ageVerified) {
+                return <AgeGate onVerified={() => setAgeVerified(true)} />;
+            }
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-emerald-50">
+                    {/* Floating particles */}
+                    <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="floating-particle"
+                                style={{
+                                    left: `${Math.random() * 100}%`,
+                                    top: `${Math.random() * 100}%`,
+                                    '--delay': `${Math.random() * 3}s`,
+                                    '--duration': `${3 + Math.random() * 2}s`
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Header */}
+                    <header className="relative bg-white/80 backdrop-blur-sm border-b border-emerald-100">
+                        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-green-600 rounded-full flex items-center justify-center">
+                                    <i className="fas fa-cannabis text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <h1 className="text-xl font-bold text-gray-900">Sage</h1>
+                                    <p className="text-xs text-gray-600">Powered by Premo Cannabis</p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm text-gray-700">📍 Keyport, NJ</p>
+                                <p className="text-xs text-gray-500">21+ Recreational</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Content */}
+                    <main className="container mx-auto px-4 py-8 max-w-6xl">
+                        {!hasSearched ? (
+                            // Initial view
+                            <div className="text-center py-12">
+                                <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                                    Find Your Perfect Cannabis Product
+                                </h2>
+                                <p className="text-lg text-gray-600 mb-8">
+                                    AI-powered recommendations from Premo Cannabis's premium selection
+                                </p>
+
+                                {/* Experience Selection */}
+                                <div className="mb-8">
+                                    <p className="text-sm text-gray-600 mb-4">Select your experience level:</p>
+                                    <div className="flex justify-center gap-4">
+                                        {experienceLevels.map((level) => (
+                                            <button
+                                                key={level.id}
+                                                onClick={() => setSelectedExperience(level.id)}
+                                                className={`experience-card px-6 py-4 rounded-xl border-2 transition-all ${
+                                                    selectedExperience === level.id
+                                                        ? 'border-emerald-500 bg-emerald-50'
+                                                        : 'border-gray-200 bg-white hover:border-emerald-300'
+                                                }`}
+                                            >
+                                                <div className="text-2xl mb-2">{level.icon}</div>
+                                                <div className="font-semibold">{level.label}</div>
+                                                <div className="text-xs text-gray-600">{level.description}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Search Bar */}
+                                <div className="max-w-2xl mx-auto">
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                                            placeholder={getCurrentPrompts()[currentPromptIndex]}
+                                            className="w-full px-6 py-4 text-lg border-2 border-emerald-200 rounded-full focus:outline-none focus:border-emerald-400 pr-14"
+                                        />
+                                        <button
+                                            onClick={handleSearch}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-green-600 text-white p-3 rounded-full hover:from-emerald-600 hover:to-green-700 transition-all"
+                                        >
+                                            <i className="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Quick Actions */}
+                                <div className="mt-8 flex flex-wrap justify-center gap-3">
+                                    {['Sleep Better', 'Energy Boost', 'Pain Relief', 'Reduce Anxiety', 'First Timer'].map((action) => (
+                                        <button
+                                            key={action}
+                                            onClick={() => {
+                                                setSearchQuery(action.toLowerCase());
+                                                handleSearch();
+                                            }}
+                                            className="px-4 py-2 bg-white border border-emerald-200 rounded-full text-sm hover:bg-emerald-50 transition-colors"
+                                        >
+                                            {action}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            // Results view
+                            <div>
+                                {/* Search bar (smaller) */}
+                                <div className="max-w-2xl mx-auto mb-8">
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                                            className="w-full px-4 py-3 border border-emerald-200 rounded-full focus:outline-none focus:border-emerald-400 pr-12"
+                                        />
+                                        <button
+                                            onClick={handleSearch}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600"
+                                        >
+                                            <i className="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {isLoading ? (
+                                    <div className="text-center py-12">
+                                        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent"></div>
+                                        <p className="mt-4 text-gray-600">Finding perfect matches...</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        {/* AI Explanation */}
+                                        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+                                            <div className="flex items-start space-x-3">
+                                                <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <i className="fas fa-robot text-emerald-600 text-sm"></i>
+                                                </div>
+                                                <div>
+                                                    <p className="text-gray-700">{explanation}</p>
+                                                    <div className="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                                                        <span><i className="fas fa-shield-alt mr-1"></i>Lab Tested</span>
+                                                        <span><i className="fas fa-truck mr-1"></i>Delivery Available</span>
+                                                        <span><i className="fas fa-clock mr-1"></i>Open until 10pm</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Product Cards */}
+                                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            {demoProducts.map((product) => (
+                                                <div key={product.id} className="product-card bg-white rounded-xl shadow-md p-6">
+                                                    <div className="flex items-start justify-between mb-3">
+                                                        <div>
+                                                            <h3 className="font-bold text-lg text-gray-900">{product.name}</h3>
+                                                            <p className="text-sm text-emerald-600">{product.category}</p>
+                                                        </div>
+                                                        {product.thc && (
+                                                            <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full font-semibold">
+                                                                {product.thc}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    
+                                                    {product.strain_type && (
+                                                        <div className={`inline-block px-2 py-1 text-xs rounded-full mb-3 ${
+                                                            product.strain_type === 'indica' ? 'bg-purple-100 text-purple-700' :
+                                                            product.strain_type === 'sativa' ? 'bg-orange-100 text-orange-700' :
+                                                            'bg-green-100 text-green-700'
+                                                        }`}>
+                                                            {product.strain_type}
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <p className="text-sm text-gray-600 mb-4">{product.description}</p>
+                                                    
+                                                    {product.effects && (
+                                                        <div className="flex flex-wrap gap-1 mb-4">
+                                                            {product.effects.map((effect, i) => (
+                                                                <span key={i} className="px-2 py-1 text-xs bg-gray-100 rounded-full">
+                                                                    {effect}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <div className="flex items-center justify-between pt-4 border-t">
+                                                        <span className="text-xl font-bold text-gray-900">{product.price}</span>
+                                                        <button className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors text-sm">
+                                                            View Details
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* NJ Compliance Note */}
+                                        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                            <p className="text-sm text-yellow-800">
+                                                <i className="fas fa-info-circle mr-2"></i>
+                                                <strong>NJ Cannabis Law:</strong> Maximum purchase limits apply - 1 oz flower, 5g concentrates, or 1000mg edibles per day. Must be 21+ with valid ID.
+                                            </p>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="mt-12 bg-white/80 backdrop-blur-sm border-t border-emerald-100 py-6">
+                        <div className="container mx-auto px-4 text-center">
+                            <p className="text-sm text-gray-600">
+                                Premo Cannabis Company • 2 E Front St, Keyport, NJ 07735 • (908) 676-7320
+                            </p>
+                            <p className="text-xs text-gray-500 mt-2">
+                                Cannabis has not been evaluated by the FDA. For use by adults 21+.
+                            </p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<SageApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
