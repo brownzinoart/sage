@@ -652,8 +652,8 @@ export default function SageApp() {
                           const pathwayContent = lines.slice(1).join('\n');
                           
                           // Parse pathways - they start with **Bold Title**
-                          const pathways = [];
-                          let currentPathway = null;
+                          const pathways: Array<{title: string, details: string[]}> = [];
+                          let currentPathway: {title: string, details: string[]} | null = null;
                           
                           pathwayContent.split('\n').forEach(line => {
                             if (line.startsWith('**') && line.includes('**')) {

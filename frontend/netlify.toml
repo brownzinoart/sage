@@ -1,6 +1,7 @@
 [build]
+  base = "frontend"
   publish = "out"
-  command = "rm -rf .next out node_modules/.cache && npm ci && npx next telemetry disable && npm run build || exit 0"
+  command = "npm ci && npm run build"
 
 [build.environment]
   NETLIFY = "true"

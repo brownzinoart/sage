@@ -1,42 +1,21 @@
 [build]
   base = "frontend"
-  publish = "out"
   command = "npm run build"
-  functions = "netlify/functions"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "18"
 
-# Handle client-side routing for Single Page Application
-# Make sure API and static assets are not caught by SPA redirect
-[[redirects]]
-  from = "/api/*"
-  to = "/api/:splat"
-  status = 200
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
-[[redirects]]
-  from = "/_next/*"
-  to = "/_next/:splat"
-  status = 200
-
-# SPA fallback for all other routes (must be last)
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-# Ensure proper MIME types for static assets
-[[headers]]
-  for = "/_next/static/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+[functions]
+  directory = "netlify/functions"
+  included_files = ["netlify/functions/**"]
 
 [[headers]]
-  for = "*.js"
+  for = "/*"
   [headers.values]
-    Content-Type = "application/javascript"
-
-[[headers]]
-  for = "*.css"
-  [headers.values]
-    Content-Type = "text/css"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
