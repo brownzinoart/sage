@@ -36,6 +36,7 @@ exports.handler = async (event, context) => {
     const queryLower = query.toLowerCase();
     
     if (process.env.GEMINI_API_KEY) {
+      console.log('Using Gemini API');
       try {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
@@ -88,8 +89,11 @@ exports.handler = async (event, context) => {
       }
     } else {
       // Fallback to local response generation
+      console.log('No Gemini API key, using fallback response');
       explanation = generateExplanation(query, experience_level);
     }
+    
+    console.log('Generated explanation preview:', explanation.substring(0, 200));
     
     // Get matching products
     const products = getMatchingProducts(queryLower);

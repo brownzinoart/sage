@@ -215,6 +215,7 @@ export default function SageApp() {
       if (response.ok) {
         const data = await response.json()
         console.log('Response data:', data)
+      console.log('Full explanation text:', data.explanation)
         setExplanation(data.explanation)
         if (data.products) {
           setDemoProducts(data.products)
@@ -635,6 +636,7 @@ export default function SageApp() {
                   </div>
                   <div className="flex-1">
                     <div className="space-y-4 text-slate-700">
+                      {console.log('All sections:', explanation.split('\n\n').map(s => s.substring(0, 50)))}
                       {explanation.split('\n\n').map((section, idx) => {
                         // Natural language intro at the top
                         if (idx === 0 && !section.trim().startsWith('📚') && !section.trim().startsWith('🔬') && !section.trim().startsWith('💡') && !section.trim().startsWith('⚠️') && !section.trim().startsWith('🎯')) {
@@ -651,7 +653,13 @@ export default function SageApp() {
                           const title = lines[0].replace('🎯 **', '').replace('**', '');
                           const pathwayContent = lines.slice(1).join('\n');
                           
-                          console.log('Parsing pathways section:', { title, pathwayContent });
+                          console.log('Parsing pathways section:', { 
+                            title, 
+                            pathwayContent,
+                            pathwayLines: pathwayContent.split('\n'),
+                            firstLine: pathwayContent.split('\n')[0],
+                            hasContent: pathwayContent.trim().length > 0
+                          });
                           
                           // Parse pathways - they start with **Bold Title**
                           const pathways: Array<{title: string, details: string[]}> = [];
