@@ -86,6 +86,20 @@ export default function SageApp() {
       duration: `${3 + Math.random() * 2}s`
     }))
     setParticles(particleData)
+    
+    // Suppress browser extension errors in console
+    const originalError = console.error;
+    console.error = (...args) => {
+      if (args[0]?.toString?.().includes('browser extension') || 
+          args[0]?.toString?.().includes('content.1.bundle.js')) {
+        return; // Ignore browser extension errors
+      }
+      originalError.apply(console, args);
+    };
+    
+    return () => {
+      console.error = originalError; // Restore on unmount
+    };
   }, [])
 
   // Debug: Log loading state changes
