@@ -640,7 +640,26 @@ export default function SageApp() {
                         console.log('All sections:', explanation.split('\n\n').map(s => s.substring(0, 50)));
                         return null;
                       })()}
-                      {explanation.split('\n\n').map((section, idx) => {
+                      {explanation.split('\n\n').map((section, idx, allSections) => {
+                        // Skip pathway detail sections (they're handled by the pathway header)
+                        if (idx > 0 && section.trim().startsWith('**') && 
+                            !section.trim().startsWith('📚') && 
+                            !section.trim().startsWith('🔬') && 
+                            !section.trim().startsWith('💡') && 
+                            !section.trim().startsWith('⚠️')) {
+                          // Check if previous section was a pathway header
+                          const prevSection = allSections[idx - 1];
+                          if (prevSection && (prevSection.trim().startsWith('🎯 **Your') || prevSection.trim().startsWith('🎯 **Pathways'))) {
+                            return null; // Skip, it will be rendered as part of pathways
+                          }
+                          // Check if this is part of a pathway group (2-3 sections after header)
+                          for (let i = Math.max(0, idx - 3); i < idx; i++) {
+                            if (allSections[i] && (allSections[i].trim().startsWith('🎯 **Your') || allSections[i].trim().startsWith('🎯 **Pathways'))) {
+                              return null; // Skip, it's a pathway section
+                            }
+                          }
+                        }
+                        
                         // Natural language intro at the top
                         if (idx === 0 && !section.trim().startsWith('📚') && !section.trim().startsWith('🔬') && !section.trim().startsWith('💡') && !section.trim().startsWith('⚠️') && !section.trim().startsWith('🎯')) {
                           return (
@@ -650,39 +669,38 @@ export default function SageApp() {
                           )
                         }
                         
-                        // New pathway options section
+                        // New pathway options section  
                         if (section.trim().startsWith('🎯 **Your') || section.trim().startsWith('🎯 **Pathways')) {
-                          const lines = section.split('\n');
-                          const title = lines[0].replace('🎯 **', '').replace('**', '');
-                          const pathwayContent = lines.slice(1).join('\n');
+                          // The pathways are actually in the NEXT sections after this header
+                          // This section only contains the title
+                          const title = section.replace('🎯 **', '').replace('**', '').trim();
                           
-                          console.log('Parsing pathways section:', { 
-                            title, 
-                            pathwayContent,
-                            pathwayLines: pathwayContent.split('\n'),
-                            firstLine: pathwayContent.split('\n')[0],
-                            hasContent: pathwayContent.trim().length > 0
-                          });
+                          console.log('Found pathway header:', title);
                           
-                          // Parse pathways - they start with **Bold Title**
+                          // Look ahead to collect pathway sections
                           const pathways: Array<{title: string, details: string[]}> = [];
-                          let currentPathway: {title: string, details: string[]} | null = null;
+                          let nextIdx = idx + 1;
                           
-                          pathwayContent.split('\n').forEach(line => {
-                            // Skip empty lines
-                            if (!line.trim()) return;
-                            
-                            if (line.startsWith('**') && line.includes('**')) {
-                              if (currentPathway) pathways.push(currentPathway);
-                              currentPathway = {
-                                title: line,
-                                details: []
-                              };
-                            } else if (currentPathway) {
-                              currentPathway.details.push(line);
+                          // Collect the next few sections that start with ** as pathways
+                          while (nextIdx < explanation.split('\n\n').length) {
+                            const nextSection = explanation.split('\n\n')[nextIdx];
+                            if (nextSection.trim().startsWith('**') && !nextSection.trim().startsWith('📚') && !nextSection.trim().startsWith('🔬') && !nextSection.trim().startsWith('💡') && !nextSection.trim().startsWith('⚠️')) {
+                              const pathwayLines = nextSection.split('\n');
+                              const pathwayTitle = pathwayLines[0];
+                              const pathwayDetails = pathwayLines.slice(1).filter(line => line.trim());
+                              
+                              pathways.push({
+                                title: pathwayTitle,
+                                details: pathwayDetails
+                              });
+                              nextIdx++;
+                            } else if (nextSection.trim().startsWith('📚') || nextSection.trim().startsWith('🔬') || nextSection.trim().startsWith('💡') || nextSection.trim().startsWith('⚠️')) {
+                              // Stop when we hit the next major section
+                              break;
+                            } else {
+                              nextIdx++;
                             }
-                          });
-                          if (currentPathway) pathways.push(currentPathway);
+                          }
                           
                           console.log('Parsed pathways:', pathways);
                           
