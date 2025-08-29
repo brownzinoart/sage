@@ -641,7 +641,20 @@ export default function SageApp() {
                         return null;
                       })()}
                       {explanation.split('\n\n').map((section, idx, allSections) => {
-                        // No need to skip sections anymore since pathways are all in one section
+                        // Skip pathway detail sections that come after the header
+                        if (idx > 0 && section.trim().startsWith('**') && 
+                            !section.trim().startsWith('📚') && 
+                            !section.trim().startsWith('🔬') && 
+                            !section.trim().startsWith('💡') && 
+                            !section.trim().startsWith('⚠️')) {
+                          // Check if there's a pathway header in the previous 3 sections
+                          for (let i = Math.max(0, idx - 3); i < idx; i++) {
+                            if (allSections[i] && (allSections[i].trim().startsWith('🎯 **Your') || allSections[i].trim().startsWith('🎯 **Pathways'))) {
+                              console.log('Skipping pathway section at index', idx);
+                              return null; // Skip this section, it's part of pathways
+                            }
+                          }
+                        }
                         
                         // Natural language intro at the top
                         if (idx === 0 && !section.trim().startsWith('📚') && !section.trim().startsWith('🔬') && !section.trim().startsWith('💡') && !section.trim().startsWith('⚠️') && !section.trim().startsWith('🎯')) {
@@ -654,43 +667,40 @@ export default function SageApp() {
                         
                         // New pathway options section  
                         if (section.trim().startsWith('🎯 **Your') || section.trim().startsWith('🎯 **Pathways')) {
-                          // This section contains both the title AND all the pathways
-                          const lines = section.split('\n');
-                          const title = lines[0].replace('🎯 **', '').replace('**', '').trim();
+                          // Extract just the title from the first part
+                          const titleMatch = section.match(/🎯 \*\*([^*]+)\*\*/);
+                          const title = titleMatch ? titleMatch[1].trim() : 'Your Options';
                           
-                          console.log('Found pathway section with', lines.length, 'lines');
+                          console.log('Full pathway section:', section);
+                          console.log('Section length:', section.length);
                           
-                          // Parse pathways from within this section
+                          // The pathways appear to be in the NEXT sections after this header
+                          // Let's collect them from subsequent sections
                           const pathways: Array<{title: string, details: string[]}> = [];
-                          let currentPathway: {title: string, details: string[]} | null = null;
                           
-                          // Skip the title line and parse the rest
-                          for (let i = 1; i < lines.length; i++) {
-                            const line = lines[i];
+                          // Look at the next few sections for pathway content
+                          for (let nextIdx = idx + 1; nextIdx < allSections.length && nextIdx <= idx + 3; nextIdx++) {
+                            const nextSection = allSections[nextIdx];
+                            console.log(`Checking section ${nextIdx} for pathways:`, nextSection?.substring(0, 80));
                             
-                            // Skip empty lines
-                            if (!line.trim()) continue;
-                            
-                            // Check if this is a pathway title (starts with **)
-                            if (line.trim().startsWith('**') && line.includes('**')) {
-                              // Save previous pathway if exists
-                              if (currentPathway) {
-                                pathways.push(currentPathway);
-                              }
-                              // Start new pathway
-                              currentPathway = {
-                                title: line.trim(),
-                                details: []
-                              };
-                            } else if (currentPathway) {
-                              // Add detail to current pathway
-                              currentPathway.details.push(line.trim());
+                            if (nextSection && nextSection.trim().startsWith('**') && 
+                                !nextSection.trim().startsWith('📚') && 
+                                !nextSection.trim().startsWith('🔬') && 
+                                !nextSection.trim().startsWith('💡') && 
+                                !nextSection.trim().startsWith('⚠️')) {
+                              
+                              // This is a pathway section
+                              const lines = nextSection.split('\n');
+                              const pathwayTitle = lines[0];
+                              const pathwayDetails = lines.slice(1).filter(line => line.trim());
+                              
+                              pathways.push({
+                                title: pathwayTitle,
+                                details: pathwayDetails
+                              });
+                              
+                              console.log('Added pathway:', pathwayTitle);
                             }
-                          }
-                          
-                          // Don't forget the last pathway
-                          if (currentPathway) {
-                            pathways.push(currentPathway);
                           }
                           
                           console.log('Parsed pathways:', pathways);
