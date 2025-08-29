@@ -624,12 +624,23 @@ export default function SageApp() {
           </div>
         </div>
 
-        {/* Sage's Response */}
+        {/* Sage's Response - Enhanced Visual Section */}
         {hasSearched && explanation && (
-          <div className="mb-16 animate-slide-up">
+          <div className="mb-24 animate-slide-up">
+            {/* Section Header */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 backdrop-blur-sm rounded-full border border-emerald-400/30">
+                <Leaf className="w-5 h-5 text-emerald-400" />
+                <h2 className="text-xl font-light text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.5)'}}>
+                  Sage's Personalized Analysis
+                </h2>
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+            
             <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-2xl blur opacity-20"></div>
-              <div className="relative bg-white/90 backdrop-blur-md border border-white/30 rounded-2xl p-8 shadow-2xl shadow-black/10">
+              <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur-xl opacity-30"></div>
+              <div className="relative bg-gradient-to-br from-white/95 to-emerald-50/95 backdrop-blur-md border border-emerald-200/50 rounded-3xl p-10 shadow-2xl shadow-emerald-900/20">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
                     <Leaf className="w-6 h-6 text-white" />
@@ -706,21 +717,30 @@ export default function SageApp() {
                           console.log('Parsed pathways:', pathways);
                           
                           return (
-                            <div key={idx} className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
-                              <div className="flex items-start gap-2 mb-3">
-                                <span className="text-xl">🎯</span>
-                                <h3 className="font-bold text-emerald-800 text-lg">{title}</h3>
+                            <div key={idx} className="bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-50 rounded-xl p-6 border border-emerald-200 shadow-lg shadow-emerald-100/50">
+                              <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-md">
+                                  <span className="text-xl">🎯</span>
+                                </div>
+                                <h3 className="font-bold text-emerald-900 text-xl">{title}</h3>
                               </div>
-                              <div className="space-y-3">
+                              <div className="grid gap-4">
                                 {pathways.map((pathway, pathIdx) => (
-                                  <div key={pathIdx} className="bg-white/70 rounded-md p-3 border-l-4 border-emerald-400">
-                                    <div className="font-semibold text-emerald-700 mb-1">
-                                      {pathway.title.replace(/\*\*/g, '')}
-                                    </div>
-                                    <div className="text-sm text-slate-600 space-y-1">
-                                      {pathway.details.map((detail, detailIdx) => (
-                                        <div key={detailIdx}>{detail}</div>
-                                      ))}
+                                  <div key={pathIdx} className="group hover:scale-[1.02] transition-transform duration-200">
+                                    <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border-l-4 border-emerald-400 shadow-md hover:shadow-lg transition-shadow">
+                                      <div className="font-semibold text-emerald-800 text-lg mb-2">
+                                        {pathway.title.replace(/\*\*/g, '')}
+                                      </div>
+                                      <div className="text-sm text-slate-700 space-y-1 pl-2">
+                                        {pathway.details.map((detail, detailIdx) => (
+                                          <div key={detailIdx} className="flex items-start">
+                                            {detail.startsWith('•') ? (
+                                              <span className="text-emerald-500 mr-2">{detail.substring(0, 1)}</span>
+                                            ) : null}
+                                            <span>{detail.startsWith('•') ? detail.substring(1).trim() : detail}</span>
+                                          </div>
+                                        ))}
+                                      </div>
                                     </div>
                                   </div>
                                 ))}
@@ -736,17 +756,19 @@ export default function SageApp() {
                         
                         if (section.trim().startsWith('📚 **Key Benefits**')) {
                           return (
-                            <div key={idx} className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                              <div className="flex items-start gap-2 mb-2">
-                                <span className="text-xl">📚</span>
-                                <h3 className="font-bold text-blue-800 text-lg">Key Benefits</h3>
+                            <div key={idx} className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200 shadow-md">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg flex items-center justify-center shadow">
+                                  <span className="text-lg">📚</span>
+                                </div>
+                                <h3 className="font-bold text-blue-900 text-lg">Key Benefits</h3>
                               </div>
-                              <div className="text-blue-700 space-y-1">
+                              <div className="text-blue-800 space-y-2 pl-2">
                                 {section.split('\n').slice(1).map((line, lineIdx) => 
                                   line.trim().startsWith('•') ? (
                                     <div key={lineIdx} className="flex items-start gap-2">
-                                      <span className="text-blue-600 mt-1">•</span>
-                                      <span>{line.replace('•', '').trim()}</span>
+                                      <span className="text-blue-500 mt-1">•</span>
+                                      <span className="text-sm">{line.replace('•', '').trim()}</span>
                                     </div>
                                   ) : null
                                 )}
@@ -757,7 +779,7 @@ export default function SageApp() {
                         
                         if (section.trim().startsWith('🔬 **Research Insights**')) {
                           return (
-                            <div key={idx} className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                            <div key={idx} className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-5 border border-purple-200 shadow-md">
                               <div className="flex items-start justify-between mb-2">
                                 <div className="flex items-start gap-2">
                                   <span className="text-xl">🔬</span>
@@ -870,10 +892,30 @@ export default function SageApp() {
           </div>
         )}
 
-        {/* Products */}
+        {/* Visual Divider */}
+        {hasSearched && (
+          <div className="my-16 flex items-center justify-center">
+            <div className="flex items-center gap-4">
+              <div className="h-px w-24 bg-gradient-to-r from-transparent to-emerald-400/50"></div>
+              <div className="flex gap-2">
+                <div className="w-2 h-2 bg-emerald-400/60 rounded-full"></div>
+                <div className="w-2 h-2 bg-emerald-500/60 rounded-full"></div>
+                <div className="w-2 h-2 bg-emerald-400/60 rounded-full"></div>
+              </div>
+              <div className="h-px w-24 bg-gradient-to-l from-transparent to-emerald-400/50"></div>
+            </div>
+          </div>
+        )}
+
+        {/* Products Section - Clearly Separated */}
         {hasSearched && (
           <div className="space-y-8 animate-scale-in" style={{animationDelay: '0.2s'}}>
+            {/* Products Header with Badge */}
             <div className="text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500/20 to-amber-500/20 backdrop-blur-sm rounded-full border border-orange-400/30 mb-4">
+                <span className="text-lg">🛍️</span>
+                <span className="text-sm font-medium text-orange-300">Product Recommendations</span>
+              </div>
               <h3 className="text-2xl font-light text-white mb-3" style={{textShadow: '0 2px 4px rgba(0,0,0,0.6)'}}>
                 Thoughtfully selected for you
               </h3>
