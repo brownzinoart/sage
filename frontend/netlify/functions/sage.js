@@ -1,3 +1,5 @@
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
 exports.handler = async (event, context) => {
   // Handle CORS
   const headers = {
@@ -29,11 +31,39 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Smart cannabinoid matching
+    // Try to use Gemini if API key is available
+    let explanation;
     const queryLower = query.toLowerCase();
     
-    // Generate experience-based explanation
-    const explanation = generateExplanation(query, experience_level);
+    if (process.env.GEMINI_API_KEY) {
+      try {
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+        
+        const prompt = `You are Sage, an AI assistant specializing in hemp, CBD, and cannabis wellness education. 
+        User's experience level: ${experience_level}
+        User query: ${query}
+        
+        Please provide a comprehensive, educational response that includes:
+        1. Quick answer to their question
+        2. Key benefits and effects
+        3. Research insights if available
+        4. How to use recommendations
+        5. Important safety notes
+        
+        Format your response with clear sections using markdown. Focus on wellness and educational information only.`;
+        
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        explanation = response.text();
+      } catch (geminiError) {
+        console.error('Gemini API error, falling back to local response:', geminiError);
+        explanation = generateExplanation(query, experience_level);
+      }
+    } else {
+      // Fallback to local response generation
+      explanation = generateExplanation(query, experience_level);
+    }
     
     // Get matching products
     const products = getMatchingProducts(queryLower);
