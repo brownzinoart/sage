@@ -636,7 +636,10 @@ export default function SageApp() {
                   </div>
                   <div className="flex-1">
                     <div className="space-y-4 text-slate-700">
-                      {console.log('All sections:', explanation.split('\n\n').map(s => s.substring(0, 50)))}
+                      {(() => {
+                        console.log('All sections:', explanation.split('\n\n').map(s => s.substring(0, 50)));
+                        return null;
+                      })()}
                       {explanation.split('\n\n').map((section, idx) => {
                         // Natural language intro at the top
                         if (idx === 0 && !section.trim().startsWith('📚') && !section.trim().startsWith('🔬') && !section.trim().startsWith('💡') && !section.trim().startsWith('⚠️') && !section.trim().startsWith('🎯')) {
