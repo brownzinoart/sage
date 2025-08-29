@@ -44,16 +44,40 @@ exports.handler = async (event, context) => {
         User's experience level: ${experience_level}
         User query: ${query}
         
-        First, provide a warm, natural language overview paragraph that directly addresses their question and guides them. This should be conversational and helpful, like a knowledgeable friend explaining things.
+        IMPORTANT: For queries about common wellness concerns (sleep, anxiety, pain, stress, etc.), present MULTIPLE solution pathways instead of just one approach.
         
-        Then provide these sections (keep all existing formatting):
-        - 📚 **Key Benefits**
-        - 🔬 **Research Insights** 
-        - 💡 **How to Use**
-        - ⚠️ **Important Notes**
+        Structure your response as follows:
         
-        DO NOT include a "Quick Answer" section. Start with the natural language overview paragraph, then the sections above.
-        Format sections with markdown and bullet points. Focus on wellness and educational information only.`;
+        1. Natural language overview paragraph that acknowledges their concern and introduces that there are different approaches available
+        
+        2. If the query benefits from multiple approaches, add:
+        🎯 **Your Options** (or "Pathways to Relief" or similar)
+        Present 2-3 distinct approaches, each with:
+        - **Approach Name** - Brief description
+        • Key products/cannabinoids for this path
+        • Best for: [specific situations]
+        
+        For example, for sleep issues:
+        **Quick Relief Tonight** - Fast-acting options
+        • Delta-8, CBN tinctures (15-30 min onset)
+        • Best for: Immediate need, occasional use
+        
+        **Natural Sleep Support** - Gentle, sustainable
+        • CBD with calming terpenes, full-spectrum
+        • Best for: Ongoing support, sensitive users
+        
+        **Comprehensive Approach** - Long-term wellness
+        • Morning CBD + evening CBN routine
+        • Best for: Chronic issues, lifestyle integration
+        
+        3. Then continue with:
+        📚 **Key Benefits** (organize by pathway if multiple)
+        🔬 **Research Insights** 
+        💡 **How to Use** (pathway-specific if applicable)
+        ⚠️ **Important Notes**
+        
+        Match complexity to experience level: simpler for new users, more detailed for experienced.
+        Focus on wellness and educational information only.`;
         
         const result = await model.generateContent(prompt);
         const response = await result.response;
@@ -110,11 +134,11 @@ function generateExplanation(query, experienceLevel) {
 
   // Smart response generation based on query content
   if (queryLower.includes('sleep') || queryLower.includes('insomnia')) {
-    return `I understand how frustrating sleep issues can be. Based on what you're looking for, CBN and Delta-8 are excellent cannabinoids that many people find helpful for sleep. CBN is particularly known for its sedative effects, while Delta-8 provides gentle relaxation without the anxiety that sometimes comes with stronger options. Most people start with about 5-10mg of CBN taken 30-60 minutes before bed, and you can adjust from there based on how you respond.\n\n📚 **Key Benefits**\n• CBN promotes deep, restful sleep\n• Delta-8 provides gentle relaxation without anxiety\n• CBD can help calm racing thoughts\n• Terpenes like myrcene enhance sleepiness\n\n🔬 **Research Insights**\n• Studies show CBN has sedative properties\n• Delta-8 users report better sleep quality\n• Full-spectrum products may be more effective\n\n💡 **How to Use**\n• Take 30-60 minutes before desired sleep time\n• Start with lowest dose and adjust as needed\n• Consider combining with good sleep hygiene\n\n⚠️ **Important Notes**\n• Avoid driving after taking sleep products\n• Consult healthcare provider if you have sleep disorders\n• Start low and go slow with any new cannabinoid`;
+    return `I understand how frustrating sleep issues can be. The good news is there are several different approaches to finding relief through hemp and cannabinoids, depending on whether you need something fast-acting tonight or you're looking for a more sustainable, long-term solution.\n\n🎯 **Your Sleep Solution Options**\n\n**Quick Relief Tonight** - Fast-acting for immediate needs\n• CBN tinctures or Delta-8 gummies (15-30 min onset)\n• THC-alternative options like HHC for deeper sedation\n• Best for: Occasional sleeplessness, need help right away\n\n**Natural Sleep Support** - Gentle, non-drowsy approach\n• CBD with calming terpenes (myrcene, linalool)\n• Full-spectrum hemp extracts for entourage effect\n• Best for: Sensitive users, daily use without grogginess\n\n**Indica-Inspired Blends** - Traditional cannabis-like effects\n• High-CBN formulas with indica terpene profiles\n• Delta-8 + CBN combinations for deep relaxation\n• Best for: Those seeking classic "couch-lock" effects\n\n📚 **Key Benefits**\n• Multiple pathways target different sleep issues\n• CBN promotes deep, restful sleep phases\n• Terpenes enhance natural drowsiness\n• Options for both immediate and long-term support\n\n🔬 **Research Insights**\n• CBN shows strongest sedative properties of all cannabinoids\n• Combining cannabinoids increases effectiveness (entourage effect)\n• Indica terpene profiles contribute to sedation beyond cannabinoids alone\n\n💡 **How to Use**\n• Fast-acting: 30-60 minutes before bed\n• Daily support: Consistent timing each evening\n• Start with 5-10mg CBN or 2.5-5mg Delta-8\n• Adjust based on your response\n\n⚠️ **Important Notes**\n• Different approaches work for different people\n• Avoid driving after taking any sleep products\n• May interact with other sleep medications`;
   }
   
   if (queryLower.includes('anxiety') || queryLower.includes('stress') || queryLower.includes('calm')) {
-    return `I can definitely help you find something for anxiety and stress relief. CBD and Delta-8 are two of the most popular options because they're effective yet gentle. CBD works by interacting with your body's natural stress response system without any psychoactive effects, while Delta-8 offers a mild, calming sensation that many people prefer over traditional THC. Most people find that starting with 10-15mg of CBD or 5mg of Delta-8 gives them the relief they're looking for without feeling overwhelmed.\n\n📚 **Key Benefits**\n• CBD reduces cortisol (stress hormone) levels\n• Delta-8 provides calm without paranoia\n• CBG offers clear-headed relaxation\n• Regular use may help manage chronic stress\n\n🔬 **Research Insights**\n• Clinical studies show CBD reduces anxiety markers\n• Delta-8 users report less anxiety than Delta-9\n• Terpenes like linalool enhance calming effects\n\n💡 **How to Use**\n• Start with 10-15mg CBD or 5mg Delta-8\n• Take during stressful periods or daily for maintenance\n• Sublingual tinctures work fastest (15-30 minutes)\n\n⚠️ **Important Notes**\n• Everyone responds differently to cannabinoids\n• Consult healthcare provider for severe anxiety\n• May interact with certain medications`;
+    return `I can definitely help you explore anxiety and stress relief options. Everyone's anxiety manifests differently - whether it's racing thoughts, physical tension, or social nervousness - so having multiple approaches to choose from can help you find what works best for your specific situation.\n\n🎯 **Your Anxiety Relief Pathways**\n\n**Pure CBD Approach** - Non-psychoactive, clear-headed calm\n• CBD isolate or broad-spectrum products (no THC)\n• CBG for focus with anxiety relief\n• Best for: Daytime use, work stress, zero tolerance for THC\n\n**Mild Euphoria Path** - Gentle mood lift with relaxation\n• Delta-8 THC for calm without paranoia\n• HHC for balanced relaxation and mood boost\n• Best for: Social anxiety, evening unwinding, mood support\n\n**Natural Botanical Blend** - Plant-powered stress relief\n• Full-spectrum CBD with calming terpenes\n• Adaptogen-enhanced formulas (ashwagandha, L-theanine)\n• Best for: Holistic wellness, daily maintenance, sensitive users\n\n📚 **Key Benefits**\n• Multiple mechanisms target different anxiety types\n• Options for both acute relief and daily management\n• Non-habit forming alternatives to traditional medications\n• Can be combined for personalized relief\n\n🔬 **Research Insights**\n• CBD reduces cortisol and inflammatory markers linked to stress\n• Delta-8 activates CB1 receptors with less anxiety than Delta-9\n• Terpenes like limonene and linalool have proven anxiolytic effects\n\n💡 **How to Use**\n• CBD: 10-25mg for mild anxiety, up to 50mg for acute stress\n• Delta-8: Start with 2.5-5mg, increase gradually\n• Best timing varies: morning for all-day support, as-needed for acute episodes\n\n⚠️ **Important Notes**\n• Start with one approach before combining\n• Some options may cause drowsiness\n• Consult healthcare provider if on anxiety medications`;
   }
 
   if (queryLower.includes('pain') || queryLower.includes('inflammation')) {
