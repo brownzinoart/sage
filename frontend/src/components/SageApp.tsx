@@ -10,36 +10,36 @@ import { EducationalResources, EducationalSummary } from '@/types'
 // Experience-based rotating prompts
 const promptExamples = {
   new: [
-    "What's the difference between indica and sativa?",
-    "I'm new to cannabis - where should I start?", 
-    "What's THC vs CBD?",
-    "How much should I take as a beginner?",
+    "What's the THC limit for beginners in NJ?",
+    "I'm new to cannabis - what's available at Premo?", 
+    "What's the difference between THC and CBD?",
+    "Best low-THC products at Premo Cannabis?",
     "What are terpenes and why do they matter?",
-    "What's best for first-time users in NJ?"
+    "First-time visitor to NJ dispensary - help!"
   ],
   casual: [
-    "I can't sleep, what strains help?",
-    "What's best for stress relief?",
-    "Need something for creativity",
-    "What helps with social anxiety?",
-    "Best daytime strains?",
-    "Something for weekend relaxation?"
+    "What THC strains help with sleep?",
+    "Best THC/CBD ratio for anxiety?",
+    "High-THC sativa at Premo?",
+    "What's good for NJ concerts?",
+    "Best daytime THC products?",
+    "Weekend THC edibles recommendations?"
   ],
   experienced: [
-    "Looking for high-THC flower",
-    "What exotic strains do you have?",
-    "Any live resin concentrates?",
-    "Best terp profiles for pain?",
-    "Strongest edibles available?",
-    "Any exclusive Premo products?"
+    "Highest THC flower at Premo?",
+    "Any 30%+ THC strains in stock?",
+    "Live rosin concentrates available?",
+    "Best THC vapes for NJ weather?",
+    "Max strength THC edibles?",
+    "Premo's exclusive THC products?"
   ],
   general: [
-    "I can't sleep...",
-    "What helps with anxiety?",
-    "Something for pain relief?",
-    "Best for relaxation?",
-    "Help with focus?",
-    "What's popular at Premo?"
+    "THC for sleep problems...",
+    "What THC helps anxiety in NJ?",
+    "Best THC for pain at Premo?",
+    "THC products for relaxation?",
+    "THC strains for focus?",
+    "What's popular at Premo Keyport?"
   ]
 }
 
@@ -407,11 +407,20 @@ export default function SageApp() {
                     <div className="flex items-center justify-center gap-3">
                       <p className="text-lg text-slate-200 font-medium"
                          style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>
-                        Powered by <span className="text-emerald-300 font-semibold">Premo Cannabis Company</span>
+                        Powered by{' '}
+                        <a href="https://premocannabis.co" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           className="text-emerald-300 font-semibold hover:text-emerald-200 transition-colors underline decoration-emerald-300/50 hover:decoration-emerald-200">
+                          Premo Cannabis Company
+                        </a>
                       </p>
                     </div>
                     <p className="text-sm text-slate-300 mt-2">
-                      NJ's Premier Cannabis Dispensary • Keyport
+                      🌿 NJ's Premier THC Dispensary • Legal Cannabis • Keyport, NJ
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      21+ Adult Use • Medical & Recreational • THC Products Available
                     </p>
                   </div>
                   
@@ -428,14 +437,14 @@ export default function SageApp() {
                        fontFamily: 'var(--font-poppins), system-ui, sans-serif',
                        textShadow: '0 2px 6px rgba(0,0,0,0.4)'
                      }}>
-                    Your AI Cannabis Guide
+                    Your AI Cannabis Guide for NJ
                   </p>
                   <p className="text-xl text-slate-200 font-medium" 
                      style={{
                        fontFamily: 'var(--font-poppins), system-ui, sans-serif',
                        textShadow: '0 2px 4px rgba(0,0,0,0.3)'
                      }}>
-                    ✨ Personalized • Private • Instant
+                    ✨ THC & CBD • NJ Legal • Expert Guidance
                   </p>
                 </div>
               </div>
@@ -446,22 +455,22 @@ export default function SageApp() {
                   <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl">🧠</span>
                   </div>
-                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>AI-Powered</p>
-                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Smart recommendations</p>
+                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>THC Products</p>
+                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Real NJ dispensary</p>
                 </div>
                 <div className="text-center space-y-2 group">
                   <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl">🔒</span>
                   </div>
-                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>100% Private</p>
-                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Your questions stay safe</p>
+                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>NJ Legal</p>
+                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>21+ Adult Use</p>
                 </div>
                 <div className="text-center space-y-2 group">
                   <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-500 rounded-full flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl">⚡</span>
                   </div>
-                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>Instant Help</p>
-                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Available 24/7</p>
+                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>Expert Staff</p>
+                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Budtender knowledge</p>
                 </div>
               </div>
             </div>
@@ -543,10 +552,10 @@ export default function SageApp() {
                       {selectedExperience && (
                         <div className="animate-fade-in space-y-2">
                           <p className="text-xs text-emerald-300/90">
-                            Perfect! Sage will tailor responses for your {experienceLevels.find(l => l.id === selectedExperience)?.description.toLowerCase()} 🎯
+                            Perfect! Sage will tailor THC recommendations for your {experienceLevels.find(l => l.id === selectedExperience)?.description.toLowerCase()} 🎯
                           </p>
                           <p className="text-xs text-slate-400/70 italic">
-                            Notice how the suggestions below change for your level ✨
+                            Get personalized THC/CBD ratios and product suggestions from Premo ✨
                           </p>
                         </div>
                       )}
@@ -633,7 +642,7 @@ export default function SageApp() {
                         <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                       </div>
                       <p className="text-xs text-slate-400 italic">
-                        Join thousands who've found their perfect hemp solution 🌱
+                        Join thousands of NJ cannabis customers who trust Premo 🌿
                       </p>
                     </div>
                   )}
@@ -932,13 +941,13 @@ export default function SageApp() {
             {/* Products Header with Badge */}
             <div className="text-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500/20 to-amber-500/20 backdrop-blur-sm rounded-full border border-orange-400/30 mb-4">
-                <span className="text-lg">🛍️</span>
-                <span className="text-sm font-medium text-orange-300">Product Recommendations</span>
+                <span className="text-lg">🌿</span>
+                <span className="text-sm font-medium text-orange-300">Premo Cannabis Products</span>
               </div>
               <h3 className="text-2xl font-light text-white mb-3" style={{textShadow: '0 2px 4px rgba(0,0,0,0.6)'}}>
-                Thoughtfully selected for you
+                Available at Premo Cannabis - Keyport, NJ
               </h3>
-              <p className="text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.5)'}}>Based on our conversation, here's what I recommend</p>
+              <p className="text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.5)'}}>THC & CBD products matching your needs - Visit us or order online</p>
             </div>
             
             <div className="grid gap-8">
@@ -1016,6 +1025,11 @@ export default function SageApp() {
                             </div>
                             <h4 className="text-xl font-bold text-gray-800 group-hover:text-gray-900 transition-colors">
                               {product.name}
+                              {(product as any).thc && (
+                                <span className="ml-2 text-sm font-medium text-emerald-600">
+                                  {(product as any).thc}% THC
+                                </span>
+                              )}
                             </h4>
                           </div>
                         </div>
@@ -1265,19 +1279,23 @@ export default function SageApp() {
                         <div className="flex items-center gap-3">
                           <div className="flex items-center gap-1">
                             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span className="text-xs text-gray-600">NC Compliant</span>
+                            <span className="text-xs text-gray-600">NJ Legal</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                            <span className="text-xs text-gray-600">Lab Verified</span>
+                            <span className="text-xs text-gray-600">THC Tested</span>
                           </div>
                         </div>
-                        <button className={`px-6 py-3 bg-gradient-to-r ${visual.gradient} text-white rounded-xl hover:shadow-lg transition-all duration-300 text-sm font-semibold transform hover:scale-105 hover:-translate-y-0.5`}>
+                        <a 
+                          href="https://premocannabis.co" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={`inline-block px-6 py-3 bg-gradient-to-r ${visual.gradient} text-white rounded-xl hover:shadow-lg transition-all duration-300 text-sm font-semibold transform hover:scale-105 hover:-translate-y-0.5`}>
                           <span className="flex items-center gap-2">
-                            View Details
-                            <span>→</span>
+                            Shop at Premo
+                            <span>🌿</span>
                           </span>
-                        </button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -1317,18 +1335,29 @@ export default function SageApp() {
                 </div>
               </div>
               
-              <div className="flex items-center justify-center gap-4 text-slate-400">
-                <div className="flex items-center gap-1">
-                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                  <span className="text-xs">Always 3rd Party Tested</span>
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center justify-center gap-4 text-slate-400">
+                  <div className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <span className="text-xs">NJ State Licensed</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+                    <span className="text-xs">THC & CBD Products</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
+                    <span className="text-xs">21+ Adult Use</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
-                  <span className="text-xs">Hemp-Derived & Legal</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
-                  <span className="text-xs">Expert Curated</span>
+                <div className="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 backdrop-blur-sm rounded-full px-6 py-3 border border-emerald-400/30">
+                  <p className="text-sm text-emerald-300 font-medium">
+                    🏪 Visit Premo Cannabis: 2 E Front St, Keyport, NJ 07735 • 📞 (908) 676-7320
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1 text-center">
+                    Mon-Sat: 9AM-10PM | Sun: 10AM-9PM | 
+                    <a href="https://premocannabis.co" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 underline ml-1">premocannabis.co</a>
+                  </p>
                 </div>
               </div>
             </div>
