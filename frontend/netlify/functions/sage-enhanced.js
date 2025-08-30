@@ -1,8 +1,8 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Import Premo products and cannabis knowledge
-const premoProducts = require('../../src/data/premoProducts');
-const cannabisKnowledge = require('../../src/data/cannabisKnowledge');
+const premoProducts = require('./data/premoProducts');
+const cannabisKnowledge = require('./data/cannabisKnowledge');
 
 exports.handler = async (event, context) => {
   // Handle CORS
@@ -285,67 +285,33 @@ function generateCannabisExplanation(query, experienceLevel) {
 }
 
 function getMatchingPremoProducts(queryLower) {
-  // This would import from the actual premoProducts.ts file
-  // For now, returning sample products
-  const products = [
-    {
-      id: "premo-001",
-      name: "Blue Dream - Premium Flower",
-      description: "Balanced hybrid with sweet berry aroma. 22% THC.",
-      price: "$55",
-      category: "Flower",
-      thc: 22,
-      cbd: 0.5,
-      type: "hybrid",
-      effects: ["relaxed", "creative", "euphoric"],
-      terpenes: ["myrcene", "pinene", "caryophyllene"],
-      image: "/images/blue-dream.jpg",
-      in_stock: true
-    },
-    {
-      id: "premo-002", 
-      name: "Premo Gummies - Mixed Berry",
-      description: "10mg THC per gummy. Perfect for controlled dosing.",
-      price: "$25",
-      category: "Edibles",
-      thc: 10,
-      cbd: 0,
-      type: "hybrid",
-      effects: ["relaxed", "happy", "euphoric"],
-      image: "/images/gummies.jpg",
-      in_stock: true
-    },
-    {
-      id: "premo-003",
-      name: "Live Resin Cart - Jack Herer",
-      description: "Sativa dominant. 85% THC. Energizing and creative.",
-      price: "$55",
-      category: "Vapes",
-      thc: 85,
-      cbd: 0,
-      type: "sativa",
-      effects: ["energetic", "creative", "focused"],
-      terpenes: ["terpinolene", "caryophyllene", "pinene"],
-      image: "/images/vape-cart.jpg",
-      in_stock: true
-    }
-  ];
+  // Use the imported premoProducts data
+  const products = premoProducts || [];
 
   // Smart matching based on query
   return products.filter(product => {
-    const matchesEffect = product.effects.some(effect => 
-      queryLower.includes(effect)
+    const matchesEffect = product.effects && product.effects.some(effect => 
+      queryLower.includes(effect.toLowerCase())
     );
     const matchesType = queryLower.includes(product.type);
     const matchesCategory = queryLower.includes(product.category.toLowerCase());
+    const matchesName = product.name.toLowerCase().includes(queryLower);
+    const matchesDescription = product.description.toLowerCase().includes(queryLower);
     
-    return matchesEffect || matchesType || matchesCategory;
-  }).slice(0, 3);
+    return matchesEffect || matchesType || matchesCategory || matchesName || matchesDescription;
+  }).slice(0, 3).map(product => ({
+    ...product,
+    price: `$${product.price}`, // Add dollar sign if not present
+    in_stock: product.inStock // Map inStock to in_stock for consistency
+  }));
 }
 
 function getCannabisEducation(queryLower) {
+  // Use the imported cannabisKnowledge data
+  const knowledge = cannabisKnowledge || {};
+  
   return {
-    cannabinoids: {
+    cannabinoids: knowledge.cannabinoids || {
       thc: {
         name: "Tetrahydrocannabinol (THC)",
         description: "Primary psychoactive compound. Creates euphoric 'high' feeling.",
@@ -359,7 +325,7 @@ function getCannabisEducation(queryLower) {
         legal_status: "Fully legal in NJ"
       }
     },
-    terpenes: {
+    terpenes: knowledge.terpenes || {
       myrcene: {
         aroma: "Earthy, musky",
         effects: "Sedating, relaxing",
@@ -371,7 +337,7 @@ function getCannabisEducation(queryLower) {
         found_in: "Lemons, oranges"
       }
     },
-    nj_laws: {
+    nj_laws: knowledge.newJerseyLaws || {
       age_requirement: "21+ with valid ID",
       purchase_limit: "1 ounce per day",
       consumption: "Private property only",
