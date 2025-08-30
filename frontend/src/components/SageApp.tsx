@@ -10,36 +10,36 @@ import { EducationalResources, EducationalSummary } from '@/types'
 // Experience-based rotating prompts
 const promptExamples = {
   new: [
-    "What's the THC limit for beginners in NJ?",
-    "I'm new to cannabis - what's available at Premo?", 
-    "What's the difference between THC and CBD?",
-    "Best low-THC products at Premo Cannabis?",
-    "What are terpenes and why do they matter?",
-    "First-time visitor to NJ dispensary - help!"
+    "What's the best indica for beginners?",
+    "I'm new to cannabis - help me choose a strain", 
+    "Difference between indica and sativa?",
+    "Low-THC strains for first-time users?",
+    "What are terpenes and how do they affect me?",
+    "First-time dispensary visit - what should I know?"
   ],
   casual: [
-    "What THC strains help with sleep?",
-    "Best THC/CBD ratio for anxiety?",
-    "High-THC sativa at Premo?",
-    "What's good for NJ concerts?",
-    "Best daytime THC products?",
-    "Weekend THC edibles recommendations?"
+    "What indica strains help with sleep?",
+    "Best hybrid for anxiety relief?",
+    "Energizing sativa recommendations?",
+    "Good strains for social situations?",
+    "Best daytime cannabis products?",
+    "Weekend relaxation strain suggestions?"
   ],
   experienced: [
-    "Highest THC flower at Premo?",
-    "Any 30%+ THC strains in stock?",
-    "Live rosin concentrates available?",
-    "Best THC vapes for NJ weather?",
-    "Max strength THC edibles?",
-    "Premo's exclusive THC products?"
+    "Highest THC flower available?",
+    "Any 25%+ THC indica strains?",
+    "Live resin and rosin concentrates?",
+    "Premium vape cartridge options?",
+    "Strongest edibles in stock?",
+    "Exclusive or rare strain drops?"
   ],
   general: [
-    "THC for sleep problems...",
-    "What THC helps anxiety in NJ?",
-    "Best THC for pain at Premo?",
-    "THC products for relaxation?",
-    "THC strains for focus?",
-    "What's popular at Premo Keyport?"
+    "Cannabis for sleep problems...",
+    "What strains help with anxiety?",
+    "Best cannabis for pain relief?",
+    "Strains for deep relaxation?",
+    "Cannabis for focus and creativity?",
+    "What's popular at the dispensary?"
   ]
 }
 
@@ -111,29 +111,7 @@ export default function SageApp() {
   useEffect(() => {
     setIsLoading(false)
   }, [])
-  const [demoProducts, setDemoProducts] = useState([
-    {
-      id: 1,
-      name: "Night Time CBD Gummies",
-      description: "5mg CBD + 2mg CBN per gummy. Infused with lavender for peaceful sleep.",
-      price: "$28",
-      category: "Sleep"
-    },
-    {
-      id: 2, 
-      name: "Calm Tincture",
-      description: "Full spectrum CBD oil with chamomile. Start with 0.5ml under tongue.",
-      price: "$45",
-      category: "Tinctures"
-    },
-    {
-      id: 3,
-      name: "Dream Tea Blend", 
-      description: "Hemp flower tea with passionflower and lemon balm. Caffeine-free.",
-      price: "$18",
-      category: "Tea"
-    }
-  ])
+  const [demoProducts, setDemoProducts] = useState<any[]>([])
 
   // Get current prompt examples based on experience level
   const getCurrentPrompts = () => {
@@ -168,6 +146,79 @@ export default function SageApp() {
     setCurrentPromptIndex(0)
   }, [selectedExperience])
 
+  // Function to fetch products directly from backend
+  const fetchBackendProducts = async (query: string) => {
+    try {
+      console.log('Fetching products from backend for:', query)
+      const response = await fetch('http://localhost:8000/api/v1/products/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: query,
+          limit: 5
+        }),
+      })
+      
+      if (response.ok) {
+        const products = await response.json()
+        console.log('Backend products:', products)
+        // Transform backend products to match expected format
+        const transformedProducts = products.map((product: any) => ({
+          id: product.id,
+          name: product.name,
+          brand: product.brand || 'ZenLeaf',
+          description: product.description,
+          price: `$${product.price}`,
+          category: product.strain_type ? product.strain_type.charAt(0).toUpperCase() + product.strain_type.slice(1) : 'Cannabis',
+          thc_percentage: product.thc_percentage,
+          cbd_percentage: product.cbd_percentage,
+          dominant_terpene: product.dominant_terpene,
+          effects: product.effects,
+          terpenes: product.terpenes,
+          lab_tested: product.lab_tested,
+          lab_report_url: product.lab_report_url,
+          match_score: product.match_score,
+          strain_type: product.strain_type,
+          product_type: product.product_type,
+          batch_number: product.batch_number,
+          harvest_date: product.harvest_date
+        }))
+        setDemoProducts(transformedProducts)
+      } else {
+        console.error('Backend products API failed:', response.status)
+        // Fallback to all products if search fails
+        const allProductsResponse = await fetch('http://localhost:8000/api/v1/products/')
+        if (allProductsResponse.ok) {
+          const allProducts = await allProductsResponse.json()
+          const transformedProducts = allProducts.slice(0, 3).map((product: any) => ({
+            id: product.id,
+            name: product.name,
+            brand: product.brand || 'ZenLeaf',
+            description: product.description,
+            price: `$${product.price}`,
+            category: product.strain_type ? product.strain_type.charAt(0).toUpperCase() + product.strain_type.slice(1) : 'Cannabis',
+            thc_percentage: product.thc_percentage,
+            cbd_percentage: product.cbd_percentage,
+            dominant_terpene: product.dominant_terpene,
+            effects: product.effects,
+            terpenes: product.terpenes,
+            lab_tested: product.lab_tested,
+            lab_report_url: product.lab_report_url,
+            strain_type: product.strain_type,
+            product_type: product.product_type,
+            batch_number: product.batch_number,
+            harvest_date: product.harvest_date
+          }))
+          setDemoProducts(transformedProducts)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching backend products:', error)
+    }
+  }
+
   const handleSearch = async () => {
     if (!searchQuery.trim()) return
     
@@ -184,7 +235,7 @@ export default function SageApp() {
     try {
       // Check if in development mode
       const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost'
-      const backendUrl = 'http://localhost:5001/api/v1/sage/ask'
+      const backendUrl = 'http://localhost:8000/api/v1/sage/ask'
       
       let apiUrl = isDevelopment ? '/api/sage' : '/.netlify/functions/sage'
       let requestBody = { 
@@ -195,7 +246,7 @@ export default function SageApp() {
       // Try to use backend API in development if available
       if (isDevelopment) {
         try {
-          const healthCheck = await fetch('http://localhost:5001/health', { 
+          const healthCheck = await fetch('http://localhost:8000/health', { 
             method: 'GET',
             signal: AbortSignal.timeout(2000) // 2 second timeout
           })
@@ -229,11 +280,14 @@ export default function SageApp() {
       if (response.ok) {
         const data = await response.json()
         console.log('Response data:', data)
-      console.log('Full explanation text:', data.explanation)
-        setExplanation(data.explanation)
-        if (data.products) {
-          setDemoProducts(data.products)
-        }
+        console.log('Full explanation text:', data.explanation)
+        
+        // Use the Gemini-generated explanation (now that API is working properly)
+        setExplanation(data.explanation || `I can help you find the perfect cannabis strain for your needs. Let me search our ZenLeaf selection.`)
+        
+        // Always fetch our NJ cannabis products regardless of Sage response
+        await fetchBackendProducts(searchQuery)
+        
         if (data.educational_resources) {
           setEducationalResources(data.educational_resources)
         }
@@ -245,13 +299,17 @@ export default function SageApp() {
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         console.error('API response not OK:', response.status)
-        setExplanation('For sleep support, CBD and CBN work together to promote relaxation. Look for products with calming terpenes like myrcene and linalool for the most restful experience.')
+        setExplanation('I can help you find the perfect cannabis strain for your needs. Let me search our available products.')
+        // Fetch products directly from backend when Sage API fails
+        await fetchBackendProducts(searchQuery)
         // Scroll to top for fallback response too
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
     } catch (error) {
       console.error('Error calling Sage API:', error)
-      setExplanation('For sleep support, CBD and CBN work together to promote relaxation. Look for products with calming terpenes like myrcene and linalool for the most restful experience.')
+      setExplanation('I can help you find the perfect cannabis strain for your needs. Let me search our available products.')
+      // Fetch products directly from backend when error occurs
+      await fetchBackendProducts(searchQuery)
       // Scroll to top for error fallback too
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } finally {
@@ -405,22 +463,21 @@ export default function SageApp() {
                   {/* Powered by directly under logo */}
                   <div className="mb-6">
                     <div className="flex items-center justify-center gap-3">
+                      <img 
+                        src="/images/zen-leaf-philadelphia-logo.png" 
+                        alt="ZenLeaf" 
+                        className="h-8 w-auto filter brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
+                      />
                       <p className="text-lg text-slate-200 font-medium"
                          style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>
-                        Powered by{' '}
-                        <a href="https://premocannabis.co" 
-                           target="_blank" 
-                           rel="noopener noreferrer"
-                           className="text-emerald-300 font-semibold hover:text-emerald-200 transition-colors underline decoration-emerald-300/50 hover:decoration-emerald-200">
-                          Premo Cannabis Company
-                        </a>
+                        Powered by ZenLeaf
                       </p>
                     </div>
                     <p className="text-sm text-slate-300 mt-2">
-                      🌿 NJ's Premier THC Dispensary • Legal Cannabis • Keyport, NJ
+                      🌿 Premium Cannabis Dispensary • Legal Cannabis • Philadelphia Area
                     </p>
                     <p className="text-xs text-slate-400 mt-1">
-                      21+ Adult Use • Medical & Recreational • THC Products Available
+                      21+ Adult Use • Medical & Recreational • Premium Cannabis Products
                     </p>
                   </div>
                   
@@ -453,24 +510,24 @@ export default function SageApp() {
               <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
                 <div className="text-center space-y-2 group">
                   <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">🧠</span>
+                    <span className="text-2xl">🌿</span>
                   </div>
-                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>THC Products</p>
-                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Real NJ dispensary</p>
+                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>Premium Cannabis</p>
+                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Indica • Sativa • Hybrid</p>
                 </div>
                 <div className="text-center space-y-2 group">
                   <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl">🔒</span>
                   </div>
-                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>NJ Legal</p>
+                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>Legal Cannabis</p>
                   <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>21+ Adult Use</p>
                 </div>
                 <div className="text-center space-y-2 group">
                   <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-500 rounded-full flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <span className="text-2xl">⚡</span>
                   </div>
-                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>Expert Staff</p>
-                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Budtender knowledge</p>
+                  <p className="text-sm font-semibold text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>Expert Guidance</p>
+                  <p className="text-xs font-medium text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>Cannabis education</p>
                 </div>
               </div>
             </div>
@@ -549,13 +606,32 @@ export default function SageApp() {
                         ))}
                       </div>
                       
+                      {/* Cannabis Strain Type Quick Filters */}
+                      {hasSearched && (
+                        <div className="mt-6 animate-fade-in">
+                          <p className="text-xs text-slate-300 mb-3 text-center">Filter by strain type:</p>
+                          <div className="flex justify-center gap-2">
+                            {['indica', 'sativa', 'hybrid'].map((strainType) => (
+                              <button
+                                key={strainType}
+                                type="button"
+                                onClick={() => fetchBackendProducts(strainType)}
+                                className="px-3 py-1 text-xs font-medium rounded-full bg-white/10 text-slate-300 hover:bg-emerald-400/20 hover:text-emerald-200 transition-all duration-200 border border-white/20 hover:border-emerald-300/30"
+                              >
+                                {strainType.charAt(0).toUpperCase() + strainType.slice(1)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
                       {selectedExperience && (
                         <div className="animate-fade-in space-y-2">
                           <p className="text-xs text-emerald-300/90">
                             Perfect! Sage will tailor THC recommendations for your {experienceLevels.find(l => l.id === selectedExperience)?.description.toLowerCase()} 🎯
                           </p>
                           <p className="text-xs text-slate-400/70 italic">
-                            Get personalized THC/CBD ratios and product suggestions from Premo ✨
+                            Get personalized strain and product suggestions from ZenLeaf ✨
                           </p>
                         </div>
                       )}
@@ -642,7 +718,7 @@ export default function SageApp() {
                         <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                       </div>
                       <p className="text-xs text-slate-400 italic">
-                        Join thousands of NJ cannabis customers who trust Premo 🌿
+                        Join thousands of cannabis customers who trust ZenLeaf 🌿
                       </p>
                     </div>
                   )}
@@ -942,10 +1018,10 @@ export default function SageApp() {
             <div className="text-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500/20 to-amber-500/20 backdrop-blur-sm rounded-full border border-orange-400/30 mb-4">
                 <span className="text-lg">🌿</span>
-                <span className="text-sm font-medium text-orange-300">Premo Cannabis Products</span>
+                <span className="text-sm font-medium text-orange-300">ZenLeaf Cannabis Products</span>
               </div>
               <h3 className="text-2xl font-light text-white mb-3" style={{textShadow: '0 2px 4px rgba(0,0,0,0.6)'}}>
-                Available at Premo Cannabis - Keyport, NJ
+                Available at ZenLeaf Dispensary - Philadelphia Area
               </h3>
               <p className="text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.5)'}}>THC & CBD products matching your needs - Visit us or order online</p>
             </div>
@@ -1025,12 +1101,40 @@ export default function SageApp() {
                             </div>
                             <h4 className="text-xl font-bold text-gray-800 group-hover:text-gray-900 transition-colors">
                               {product.name}
-                              {(product as any).thc && (
-                                <span className="ml-2 text-sm font-medium text-emerald-600">
-                                  {(product as any).thc}% THC
-                                </span>
-                              )}
                             </h4>
+                            {/* THC Potency Indicator */}
+                            {(product as any).thc_percentage && (
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold ${
+                                  (product as any).thc_percentage >= 20 
+                                    ? 'bg-red-100 text-red-800 border border-red-200' 
+                                    : (product as any).thc_percentage >= 15 
+                                    ? 'bg-orange-100 text-orange-800 border border-orange-200' 
+                                    : 'bg-green-100 text-green-800 border border-green-200'
+                                }`}>
+                                  {(product as any).thc_percentage}% THC
+                                </span>
+                                <span className="text-xs text-gray-600">
+                                  {(product as any).thc_percentage >= 20 ? 'High Potency' 
+                                   : (product as any).thc_percentage >= 15 ? 'Medium Potency' 
+                                   : 'Mild Potency'}
+                                </span>
+                              </div>
+                            )}
+                            {/* Strain Type Badge */}
+                            {(product as any).strain_type && (
+                              <div className="mt-2">
+                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                  (product as any).strain_type === 'indica' 
+                                    ? 'bg-purple-100 text-purple-800 border border-purple-200' 
+                                    : (product as any).strain_type === 'sativa'
+                                    ? 'bg-yellow-100 text-yellow-800 border border-yellow-200'
+                                    : 'bg-blue-100 text-blue-800 border border-blue-200'
+                                }`}>
+                                  {(product as any).strain_type.charAt(0).toUpperCase() + (product as any).strain_type.slice(1)}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="text-right">
@@ -1252,7 +1356,7 @@ export default function SageApp() {
                               <p className="text-sm text-purple-700 leading-relaxed">
                                 {product.category === 'Sleep' ? `Ideal for your search about better rest and relaxation. The combination of CBD and CBN specifically targets sleep receptors for natural, restorative sleep without grogginess.` :
                                  product.category === 'Tinctures' ? `Perfect for precise dosing and fast-acting relief. Tinctures offer the most control over your experience, letting you find your optimal amount quickly.` :
-                                 `This ${product.category.toLowerCase()} option provides a gentle, approachable way to experience hemp benefits with consistent, reliable effects.`}
+                                 `This ${product.category.toLowerCase()} option provides a gentle, approachable way to experience cannabis benefits with consistent, reliable effects.`}
                               </p>
                             </div>
                           </div>
@@ -1287,12 +1391,12 @@ export default function SageApp() {
                           </div>
                         </div>
                         <a 
-                          href="https://premocannabis.co" 
+                          href="https://zenleaf.com" 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className={`inline-block px-6 py-3 bg-gradient-to-r ${visual.gradient} text-white rounded-xl hover:shadow-lg transition-all duration-300 text-sm font-semibold transform hover:scale-105 hover:-translate-y-0.5`}>
                           <span className="flex items-center gap-2">
-                            Shop at Premo
+                            Shop ZenLeaf
                             <span>🌿</span>
                           </span>
                         </a>
@@ -1311,7 +1415,7 @@ export default function SageApp() {
                   <h3 className="text-lg font-semibold text-slate-800">Still have questions?</h3>
                 </div>
                 <p className="text-slate-600 mb-4">
-                  I'm here to help you find the perfect hemp solution for your needs.
+                  I'm here to help you find the perfect cannabis strain for your needs.
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   <button 
@@ -1352,11 +1456,11 @@ export default function SageApp() {
                 </div>
                 <div className="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 backdrop-blur-sm rounded-full px-6 py-3 border border-emerald-400/30">
                   <p className="text-sm text-emerald-300 font-medium">
-                    🏪 Visit Premo Cannabis: 2 E Front St, Keyport, NJ 07735 • 📞 (908) 676-7320
+                    🏪 Visit ZenLeaf Dispensary - Philadelphia Area • Premium Cannabis
                   </p>
                   <p className="text-xs text-slate-400 mt-1 text-center">
                     Mon-Sat: 9AM-10PM | Sun: 10AM-9PM | 
-                    <a href="https://premocannabis.co" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 underline ml-1">premocannabis.co</a>
+                    <a href="https://zenleaf.com" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 underline ml-1">zenleaf.com</a>
                   </p>
                 </div>
               </div>

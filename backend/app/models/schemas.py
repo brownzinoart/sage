@@ -14,12 +14,23 @@ class ProductInfo(BaseModel):
     name: str
     brand: Optional[str]
     description: Optional[str]
+    # Hemp-focused fields (for NC/other states)
     cbd_mg: Optional[float]
     thc_mg: Optional[float]
     cbg_mg: Optional[float]
     cbn_mg: Optional[float]
     cbc_mg: Optional[float]
     thca_percentage: Optional[float]
+    # NJ Cannabis-focused fields
+    thc_percentage: Optional[float]
+    cbd_percentage: Optional[float]
+    cbda_percentage: Optional[float]
+    cbg_percentage: Optional[float]
+    cbga_percentage: Optional[float]
+    cbn_percentage: Optional[float]
+    dominant_terpene: Optional[str] = None
+    batch_number: Optional[str] = None
+    harvest_date: Optional[str] = None
     price: float
     effects: List[str] = []
     terpenes: Optional[Dict[str, float]] = {}
@@ -62,9 +73,13 @@ class ProductFilter(BaseModel):
     cannabinoid: Optional[str] = None
     effect: Optional[str] = None
     product_type: Optional[str] = None
+    strain_type: Optional[str] = None  # indica/sativa/hybrid
+    dominant_terpene: Optional[str] = None
     max_price: Optional[float] = None
+    min_price: Optional[float] = None
     min_cbd: Optional[float] = None
     max_thc: Optional[float] = None
+    min_thc: Optional[float] = None
 
 class SearchRequest(BaseModel):
     query: str

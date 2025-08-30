@@ -15,11 +15,20 @@ class MockDatabase:
         self.load_sample_products()
     
     def load_sample_products(self):
-        """Load sample products from JSON file"""
+        """Load sample products from JSON file - prioritize NJ products for NJ branch"""
         try:
-            data_file = Path(__file__).parent.parent.parent.parent / "data" / "sample_products.json"
-            with open(data_file, 'r') as f:
-                sample_products = json.load(f)
+            # Try NJ products first (for NJ branch)
+            nj_data_file = Path(__file__).parent.parent.parent.parent / "data" / "nj_sample_products.json"
+            if nj_data_file.exists():
+                with open(nj_data_file, 'r') as f:
+                    sample_products = json.load(f)
+                print(f"✅ Loading NJ cannabis products")
+            else:
+                # Fallback to hemp products
+                data_file = Path(__file__).parent.parent.parent.parent / "data" / "sample_products.json"
+                with open(data_file, 'r') as f:
+                    sample_products = json.load(f)
+                print(f"✅ Loading hemp products")
             
             # Convert to internal format with UUIDs
             for product in sample_products:
@@ -37,19 +46,24 @@ class MockDatabase:
         results = []
         query_lower = query.lower()
         
-        # Intent-based cannabinoid matching
+        # Intent-based matching for both hemp and cannabis products
         intent_mapping = {
+            # Cannabis strain effects (NJ)
+            'relaxing': ['indica', 'myrcene', 'linalool'],
+            'energizing': ['sativa', 'limonene', 'pinene'],
+            'creative': ['sativa', 'hybrid', 'terpinolene', 'limonene'],
+            'focus': ['sativa', 'pinene', 'limonene'],
+            'euphoric': ['hybrid', 'sativa', 'limonene'],
+            'sleep': ['indica', 'myrcene', 'linalool', 'cbn'],
+            'pain': ['indica', 'hybrid', 'caryophyllene', 'myrcene'],
+            'uplifting': ['sativa', 'limonene', 'pinene'],
+            'calming': ['indica', 'linalool', 'myrcene'],
+            # Hemp derivative effects (other states)
             'high': ['delta-8', 'delta-9', 'hhc', 'thca', 'thcp'],
             'legal high': ['delta-8', 'hhc', 'delta-10', 'thca'],
-            'euphoria': ['delta-8', 'hhc', 'delta-9', 'thcp'],
             'buzz': ['delta-8', 'hhc', 'delta-10'],
             'party': ['delta-8', 'hhc', 'delta-10', 'blend'],
             'social': ['delta-8', 'hhc', 'blend'],
-            'creative': ['delta-10', 'thcv', 'cbg'],
-            'focus': ['thcv', 'cbg', 'delta-10'],
-            'energy': ['thcv', 'cbg', 'delta-10'],
-            'sleep': ['cbn', 'delta-8', 'thc'],
-            'pain': ['thc', 'cbd', 'cbc', 'ratio'],
             'anxiety': ['cbd', 'delta-8'],
             'microdose': ['delta-9'],
             'appetite': ['thcv'],
@@ -65,19 +79,40 @@ class MockDatabase:
             if query_lower in product.get('description', '').lower():
                 score += 8
             
-            # Intent-based subcategory matching
+            # Intent-based matching (strain type, subcategory, terpenes)
             subcategory = product.get('subcategory', '').lower()
+            strain_type = product.get('strain_type', '').lower() 
+            dominant_terpene = product.get('dominant_terpene', '').lower()
+            
             for intent, preferred_types in intent_mapping.items():
                 if intent in query_lower:
+                    # Check strain type (indica/sativa/hybrid)
+                    if strain_type in preferred_types:
+                        score += 30
+                    # Check subcategory (delta-8, live_resin, etc)
                     if subcategory in preferred_types:
-                        score += 25  # High priority for intent matches
+                        score += 25
+                    # Check dominant terpene
+                    if dominant_terpene in preferred_types:
+                        score += 20
                     break
             
-            # Direct cannabinoid matching
-            cannabinoid_terms = ['cbd', 'thc', 'delta-8', 'delta-9', 'delta-10', 'hhc', 'thcp', 'thcv', 'cbg', 'cbn', 'cbc', 'thca']
-            for term in cannabinoid_terms:
-                if term in query_lower and term in subcategory:
-                    score += 20
+            # Strain name and terpene matching
+            if strain_type in ['indica', 'sativa', 'hybrid']:
+                # Cannabis strain matching
+                strain_terms = ['indica', 'sativa', 'hybrid', 'flower', 'bud']
+                for term in strain_terms:
+                    if term in query_lower:
+                        if term == strain_type:
+                            score += 25
+                        elif term in ['flower', 'bud'] and product.get('product_type') == 'flower':
+                            score += 15
+            else:
+                # Hemp cannabinoid matching
+                cannabinoid_terms = ['cbd', 'thc', 'delta-8', 'delta-9', 'delta-10', 'hhc', 'thcp', 'thcv', 'cbg', 'cbn', 'cbc', 'thca']
+                for term in cannabinoid_terms:
+                    if term in query_lower and term in subcategory:
+                        score += 20
             
             # Effect matching
             for effect in product.get('effects', []):
@@ -86,17 +121,32 @@ class MockDatabase:
                     if word in query_lower:
                         score += 10
             
+            # Terpene matching for cannabis products
+            terpenes = product.get('terpenes', {})
+            terpene_terms = ['myrcene', 'limonene', 'pinene', 'linalool', 'caryophyllene', 'terpinolene']
+            for terpene in terpene_terms:
+                if terpene in query_lower and terpene in terpenes:
+                    score += 8
+            
             # Category matching
             if query_lower in product.get('category', '').lower():
                 score += 5
             
             # Product type preferences
-            if any(term in query_lower for term in ['gummy', 'gummies', 'edible']) and product.get('product_type') == 'edible':
-                score += 8
-            if any(term in query_lower for term in ['vape', 'cartridge', 'cart']) and product.get('product_type') == 'vape':
-                score += 8
-            if any(term in query_lower for term in ['tincture', 'drops', 'oil']) and product.get('product_type') == 'tincture':
-                score += 8
+            product_type_mapping = {
+                'edible': ['gummy', 'gummies', 'edible', 'chocolate', 'candy'],
+                'vape': ['vape', 'cartridge', 'cart', 'pen'],
+                'tincture': ['tincture', 'drops', 'oil', 'sublingual'],
+                'flower': ['flower', 'bud', 'eighth', 'quarter', 'oz'],
+                'pre-roll': ['pre-roll', 'joint', 'preroll'],
+                'concentrate': ['concentrate', 'shatter', 'wax', 'rosin', 'resin', 'dab'],
+                'topical': ['topical', 'cream', 'balm', 'salve', 'lotion']
+            }
+            
+            for product_type, terms in product_type_mapping.items():
+                if any(term in query_lower for term in terms):
+                    if product.get('product_type') == product_type:
+                        score += 12
             
             if score > 0:
                 product_copy = product.copy()

@@ -172,56 +172,71 @@ Question: "{user_query}"
 
 {research_context}
 
-TASK: Provide helpful, evidence-based guidance about hemp products that may support their wellness goals.
+TASK: Provide helpful, evidence-based guidance about cannabis strains and products for NJ dispensary customers.
 
-CORE PRINCIPLE: Help users understand how hemp products might fit into their wellness routine. Be informative and supportive, not pushy.
+CORE PRINCIPLE: Help users understand cannabis strain effects, potency levels, and consumption methods to make informed dispensary purchases. Focus on education-first, product recommendations second.
 
-CANNABINOID KNOWLEDGE BASE:
-• CBD: Non-psychoactive, anxiety/pain relief, legal everywhere
-• THC/Delta-9: Traditional psychoactive cannabinoid, euphoria, pain relief
-• THCa: Raw form, converts to THC when heated, legal hemp-derived
-• Delta-8: Mild psychoactive, legal hemp-derived, smooth euphoria
-• Delta-10: Creative/energizing effects, clear-headed high
-• HHC: Hemp-derived, stable shelf life, THC-like effects
-• CBG: "Mother cannabinoid", focus and clarity, non-psychoactive
-• CBN: Sedating, sleep-promoting, "couch lock" effects
-• CBC: Mood support, anti-inflammatory, works with other cannabinoids
-• THCP: Highly potent, 33x stronger binding than THC
-• THCV: Energy, appetite suppressant, "diet weed"
+CANNABIS STRAIN KNOWLEDGE BASE:
+
+STRAIN TYPES:
+• INDICA: Body-focused effects, relaxation, sedation, evening use, higher myrcene content
+• SATIVA: Head-focused effects, energy, creativity, daytime use, higher limonene/pinene
+• HYBRID: Balanced effects combining indica and sativa traits, versatile timing
+
+THC POTENCY RANGES:
+• LOW (0-15% THC): Mild effects, good for beginners, functional use
+• MEDIUM (15-25% THC): Moderate effects, regular users, balanced experience  
+• HIGH (25%+ THC): Strong effects, experienced users only, careful dosing
+
+MAJOR CANNABINOIDS:
+• THC: Primary psychoactive compound, euphoria, pain relief, appetite stimulation
+• CBD: Non-psychoactive, anxiety relief, anti-inflammatory, balances THC effects
+• CBG: "Mother cannabinoid", focus and energy, antibacterial properties
+• CBN: Sedating effects, sleep promotion, forms as THC degrades
+• THCA: Raw THC form, anti-inflammatory, converts to THC when heated
+• CBDA: Raw CBD form, anti-nausea, converts to CBD when heated
+
+TERPENE PROFILES:
+• MYRCENE: Sedating, muscle relaxant, "couch-lock" effects, indica dominant
+• LIMONENE: Mood elevation, stress relief, citrus aroma, sativa common
+• PINENE: Alertness, memory retention, pine aroma, counteracts THC anxiety
+• LINALOOL: Calming, sleep aid, lavender aroma, anxiety reduction
+• CARYOPHYLLENE: Anti-inflammatory, pain relief, spicy aroma, CB2 receptor binding
 
 REQUIREMENTS:
-1. COMPREHENSIVE COVERAGE: Discuss ALL relevant cannabinoids, not just CBD
-2. EFFECT-BASED MATCHING: Match cannabinoids to user's desired effects
-3. LEGAL EDUCATION: Explain legal status and compliance for each compound
-4. EVIDENCE-BASED: Reference research for ALL cannabinoids mentioned
-5. PRACTICAL GUIDANCE: Dosing and usage for different cannabinoids
-6. TRANSPARENCY: Clear about psychoactive vs non-psychoactive effects
+1. STRAIN-FOCUSED: Emphasize indica/sativa/hybrid characteristics and effects
+2. THC EDUCATION: Explain potency levels and appropriate user experience matching
+3. TERPENE INTEGRATION: Connect terpene profiles to expected effects and experiences
+4. CONSUMPTION GUIDANCE: Cover flower, edibles, vapes, concentrates with onset/duration
+5. NJ COMPLIANCE: Include 21+ requirements, legal cannabis status, responsible use
+6. EVIDENCE-BASED: Reference cannabis research and clinical findings when available
 
 RESPONSE FORMAT: Use this EXACT structure with markdown formatting:
 
 🌿 **Quick Answer**
-• 1-2 concise sentences directly answering their question
+• 1-2 concise sentences about strain type recommendation (indica/sativa/hybrid)
+• Include THC potency guidance for their experience level
 
 📚 **Key Benefits** 
-• 3-4 bullet points about relevant hemp benefits
-• Each point should be 1 line maximum
-• Focus on their specific need
+• 3-4 bullet points about specific strain effects and therapeutic benefits
+• Include onset time and duration for consumption methods
+• Focus on their desired outcome (sleep, energy, pain relief, etc.)
 
 🔬 **Research Insights**
-• 2-3 evidence-based findings with simple explanations
-• Include credibility indicators when available
-• Mention any important limitations
+• 2-3 evidence-based findings from cannabis research studies
+• Terpene profile science and entourage effect explanations
+• Clinical trial data on cannabinoids when available
 
 💡 **How to Use**
-• Practical dosage guidance (start low)
-• Best timing recommendations
-• Integration with lifestyle tips
+• Consumption method recommendations (flower, edibles, vapes, concentrates)
+• Dosage guidance by experience level (start low, go slow for THC)
+• Best timing for desired effects (morning sativas, evening indicas)
 
 ⚠️ **Important Notes**
-• Key safety considerations and legal compliance
-• Age requirements (21+ for psychoactive products)
-• State law variations and responsible use
-• Consult healthcare provider reminder
+• NJ legal compliance (21+ adult use, state licensed dispensaries only)
+• Drug testing considerations for employment
+• Interaction warnings and responsible consumption
+• Start with lower potency products for new users
 
 REQUIREMENTS:
 - Use EXACT section headers with emojis as shown

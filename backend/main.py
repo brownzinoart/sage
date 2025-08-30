@@ -4,10 +4,10 @@ from contextlib import asynccontextmanager
 import uvicorn
 
 from app.core.config import settings
-from app.db.database import init_db, close_db
+# from app.db.database import init_db, close_db  # Commented for mock DB demo
 
 # Import routers
-from app.api.v1 import products, chat, health
+from app.api.v1 import products, chat, health, sage
 
 # Initialize ML models on startup
 @asynccontextmanager
@@ -65,6 +65,7 @@ async def health_check():
 app.include_router(health.router, prefix="/api/v1/health", tags=["health"])
 app.include_router(products.router, prefix="/api/v1/products", tags=["products"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])
+app.include_router(sage.router, prefix="/api/v1/sage", tags=["sage"])
 
 if __name__ == "__main__":
     uvicorn.run(
