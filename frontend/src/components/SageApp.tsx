@@ -10,36 +10,36 @@ import { EducationalResources, EducationalSummary } from '@/types'
 // Experience-based rotating prompts
 const promptExamples = {
   new: [
-    "What is CBD and how does it work?",
-    "I'm new to hemp - where should I start?", 
-    "What's the difference between CBD and THC?",
-    "Are hemp products legal?",
-    "How do I know what dosage to take?",
-    "What's the difference between full spectrum and isolate?"
+    "What's the difference between indica and sativa?",
+    "I'm new to cannabis - where should I start?", 
+    "What's THC vs CBD?",
+    "How much should I take as a beginner?",
+    "What are terpenes and why do they matter?",
+    "What's best for first-time users in NJ?"
   ],
   casual: [
-    "I can't sleep, what helps?",
+    "I can't sleep, what strains help?",
     "What's best for stress relief?",
-    "I need something for after workouts",
-    "What helps with occasional anxiety?",
-    "Something for social situations?",
-    "Best products for daily wellness?"
+    "Need something for creativity",
+    "What helps with social anxiety?",
+    "Best daytime strains?",
+    "Something for weekend relaxation?"
   ],
   experienced: [
-    "Looking for high-potency options",
-    "What are your premium terpene blends?",
-    "Any new cannabinoid products?",
-    "Best ratio for pain management?",
-    "What's your strongest sleep formula?",
-    "Any limited edition or craft products?"
+    "Looking for high-THC flower",
+    "What exotic strains do you have?",
+    "Any live resin concentrates?",
+    "Best terp profiles for pain?",
+    "Strongest edibles available?",
+    "Any exclusive Premo products?"
   ],
   general: [
     "I can't sleep...",
-    "What helps with stress?",
+    "What helps with anxiety?",
     "Something for pain relief?",
     "Best for relaxation?",
     "Help with focus?",
-    "What's good for beginners?"
+    "What's popular at Premo?"
   ]
 }
 
@@ -47,19 +47,19 @@ const experienceLevels = [
   {
     id: 'new',
     label: 'New',
-    description: 'First time with hemp products',
+    description: 'First time with cannabis',
     icon: '🌱'
   },
   {
     id: 'casual',
     label: 'Casual',
-    description: 'Some experience, want guidance',
+    description: 'Some experience, exploring options',
     icon: '🌿'
   },
   {
     id: 'experienced',
     label: 'Experienced',
-    description: 'Know what works, want options',
+    description: 'Cannabis connoisseur',
     icon: '🧠'
   }
 ]
@@ -404,9 +404,14 @@ export default function SageApp() {
                   
                   {/* Powered by directly under logo */}
                   <div className="mb-6">
-                    <p className="text-lg text-slate-200 font-medium"
-                       style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>
-                      Powered by <span className="text-emerald-300 font-semibold">Green Valley Hemp</span>
+                    <div className="flex items-center justify-center gap-3">
+                      <p className="text-lg text-slate-200 font-medium"
+                         style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>
+                        Powered by <span className="text-emerald-300 font-semibold">Premo Cannabis Company</span>
+                      </p>
+                    </div>
+                    <p className="text-sm text-slate-300 mt-2">
+                      NJ's Premier Cannabis Dispensary • Keyport
                     </p>
                   </div>
                   
@@ -423,7 +428,7 @@ export default function SageApp() {
                        fontFamily: 'var(--font-poppins), system-ui, sans-serif',
                        textShadow: '0 2px 6px rgba(0,0,0,0.4)'
                      }}>
-                    Your AI Hemp Guide
+                    Your AI Cannabis Guide
                   </p>
                   <p className="text-xl text-slate-200 font-medium" 
                      style={{
@@ -511,7 +516,7 @@ export default function SageApp() {
                         fontFamily: 'var(--font-poppins), system-ui, sans-serif',
                         textShadow: '0 1px 3px rgba(0,0,0,0.4)'
                       }}>
-                        Your AI hemp guide is ready to help ✨
+                        Your AI cannabis guide is ready to help ✨
                       </p>
                       
                       {/* Magical experience level selector */}
