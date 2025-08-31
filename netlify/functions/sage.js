@@ -117,7 +117,13 @@ function searchProducts(query, limit = 3) {
     'energy': ['sativa', 'limonene', 'energizing', 'uplifting'],
     'anxiety': ['hybrid', 'cbd', 'linalool', 'calming'],
     'focus': ['sativa', 'pinene', 'focused', 'creative'],
-    'relax': ['indica', 'hybrid', 'myrcene', 'relaxed']
+    'relax': ['indica', 'hybrid', 'myrcene', 'relaxed'],
+    'social': ['hybrid', 'sativa', 'euphoric', 'happy', 'social'],
+    'wedding': ['hybrid', 'sativa', 'euphoric', 'happy', 'social'],
+    'event': ['hybrid', 'sativa', 'euphoric', 'happy', 'social'],
+    'party': ['hybrid', 'sativa', 'euphoric', 'happy', 'social'],
+    'nervous': ['hybrid', 'cbd', 'linalool', 'calming'],
+    'stress': ['indica', 'hybrid', 'myrcene', 'relaxed', 'calming']
   };
   
   for (const product of zenleafProducts) {
@@ -205,7 +211,7 @@ Keep response under 200 words. Emphasize ZenLeaf Neptune as New Jersey's premier
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    return response.text().strip();
+    return response.text().trim();
     
   } catch (error) {
     console.error('Gemini API error:', error);
@@ -237,6 +243,28 @@ function generateFallbackExplanation(userQuery) {
 • New Jersey 21+ adult use - bring valid ID
 • Our expert budtenders provide personalized guidance
 • Visit ZenLeaf Neptune for premium cannabis selection`;
+  }
+  
+  if (query.includes('wedding') || query.includes('social') || query.includes('event') || query.includes('nervous') || query.includes('party')) {
+    return `🎯 **Your Cannabis Options at ZenLeaf**
+• Wedding Cake hybrid strain (28.4% THC) - perfect name match for social confidence
+• Berry Bliss Gummies for discreet, manageable social effects  
+• Balanced hybrid strains that provide euphoric, happy effects without overwhelming sedation
+
+🧬 **Cannabis Science & Effects**
+• Caryophyllene terpene reduces social anxiety and stress
+• Balanced THC/CBD ratios provide confidence without paranoia
+• Hybrid effects offer social euphoria while maintaining mental clarity
+
+💡 **Consumption & Dosing**
+• Low-dose edibles (2.5-5mg) for controlled, long-lasting social comfort
+• Small flower hits 1-2 hours before event for optimal timing
+• Avoid high-THC sativas which may increase anxiety in social settings
+
+⚠️ **ZenLeaf Safety & Compliance**
+• Start with lower doses for social situations to avoid overconsumption
+• New Jersey 21+ adult use - bring valid ID to ZenLeaf Neptune
+• Our budtenders can recommend specific strains for social anxiety management`;
   }
   
   if (query.includes('sleep') || query.includes('insomnia')) {
