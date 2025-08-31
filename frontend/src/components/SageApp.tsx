@@ -150,7 +150,8 @@ export default function SageApp() {
   const fetchBackendProducts = async (query: string) => {
     try {
       console.log('Fetching products from backend for:', query)
-      const response = await fetch('http://localhost:8000/api/v1/products/search', {
+      const backendUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://zenleaf-backend.onrender.com';
+      const response = await fetch(`${backendUrl}/api/v1/products/search`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -189,7 +190,7 @@ export default function SageApp() {
       } else {
         console.error('Backend products API failed:', response.status)
         // Fallback to all products if search fails
-        const allProductsResponse = await fetch('http://localhost:8000/api/v1/products/')
+        const allProductsResponse = await fetch(`${backendUrl}/api/v1/products/`)
         if (allProductsResponse.ok) {
           const allProducts = await allProductsResponse.json()
           const transformedProducts = allProducts.slice(0, 3).map((product: any) => ({
@@ -235,30 +236,38 @@ export default function SageApp() {
     try {
       // Check if in development mode
       const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost'
-      const backendUrl = 'http://localhost:8000/api/v1/sage/ask'
       
-      let apiUrl = isDevelopment ? '/api/sage' : '/.netlify/functions/sage'
+      let apiUrl = '/.netlify/functions/sage' // Default to Netlify functions
       let requestBody = { 
-        query: searchQuery,
+        user_query: searchQuery, // Use user_query for Netlify function
         experience_level: selectedExperience || 'casual'
       }
       
-      // Try to use backend API in development if available
+      // Only try backend API in development if available
       if (isDevelopment) {
+        const backendUrl = 'http://localhost:8000'
+        const backendSageUrl = `${backendUrl}/api/v1/sage/ask`
+        
         try {
-          const healthCheck = await fetch('http://localhost:8000/health', { 
+          const healthCheck = await fetch(`${backendUrl}/health`, { 
             method: 'GET',
             signal: AbortSignal.timeout(2000) // 2 second timeout
           })
           if (healthCheck.ok) {
-            apiUrl = backendUrl
+            apiUrl = backendSageUrl
+            requestBody = { 
+              query: searchQuery, // Backend uses 'query' parameter
+              experience_level: selectedExperience || 'casual'
+            }
             console.log('Using backend API for development')
           } else {
-            console.log('Backend not available, using Next.js API route')
+            console.log('Backend not available, using Netlify functions')
           }
         } catch {
-          console.log('Backend not available, using Next.js API route')
+          console.log('Backend not available, using Netlify functions')
         }
+      } else {
+        console.log('Production mode: using Netlify functions')
       }
       
       console.log('Making request to:', apiUrl)

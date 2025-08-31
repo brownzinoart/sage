@@ -62,33 +62,47 @@ const zenleafProducts = [
   }
 ];
 
-// Cannabis knowledge base for ZenLeaf Neptune
+// ZenLeaf Neptune CANNABIS knowledge base (NOT HEMP)
 const CANNABIS_KNOWLEDGE = `
-ZEN LEAF NEPTUNE CANNABIS KNOWLEDGE:
+ZEN LEAF NEPTUNE - NEW JERSEY'S PREMIER CANNABIS DISPENSARY
 
 LOCATION: 2100 NJ-66, Neptune City, NJ • (908) 676-5936
+ADULT USE RECREATIONAL CANNABIS • 21+ ONLY
 HOURS: Mon 10AM-9PM, Tue 9AM-9PM, Wed-Sun 8AM-10PM
 
-STRAIN EFFECTS:
-• INDICA: Body relaxation, sedation, sleep aid, pain relief, evening use
-• SATIVA: Mental energy, creativity, focus, mood elevation, daytime use  
-• HYBRID: Balanced mind-body effects, versatile timing
+IMPORTANT: You are a cannabis consultant for ZenLeaf Neptune dispensary. Focus EXCLUSIVELY on cannabis (THC) products and education, NOT hemp or CBD-only products. This is a legal New Jersey cannabis dispensary serving adult recreational customers.
 
-THC POTENCY:
-• 15-20%: Moderate effects, good for casual users
-• 20-25%: Standard recreational potency 
-• 25%+: High potency, experienced users only
+CANNABIS STRAIN EFFECTS:
+• INDICA: Deep body relaxation, sedation, sleep aid, pain relief, evening/nighttime use
+• SATIVA: Mental energy, creativity, focus, mood elevation, daytime/social use  
+• HYBRID: Balanced mind-body effects, versatile for any time of day
 
-TERPENES:
-• MYRCENE: Sedating, muscle relaxant, sleep aid
-• LIMONENE: Mood boost, stress relief, citrus aroma
-• CARYOPHYLLENE: Pain relief, anti-inflammatory
-• LINALOOL: Calming, anxiety reduction
+THC POTENCY GUIDANCE:
+• BEGINNER (10-18% THC): New to cannabis, start low and go slow
+• CASUAL (18-25% THC): Some experience, standard recreational potency 
+• EXPERIENCED (25%+ THC): High tolerance, premium potency strains
 
-PRODUCT TYPES:
-• FLOWER: $52-68/eighth, immediate effects, 1-3 hours
-• EDIBLES: $32, 30-120min onset, 4-8 hour duration
-• VAPES: $45-62, immediate onset, discreet use
+KEY CANNABIS TERPENES:
+• MYRCENE: Sedating, muscle relaxant, couch-lock, sleep aid (indica dominant)
+• LIMONENE: Mood elevation, stress relief, citrus aroma, energy (sativa common)
+• CARYOPHYLLENE: Pain relief, anti-inflammatory, spicy aroma
+• LINALOOL: Calming, anxiety reduction, lavender scent
+• PINENE: Alertness, memory, focus, pine aroma
+
+ZENLEAF PRODUCT CATEGORIES:
+• PREMIUM FLOWER: $52-68/eighth, immediate effects, 1-3 hours, smoking/vaping
+• GUMMIES: $32, precise 10mg doses, 30-120min onset, 4-8 hour duration
+• VAPE CARTRIDGES: $45-62, immediate onset, discreet, portable
+• CONCENTRATES: $65-78, high potency 70%+ THC, intense effects
+• TINCTURES: $58, sublingual, 15-45min onset, precise dosing
+• PRE-ROLLS: $18-24, convenient, ready-to-use
+
+DISPENSARY BRANDS:
+• VERANO RESERVE: Premium craft cannabis, highest quality
+• (THE) ESSENCE: Reliable, consistent, great value  
+• ON THE ROCKS: Premium vape products
+• ENCORE: Precisely dosed edibles
+• SAVVY: Wellness-focused tinctures and topicals
 `;
 
 // Search products based on query intent
@@ -159,30 +173,35 @@ async function generateExplanation(userQuery, experienceLevel = 'casual') {
 User Experience Level: ${experienceLevel}
 User Query: "${userQuery}"
 
-As a cannabis consultant for Zen Leaf Neptune, provide a helpful response about cannabis products and recommendations. 
+You are ZenLeaf Neptune's expert cannabis consultant. Provide premium dispensary-level guidance about our cannabis products and strains. Focus EXCLUSIVELY on cannabis (THC products), NOT hemp or CBD-only products.
+
+For beginner queries ("never smoked before", "first time", etc.), recommend:
+• Low-THC strains (10-18% THC) like indica or indica-dominant hybrids
+• Start with small amounts and go slow approach  
+• Emphasize ZenLeaf's premium quality and expert budtender guidance
 
 Format your response with these exact sections:
 
-🌿 **Quick Answer**
-• 1-2 sentences about strain type recommendation (indica/sativa/hybrid)  
-• Include THC potency guidance for their experience level
+🎯 **Your Cannabis Options at ZenLeaf**
+• Specific strain type recommendations (indica/sativa/hybrid) with THC percentages
+• Why these strains work for their specific needs  
 
-🧬 **Science & Effects**
-• Key cannabinoids (THC, CBD, terpenes) relevant to their needs
-• Expected timeline and duration of effects
-• Why this approach works for their specific request
+🧬 **Cannabis Science & Effects**
+• THC and terpene profiles relevant to their request
+• Expected onset times and duration of effects
+• Scientific backing for strain selection
 
-💡 **How to Use** 
-• Consumption method recommendations
-• Dosing guidance by experience level  
-• Best timing for desired effects
+💡 **Consumption & Dosing**
+• Best consumption methods (flower, edibles, vapes)
+• Precise dosing guidance for their experience level
+• Optimal timing for desired effects
 
-⚠️ **Important Notes**
-• NJ legal compliance (21+ adult use)
-• Safety considerations
-• Start low guidance for new users
+⚠️ **ZenLeaf Safety & Compliance**
+• New Jersey 21+ adult use legal requirements
+• "Start low, go slow" guidance for new users
+• Visit our expert budtenders for personalized selection
 
-Keep response under 200 words total. Be direct and actionable.`;
+Keep response under 200 words. Emphasize ZenLeaf Neptune as New Jersey's premier cannabis dispensary. Be professional and educational.`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -194,32 +213,54 @@ Keep response under 200 words total. Be direct and actionable.`;
   }
 }
 
-// Fallback explanation when Gemini fails
+// Cannabis-focused fallback when Gemini fails
 function generateFallbackExplanation(userQuery) {
   const query = userQuery.toLowerCase();
   
-  if (query.includes('sleep') || query.includes('insomnia')) {
-    return `🌿 **Quick Answer**
-• Indica strains with myrcene terpene are ideal for sleep issues
-• Look for 20-25% THC for effective nighttime relief
+  if (query.includes('never smoked') || query.includes('first time') || query.includes('beginner')) {
+    return `🎯 **Your Cannabis Options at ZenLeaf**
+• Start with indica-dominant hybrids (15-18% THC) for gentle relaxation
+• Our budtenders recommend Northern Lights or Blue Dream for beginners
+• ZenLeaf's premium quality ensures consistent, safe experience
 
-🧬 **Science & Effects** 
-• Myrcene terpene promotes sedation and muscle relaxation
-• Effects typically begin within 5-15 minutes, lasting 2-4 hours
-• THC converts to CBN over time, enhancing sleep properties
+🧬 **Cannabis Science & Effects**
+• Lower THC percentages provide mild, manageable effects
+• Indica strains offer body relaxation without overwhelming psychoactivity  
+• Effects last 1-3 hours when smoked, 4-6 hours with edibles
 
-💡 **How to Use**
-• Consume 1-2 hours before desired bedtime
-• Start with small amounts - cannabis affects sleep architecture
-• Flower or tinctures work well for sleep applications
+💡 **Consumption & Dosing**
+• Start with 1-2 small puffs if smoking flower
+• Wait 15 minutes between doses to gauge effects
+• Consider 2.5mg edibles as alternative option
 
-⚠️ **Important Notes**
-• NJ legal compliance: 21+ adult use only
-• May cause morning grogginess if used too close to wake time
-• Consult budtender for personalized recommendations`;
+⚠️ **ZenLeaf Safety & Compliance**
+• New Jersey 21+ adult use - bring valid ID
+• Our expert budtenders provide personalized guidance
+• Visit ZenLeaf Neptune for premium cannabis selection`;
   }
   
-  return `I can help you find the right cannabis products for your needs. Let me search our ZenLeaf Neptune selection for you.`;
+  if (query.includes('sleep') || query.includes('insomnia')) {
+    return `🎯 **Your Cannabis Options at ZenLeaf**
+• Indica strains like Mag Landrace (26.8% THC) or Purple Punch for deep sleep
+• High myrcene terpene content promotes sedation and relaxation
+
+🧬 **Cannabis Science & Effects**
+• Myrcene terpene creates "couch-lock" and muscle relaxation
+• THC converts to CBN over time, enhancing sleep properties
+• Effects begin within 5-15 minutes, lasting 2-4 hours
+
+💡 **Consumption & Dosing**
+• Consume 1-2 hours before bedtime for optimal timing
+• Start with small amounts if new to cannabis
+• Flower smoking or tinctures work well for sleep
+
+⚠️ **ZenLeaf Safety & Compliance**  
+• Visit our Neptune City location for expert strain selection
+• 21+ adult use only - premium cannabis dispensary
+• Our budtenders help match strains to your sleep needs`;
+  }
+  
+  return `Welcome to ZenLeaf Neptune - New Jersey's premier cannabis dispensary! I can help you find the perfect cannabis strains and products for your needs. Visit us at 2100 NJ-66, Neptune City for expert guidance from our budtenders.`;
 }
 
 exports.handler = async (event, context) => {
@@ -248,7 +289,9 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { user_query, experience_level = 'casual' } = JSON.parse(event.body || '{}');
+    const body = JSON.parse(event.body || '{}');
+    const user_query = body.user_query || body.query; // Support both parameter names
+    const experience_level = body.experience_level || 'casual';
     
     if (!user_query) {
       return {
@@ -257,7 +300,7 @@ exports.handler = async (event, context) => {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ error: 'user_query is required' })
+        body: JSON.stringify({ error: 'user_query or query parameter is required' })
       };
     }
 

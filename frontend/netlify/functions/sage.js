@@ -41,7 +41,17 @@ exports.handler = async (event, context) => {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
         
-        const prompt = `You are Sage, an AI assistant specializing in hemp, CBD, and cannabis wellness education. 
+        const prompt = `You are Sage, ZenLeaf Neptune's AI cannabis consultant specializing in cannabis education and product recommendations for our premium New Jersey dispensary.
+        
+        CONTEXT: You represent ZenLeaf Neptune dispensary in Neptune City, NJ - a premium adult-use recreational cannabis dispensary serving customers 21+. Focus EXCLUSIVELY on cannabis (THC) products and education, NOT hemp or CBD-only products.
+        
+        BRANDING: Always refer to "cannabis" not "hemp." You're helping customers find the right cannabis strains and products at ZenLeaf Neptune.
+        
+        For beginner queries ("never smoked before", "first time", etc.), recommend:
+        - Low-THC strains (10-15% THC)  
+        - Indica or hybrid strains for relaxation
+        - Start low, go slow approach
+        - Emphasize ZenLeaf's premium quality and expert budtender guidance 
         User's experience level: ${experience_level}
         User query: ${query}
         
@@ -154,64 +164,65 @@ function generateExplanation(query, experienceLevel) {
   }
 
   // Default response
-  return `I'd love to help you explore the world of hemp and cannabinoids! There are over 100 different cannabinoids in hemp, each with unique properties that can support various aspects of wellness. Whether you're looking for relaxation, better sleep, pain relief, or just general wellness support, there's likely a cannabinoid or combination that can help. The key is finding what works best for your specific needs and starting with appropriate doses.\n\n📚 **Key Benefits**\n• CBD: Non-psychoactive, anti-inflammatory, calming\n• CBG: Focus and energy, "mother cannabinoid"\n• CBN: Sleep support, relaxation\n• Delta-8/HHC: Legal euphoria, mild psychoactive effects\n\n🔬 **Research Insights**\n• Over 100 cannabinoids identified in hemp\n• Entourage effect enhances individual benefits\n• Terpenes contribute to effects and flavors\n\n💡 **How to Use**\n• Start with low doses and increase gradually\n• Different methods have different onset times\n• Consistency is key for therapeutic benefits\n\n⚠️ **Important Notes**\n• Consult healthcare provider before starting\n• Quality varies between manufacturers\n• Third-party lab testing ensures purity`;
+  return `Welcome to your cannabis journey with ZenLeaf Neptune! I'm here to help you find the perfect cannabis strain from our premium selection. As New Jersey's premier adult-use dispensary in Neptune City, we offer top-quality cannabis products with expert guidance from our experienced budtenders. Whether you're looking for relaxation, better sleep, pain relief, or just general wellness support, there's likely a cannabinoid or combination that can help. The key is finding what works best for your specific needs and starting with appropriate doses.\n\n📚 **Key Benefits**\n• CBD: Non-psychoactive, anti-inflammatory, calming\n• CBG: Focus and energy, "mother cannabinoid"\n• CBN: Sleep support, relaxation\n• Delta-8/HHC: Legal euphoria, mild psychoactive effects\n\n🔬 **Research Insights**\n• Over 100 cannabinoids identified in hemp\n• Entourage effect enhances individual benefits\n• Terpenes contribute to effects and flavors\n\n💡 **How to Use**\n• Start with low doses and increase gradually\n• Different methods have different onset times\n• Consistency is key for therapeutic benefits\n\n⚠️ **Important Notes**\n• Consult healthcare provider before starting\n• Quality varies between manufacturers\n• Third-party lab testing ensures purity`;
 }
 
 function getMatchingProducts(queryLower) {
+  // ZenLeaf Neptune Cannabis Products
   const allProducts = [
     {
       id: "1",
-      name: "Sleep Support CBN Tincture",
-      description: "High-CBN formula specifically designed for deep, restful sleep. Combines CBN with melatonin for enhanced sleep support.",
-      price: "$58.99",
-      category: "Sleep",
-      cbd_mg: 15,
-      thc_mg: 0,
+      name: "Northern Lights (Indica)",
+      description: "Classic indica strain perfect for beginners. 18% THC with deeply relaxing effects for sleep and stress relief.",
+      price: "$45.00",
+      category: "Flower",
+      cbd_mg: 0.5,
+      thc_mg: 18,
       cbg_mg: 0,
-      cbn_mg: 20,
+      cbn_mg: 0,
       cbc_mg: 0,
-      effects: ["sleep", "sedating", "deep-rest", "nighttime"],
+      effects: ["relaxed", "sleepy", "happy", "euphoric"],
       terpenes: { myrcene: 3.1, linalool: 1.8 },
       lab_tested: true,
       in_stock: true,
-      brand: "Hemp Generation",
-      product_type: "tincture"
+      brand: "ZenLeaf",
+      product_type: "flower"
     },
     {
       id: "2", 
-      name: "Delta-8 Relaxation Gummies",
-      description: "Hemp-derived Delta-8 THC gummies for mild euphoria and relaxation. Legal alternative with smooth, mellow effects.",
-      price: "$34.99",
-      category: "Edibles",
-      cbd_mg: 2,
-      thc_mg: 0,
+      name: "Blue Dream (Hybrid)",
+      description: "Popular hybrid strain perfect for new users. 20% THC with balanced effects - relaxing yet uplifting.",
+      price: "$50.00",
+      category: "Flower",
+      cbd_mg: 0.8,
+      thc_mg: 20,
       cbg_mg: 1,
-      cbn_mg: 3,
+      cbn_mg: 0,
       cbc_mg: 0,
-      effects: ["relaxation", "mild-euphoria", "stress-relief", "mood-enhancement", "legal-high"],
+      effects: ["relaxed", "creative", "euphoric", "uplifted"],
       terpenes: { myrcene: 1.2, limonene: 1.8, linalool: 0.9 },
       lab_tested: true,
       in_stock: true,
-      brand: "Hemp Generation",
-      product_type: "edible"
+      brand: "ZenLeaf",
+      product_type: "flower"
     },
     {
       id: "3",
-      name: "CBD Wellness Tincture",
-      description: "Premium full-spectrum CBD oil for daily wellness support. Contains beneficial terpenes and minor cannabinoids.",
-      price: "$45.99",
-      category: "Wellness",
-      cbd_mg: 30,
-      thc_mg: 0.3,
+      name: "Sour Diesel (Sativa)",
+      description: "Energizing sativa strain ideal for daytime use. 22% THC with uplifting, creative effects perfect for social activities.",
+      price: "$48.00",
+      category: "Flower",
+      cbd_mg: 0.3,
+      thc_mg: 22,
       cbg_mg: 2,
-      cbn_mg: 1,
+      cbn_mg: 0,
       cbc_mg: 1,
-      effects: ["wellness", "balance", "calm", "daily-support"],
+      effects: ["energetic", "happy", "uplifted", "creative"],
       terpenes: { limonene: 2.1, pinene: 1.5, linalool: 1.0 },
       lab_tested: true,
       in_stock: true,
-      brand: "Hemp Generation", 
-      product_type: "tincture"
+      brand: "ZenLeaf", 
+      product_type: "flower"
     }
   ];
 
