@@ -105,68 +105,10 @@ DISPENSARY BRANDS:
 • SAVVY: Wellness-focused tinctures and topicals
 `;
 
-// Search products based on query intent
-function searchProducts(query, limit = 3) {
-  const results = [];
-  const queryLower = query.toLowerCase();
-  
-  // Intent mapping for cannabis effects
-  const intentMapping = {
-    'sleep': ['indica', 'myrcene', 'linalool', 'sedating', 'relaxing'],
-    'pain': ['indica', 'hybrid', 'caryophyllene', 'pain-relief'],
-    'energy': ['sativa', 'limonene', 'energizing', 'uplifting'],
-    'anxiety': ['hybrid', 'cbd', 'linalool', 'calming'],
-    'focus': ['sativa', 'pinene', 'focused', 'creative'],
-    'relax': ['indica', 'hybrid', 'myrcene', 'relaxed'],
-    'social': ['hybrid', 'sativa', 'euphoric', 'happy', 'social'],
-    'wedding': ['hybrid', 'sativa', 'euphoric', 'happy', 'social'],
-    'event': ['hybrid', 'sativa', 'euphoric', 'happy', 'social'],
-    'party': ['hybrid', 'sativa', 'euphoric', 'happy', 'social'],
-    'nervous': ['hybrid', 'cbd', 'linalool', 'calming'],
-    'stress': ['indica', 'hybrid', 'myrcene', 'relaxed', 'calming']
-  };
-  
-  for (const product of zenleafProducts) {
-    let score = 0;
-    
-    // Direct name matching
-    if (queryLower.includes(product.name.toLowerCase())) {
-      score += 15;
-    }
-    
-    // Intent-based matching
-    for (const [intent, keywords] of Object.entries(intentMapping)) {
-      if (queryLower.includes(intent)) {
-        // Check strain type
-        if (keywords.includes(product.strain_type)) score += 30;
-        // Check dominant terpene  
-        if (keywords.includes(product.dominant_terpene)) score += 25;
-        // Check effects
-        const hasEffect = product.effects.some(effect => 
-          keywords.some(keyword => effect.includes(keyword))
-        );
-        if (hasEffect) score += 20;
-        break;
-      }
-    }
-    
-    // Category matching
-    if (queryLower.includes('flower') && product.category === 'flower') score += 10;
-    if (queryLower.includes('edible') && product.category === 'edibles') score += 10;
-    
-    if (score > 0) {
-      results.push({ ...product, match_score: score });
-    }
-  }
-  
-  // Sort by score and return top results
-  return results.sort((a, b) => b.match_score - a.match_score).slice(0, limit);
-}
-
-// Generate AI explanation using Gemini
-async function generateExplanation(userQuery, experienceLevel = 'casual') {
+// Generate AI explanation and select products using Gemini
+async function generateEnhancedResponse(userQuery, experienceLevel = 'casual', products) {
   try {
-    const model = genAI.getGenerativeModel({ 
+    const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
       generationConfig: {
         temperature: 0.7,
@@ -174,122 +116,63 @@ async function generateExplanation(userQuery, experienceLevel = 'casual') {
       }
     });
 
+    const productList = JSON.stringify(
+      products.map(({ id, name, strain_type, thc_percentage, dominant_terpene, effects, description }) =>
+        ({ id, name, strain_type, thc_percentage, dominant_terpene, effects, description })
+      ),
+      null,
+      2
+    );
+
     const prompt = `${CANNABIS_KNOWLEDGE}
+
+AVAILABLE CANNABIS PRODUCTS:
+${productList}
 
 User Experience Level: ${experienceLevel}
 User Query: "${userQuery}"
 
-You are ZenLeaf Neptune's expert cannabis consultant. Provide premium dispensary-level guidance about our cannabis products and strains. Focus EXCLUSIVELY on cannabis (THC products), NOT hemp or CBD-only products.
+You are ZenLeaf Neptune's expert cannabis consultant. Your task is to provide a premium, personalized cannabis consultation based on the user's query and experience level, using ONLY the products from the AVAILABLE CANNABIS PRODUCTS list.
 
-For beginner queries ("never smoked before", "first time", etc.), recommend:
-• Low-THC strains (10-18% THC) like indica or indica-dominant hybrids
-• Start with small amounts and go slow approach  
-• Emphasize ZenLeaf's premium quality and expert budtender guidance
+**CRITICAL INSTRUCTIONS:**
+1.  **Analyze the User Query:** Understand the user's needs (e.g., sleep, energy, social anxiety).
+2.  **Select 1-3 Products:** Choose the most suitable products from the list.
+3.  **Generate Explanation:** Write a detailed explanation formatted with the exact sections below.
+4.  **Embed Product IDs:** At the very end of your response, you MUST include a line with the chosen product IDs in this exact format:
+    RECOMMENDED_PRODUCTS=[id_1,id_2,...]
 
-Format your response with these exact sections:
+**RESPONSE FORMAT:**
 
 🎯 **Your Cannabis Options at ZenLeaf**
-• Specific strain type recommendations (indica/sativa/hybrid) with THC percentages
-• Why these strains work for their specific needs  
+• Recommend the specific strains you selected from the list.
+• Explain WHY these specific products are ideal for the user's needs, referencing their effects, THC, and terpenes.
 
 🧬 **Cannabis Science & Effects**
-• THC and terpene profiles relevant to their request
-• Expected onset times and duration of effects
-• Scientific backing for strain selection
+• Explain the science behind your recommendations (e.g., "The myrcene in Mag Landrace promotes relaxation...").
+• Detail the expected onset and duration for the recommended product types (flower, edibles).
 
 💡 **Consumption & Dosing**
-• Best consumption methods (flower, edibles, vapes)
-• Precise dosing guidance for their experience level
-• Optimal timing for desired effects
+• Provide specific dosing advice for the selected products and user's experience level.
+• Suggest the best time and method to consume the recommended products.
 
 ⚠️ **ZenLeaf Safety & Compliance**
-• New Jersey 21+ adult use legal requirements
-• "Start low, go slow" guidance for new users
-• Visit our expert budtenders for personalized selection
+• Remind users of the "start low, go slow" principle.
+• State the NJ 21+ adult use requirement.
+• Encourage a visit to ZenLeaf Neptune for more expert advice.
 
-Keep response under 200 words. Emphasize ZenLeaf Neptune as New Jersey's premier cannabis dispensary. Be professional and educational.`;
+Keep the tone professional, educational, and focused on customer care. Emphasize ZenLeaf's premium quality.`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
     return response.text().trim();
-    
+
   } catch (error) {
     console.error('Gemini API error:', error);
-    return generateFallbackExplanation(userQuery);
+    // Fallback explanation should still be cannabis-focused
+    return `Welcome to ZenLeaf Neptune! We're currently experiencing high demand. Based on your query for "${userQuery}", we generally recommend exploring our indica strains for relaxation or sativa strains for energy. Please visit our dispensary at 2100 NJ-66, Neptune City, where our expert budtenders can provide a personalized consultation. RECOMMENDED_PRODUCTS=[]`;
   }
 }
 
-// Cannabis-focused fallback when Gemini fails
-function generateFallbackExplanation(userQuery) {
-  const query = userQuery.toLowerCase();
-  
-  if (query.includes('never smoked') || query.includes('first time') || query.includes('beginner')) {
-    return `🎯 **Your Cannabis Options at ZenLeaf**
-• Start with indica-dominant hybrids (15-18% THC) for gentle relaxation
-• Our budtenders recommend Northern Lights or Blue Dream for beginners
-• ZenLeaf's premium quality ensures consistent, safe experience
-
-🧬 **Cannabis Science & Effects**
-• Lower THC percentages provide mild, manageable effects
-• Indica strains offer body relaxation without overwhelming psychoactivity  
-• Effects last 1-3 hours when smoked, 4-6 hours with edibles
-
-💡 **Consumption & Dosing**
-• Start with 1-2 small puffs if smoking flower
-• Wait 15 minutes between doses to gauge effects
-• Consider 2.5mg edibles as alternative option
-
-⚠️ **ZenLeaf Safety & Compliance**
-• New Jersey 21+ adult use - bring valid ID
-• Our expert budtenders provide personalized guidance
-• Visit ZenLeaf Neptune for premium cannabis selection`;
-  }
-  
-  if (query.includes('wedding') || query.includes('social') || query.includes('event') || query.includes('nervous') || query.includes('party')) {
-    return `🎯 **Your Cannabis Options at ZenLeaf**
-• Wedding Cake hybrid strain (28.4% THC) - perfect name match for social confidence
-• Berry Bliss Gummies for discreet, manageable social effects  
-• Balanced hybrid strains that provide euphoric, happy effects without overwhelming sedation
-
-🧬 **Cannabis Science & Effects**
-• Caryophyllene terpene reduces social anxiety and stress
-• Balanced THC/CBD ratios provide confidence without paranoia
-• Hybrid effects offer social euphoria while maintaining mental clarity
-
-💡 **Consumption & Dosing**
-• Low-dose edibles (2.5-5mg) for controlled, long-lasting social comfort
-• Small flower hits 1-2 hours before event for optimal timing
-• Avoid high-THC sativas which may increase anxiety in social settings
-
-⚠️ **ZenLeaf Safety & Compliance**
-• Start with lower doses for social situations to avoid overconsumption
-• New Jersey 21+ adult use - bring valid ID to ZenLeaf Neptune
-• Our budtenders can recommend specific strains for social anxiety management`;
-  }
-  
-  if (query.includes('sleep') || query.includes('insomnia')) {
-    return `🎯 **Your Cannabis Options at ZenLeaf**
-• Indica strains like Mag Landrace (26.8% THC) or Purple Punch for deep sleep
-• High myrcene terpene content promotes sedation and relaxation
-
-🧬 **Cannabis Science & Effects**
-• Myrcene terpene creates "couch-lock" and muscle relaxation
-• THC converts to CBN over time, enhancing sleep properties
-• Effects begin within 5-15 minutes, lasting 2-4 hours
-
-💡 **Consumption & Dosing**
-• Consume 1-2 hours before bedtime for optimal timing
-• Start with small amounts if new to cannabis
-• Flower smoking or tinctures work well for sleep
-
-⚠️ **ZenLeaf Safety & Compliance**  
-• Visit our Neptune City location for expert strain selection
-• 21+ adult use only - premium cannabis dispensary
-• Our budtenders help match strains to your sleep needs`;
-  }
-  
-  return `Welcome to ZenLeaf Neptune - New Jersey's premier cannabis dispensary! I can help you find the perfect cannabis strains and products for your needs. Visit us at 2100 NJ-66, Neptune City for expert guidance from our budtenders.`;
-}
 
 exports.handler = async (event, context) => {
   // Handle CORS
@@ -318,9 +201,9 @@ exports.handler = async (event, context) => {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const user_query = body.user_query || body.query; // Support both parameter names
+    const user_query = body.user_query || body.query;
     const experience_level = body.experience_level || 'casual';
-    
+
     if (!user_query) {
       return {
         statusCode: 400,
@@ -332,27 +215,40 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Generate AI explanation
-    const explanation = await generateExplanation(user_query, experience_level);
-    
-    // Search matching products
-    const products = searchProducts(user_query, 3);
+    // Generate AI explanation and get product recommendations in one call
+    const rawResponse = await generateEnhancedResponse(user_query, experience_level, zenleafProducts);
 
-    // Transform products to expected format
-    const transformedProducts = products.map(product => ({
+    // Extract explanation and product IDs
+    let explanation = rawResponse;
+    let recommendedIds = [];
+
+    const match = rawResponse.match(/RECOMMENDED_PRODUCTS=\[(.*?)\]/);
+    if (match && match[1]) {
+      recommendedIds = match[1].split(',').map(id => id.trim()).filter(id => id);
+      // Clean the recommendation line from the user-facing explanation
+      explanation = rawResponse.replace(/RECOMMENDED_PRODUCTS=\[(.*?)\]/, '').trim();
+    }
+
+    // Filter products based on AI recommendations
+    const recommendedProducts = zenleafProducts.filter(p => recommendedIds.includes(p.id));
+    
+    // If AI fails to recommend specific products, fall back to showing the top 3 products
+    const productsToDisplay = recommendedProducts.length > 0 ? recommendedProducts : zenleafProducts.slice(0, 3);
+
+    // Transform products to the format expected by the frontend
+    const transformedProducts = productsToDisplay.map(product => ({
       id: product.id,
       name: product.name,
       brand: product.brand,
       description: product.description,
-      price: `$${product.price}`,
-      category: product.strain_type ? 
-        product.strain_type.charAt(0).toUpperCase() + product.strain_type.slice(1) : 
+      price: `$${product.price.toFixed(2)}`, // Ensure price is a string with two decimals
+      category: product.strain_type ?
+        product.strain_type.charAt(0).toUpperCase() + product.strain_type.slice(1) :
         'Cannabis',
       thc_percentage: product.thc_percentage,
       cbd_percentage: product.cbd_percentage,
       dominant_terpene: product.dominant_terpene,
       effects: product.effects,
-      match_score: product.match_score,
       strain_type: product.strain_type,
       product_type: product.category
     }));
@@ -366,6 +262,7 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         explanation,
         products: transformedProducts,
+        // Mocked educational resources as before
         educational_resources: {
           studies: [],
           papers: []
@@ -379,14 +276,13 @@ exports.handler = async (event, context) => {
 
   } catch (error) {
     console.error('Sage function error:', error);
-    
     return {
       statusCode: 500,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         error: 'Internal server error',
         message: error.message
       })
