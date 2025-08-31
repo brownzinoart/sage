@@ -470,14 +470,14 @@ export default function SageApp() {
                       />
                       <p className="text-lg text-slate-200 font-medium"
                          style={{textShadow: '0 2px 4px rgba(0,0,0,0.4)'}}>
-                        Powered by ZenLeaf
+                        Zen Leaf Neptune
                       </p>
                     </div>
                     <p className="text-sm text-slate-300 mt-2">
-                      🌿 Premium Cannabis Dispensary • Legal Cannabis • Philadelphia Area
+                      🌿 Premium Cannabis Dispensary • Neptune City, NJ • Adult Use Recreational
                     </p>
                     <p className="text-xs text-slate-400 mt-1">
-                      21+ Adult Use • Medical & Recreational • Premium Cannabis Products
+                      21+ Adult Use • Open 8AM-10PM • 2100 NJ-66, Neptune City
                     </p>
                   </div>
                   
@@ -494,14 +494,14 @@ export default function SageApp() {
                        fontFamily: 'var(--font-poppins), system-ui, sans-serif',
                        textShadow: '0 2px 6px rgba(0,0,0,0.4)'
                      }}>
-                    Your AI Cannabis Guide for NJ
+                    Find Your Zen • Relax. Recharge. Refresh.
                   </p>
                   <p className="text-xl text-slate-200 font-medium" 
                      style={{
                        fontFamily: 'var(--font-poppins), system-ui, sans-serif',
                        textShadow: '0 2px 4px rgba(0,0,0,0.3)'
                      }}>
-                    ✨ THC & CBD • NJ Legal • Expert Guidance
+                    ✨ Premium Cannabis • Expert Budtenders • Quality Guaranteed
                   </p>
                 </div>
               </div>
@@ -1021,7 +1021,7 @@ export default function SageApp() {
                 <span className="text-sm font-medium text-orange-300">ZenLeaf Cannabis Products</span>
               </div>
               <h3 className="text-2xl font-light text-white mb-3" style={{textShadow: '0 2px 4px rgba(0,0,0,0.6)'}}>
-                Available at ZenLeaf Dispensary - Philadelphia Area
+                Available at Zen Leaf Neptune - Neptune City, NJ
               </h3>
               <p className="text-slate-200" style={{textShadow: '0 1px 3px rgba(0,0,0,0.5)'}}>THC & CBD products matching your needs - Visit us or order online</p>
             </div>
@@ -1456,7 +1456,7 @@ export default function SageApp() {
                 </div>
                 <div className="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 backdrop-blur-sm rounded-full px-6 py-3 border border-emerald-400/30">
                   <p className="text-sm text-emerald-300 font-medium">
-                    🏪 Visit ZenLeaf Dispensary - Philadelphia Area • Premium Cannabis
+                    🏪 Visit Zen Leaf Neptune - 2100 NJ-66, Neptune City • Premium Cannabis
                   </p>
                   <p className="text-xs text-slate-400 mt-1 text-center">
                     Mon-Sat: 9AM-10PM | Sun: 10AM-9PM | 

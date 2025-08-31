@@ -15,20 +15,27 @@ class MockDatabase:
         self.load_sample_products()
     
     def load_sample_products(self):
-        """Load sample products from JSON file - prioritize NJ products for NJ branch"""
+        """Load sample products from JSON file - prioritize ZenLeaf Neptune products"""
         try:
-            # Try NJ products first (for NJ branch)
-            nj_data_file = Path(__file__).parent.parent.parent.parent / "data" / "nj_sample_products.json"
-            if nj_data_file.exists():
-                with open(nj_data_file, 'r') as f:
+            # Try ZenLeaf Neptune products first
+            zenleaf_data_file = Path(__file__).parent.parent.parent.parent / "data" / "zenleaf_neptune_products.json"
+            if zenleaf_data_file.exists():
+                with open(zenleaf_data_file, 'r') as f:
                     sample_products = json.load(f)
-                print(f"✅ Loading NJ cannabis products")
+                print(f"✅ Loading ZenLeaf Neptune cannabis products")
             else:
-                # Fallback to hemp products
-                data_file = Path(__file__).parent.parent.parent.parent / "data" / "sample_products.json"
-                with open(data_file, 'r') as f:
-                    sample_products = json.load(f)
-                print(f"✅ Loading hemp products")
+                # Fallback to generic NJ products
+                nj_data_file = Path(__file__).parent.parent.parent.parent / "data" / "nj_sample_products.json"
+                if nj_data_file.exists():
+                    with open(nj_data_file, 'r') as f:
+                        sample_products = json.load(f)
+                    print(f"✅ Loading NJ cannabis products")
+                else:
+                    # Final fallback to hemp products
+                    data_file = Path(__file__).parent.parent.parent.parent / "data" / "sample_products.json"
+                    with open(data_file, 'r') as f:
+                        sample_products = json.load(f)
+                    print(f"✅ Loading hemp products")
             
             # Convert to internal format with UUIDs
             for product in sample_products:
