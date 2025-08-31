@@ -255,29 +255,42 @@ TONE: Helpful, knowledgeable, concise. Skip filler words and reassurances."""
             logger.error(f"Gemini API error: {e}")
             return self._fallback_explanation(user_query)
 
-    async def search_products(self, user_query: str, explanation: str) -> List[Dict[str, Any]]:
-        """Search for relevant products from real database"""
+    async def search_products(self, user_query: str, explanation: str, educational_data: Optional[Dict] = None) -> List[Dict[str, Any]]:
+        """Search for relevant products using research-enhanced matching"""
         
         if not DB_AVAILABLE or not mock_db:
             return self._fallback_products(user_query)
 
         try:
-            # Search products based on query
-            products = await mock_db.search_products(user_query, limit=3)
+            # Enhance search query with research findings
+            enhanced_query = self._enhance_query_with_research(user_query, educational_data)
+            
+            # Search products with enhanced query
+            products = await mock_db.search_products(enhanced_query, limit=3)
+            
+            # If no matches with enhanced query, try original
+            if not products:
+                products = await mock_db.search_products(user_query, limit=3)
+            
+            # Apply research-based scoring adjustments
+            if products and educational_data:
+                products = self._adjust_scores_with_research(products, educational_data, user_query)
             
             if not products:
-                # Fallback to basic query terms if no matches
-                query_terms = ['cbd', 'sleep', 'pain', 'anxiety']
-                for term in query_terms:
+                # Fallback to evidence-based query terms
+                research_terms = self._extract_research_terms(educational_data) if educational_data else []
+                fallback_terms = research_terms + ['cannabis', 'cannabinoid', 'terpene', 'strain']
+                
+                for term in fallback_terms:
                     if term in user_query.lower():
                         products = await mock_db.search_products(term, limit=3)
                         break
             
-            # If still no products, get first 3 products as fallback
+            # If still no products, get scientifically relevant defaults
             if not products:
-                products = mock_db.products[:3]
+                products = self._get_research_based_defaults(user_query, educational_data)
                 for product in products:
-                    product['match_score'] = 1
+                    product['match_score'] = 5  # Low but non-zero score
             
             # Format products for frontend
             formatted_products = []
@@ -355,6 +368,115 @@ TONE: Helpful, knowledgeable, concise. Skip filler words and reassurances."""
         logger.info(f"Educational summary created: {len(studies)} studies, {len(key_findings)} findings, {len(safety_notes)} safety notes")
         
         return summary_result
+
+    def _enhance_query_with_research(self, user_query: str, educational_data: Optional[Dict]) -> str:
+        """Enhance search query with research findings"""
+        if not educational_data:
+            return user_query
+            
+        enhanced_terms = [user_query]
+        
+        # Extract key terms from research studies
+        studies = educational_data.get('studies', [])
+        for study in studies[:3]:  # Use top 3 studies
+            title = study.get('title', '').lower()
+            # Extract cannabis-relevant terms from study titles
+            cannabis_terms = ['cannabinoid', 'thc', 'cbd', 'terpene', 'cannabis', 'indica', 'sativa']
+            for term in cannabis_terms:
+                if term in title and term not in enhanced_terms:
+                    enhanced_terms.append(term)
+        
+        return ' '.join(enhanced_terms)
+    
+    def _adjust_scores_with_research(self, products: List[Dict], educational_data: Dict, user_query: str) -> List[Dict]:
+        """Adjust product scores based on research evidence"""
+        studies = educational_data.get('studies', [])
+        if not studies:
+            return products
+            
+        # Extract research-supported cannabinoids and terpenes
+        research_cannabinoids = set()
+        research_terpenes = set()
+        
+        for study in studies:
+            title = study.get('title', '').lower()
+            abstract = study.get('abstract', '').lower()
+            text = f"{title} {abstract}"
+            
+            # Identify mentioned cannabinoids
+            cannabinoids = ['thc', 'cbd', 'cbg', 'cbn', 'cbc', 'delta-9']
+            for cannabinoid in cannabinoids:
+                if cannabinoid in text:
+                    research_cannabinoids.add(cannabinoid)
+                    
+            # Identify mentioned terpenes  
+            terpenes = ['myrcene', 'limonene', 'pinene', 'linalool', 'caryophyllene']
+            for terpene in terpenes:
+                if terpene in text:
+                    research_terpenes.add(terpene)
+        
+        # Adjust scores based on research alignment
+        for product in products:
+            research_bonus = 0
+            dominant_terpene = product.get('dominant_terpene', '').lower()
+            
+            # Bonus for research-supported terpenes
+            if dominant_terpene in research_terpenes:
+                research_bonus += 15
+                
+            # Bonus for research-supported cannabinoid profiles
+            if product.get('thc_percentage', 0) > 0 and 'thc' in research_cannabinoids:
+                research_bonus += 10
+            if product.get('cbd_percentage', 0) > 0 and 'cbd' in research_cannabinoids:
+                research_bonus += 10
+                
+            product['match_score'] = product.get('match_score', 0) + research_bonus
+            product['research_supported'] = research_bonus > 0
+            
+        return sorted(products, key=lambda x: x.get('match_score', 0), reverse=True)
+    
+    def _extract_research_terms(self, educational_data: Dict) -> List[str]:
+        """Extract relevant search terms from research data"""
+        terms = []
+        studies = educational_data.get('studies', [])
+        
+        for study in studies[:2]:  # Top 2 studies
+            title = study.get('title', '').lower()
+            # Extract key cannabis terms
+            key_terms = ['sleep', 'pain', 'anxiety', 'epilepsy', 'inflammation', 'nausea']
+            for term in key_terms:
+                if term in title and term not in terms:
+                    terms.append(term)
+                    
+        return terms
+    
+    def _get_research_based_defaults(self, user_query: str, educational_data: Optional[Dict]) -> List[Dict]:
+        """Get default products based on research patterns"""
+        if not mock_db or not mock_db.products:
+            return []
+            
+        # Get top 3 products by scientific relevance
+        relevant_products = []
+        
+        for product in mock_db.products:
+            relevance_score = 0
+            
+            # Prefer products with lab testing
+            if product.get('lab_tested', False):
+                relevance_score += 10
+                
+            # Prefer products with terpene data
+            if product.get('dominant_terpene'):
+                relevance_score += 8
+                
+            # Prefer balanced cannabinoid profiles
+            if product.get('cbd_percentage', 0) > 0:
+                relevance_score += 5
+                
+            product['match_score'] = relevance_score
+            relevant_products.append(product)
+            
+        return sorted(relevant_products, key=lambda x: x.get('match_score', 0), reverse=True)[:3]
 
     def _fallback_explanation(self, user_query: str) -> str:
         """Simple fallback when Gemini unavailable"""

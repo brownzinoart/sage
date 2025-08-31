@@ -53,56 +53,106 @@ class MockDatabase:
         results = []
         query_lower = query.lower()
         
-        # Intent-based matching for both hemp and cannabis products
+        # Enhanced intent-based matching for ZenLeaf Neptune cannabis products
         intent_mapping = {
-            # Cannabis strain effects (NJ)
-            'relaxing': ['indica', 'myrcene', 'linalool'],
-            'energizing': ['sativa', 'limonene', 'pinene'],
-            'creative': ['sativa', 'hybrid', 'terpinolene', 'limonene'],
-            'focus': ['sativa', 'pinene', 'limonene'],
-            'euphoric': ['hybrid', 'sativa', 'limonene'],
-            'sleep': ['indica', 'myrcene', 'linalool', 'cbn'],
-            'pain': ['indica', 'hybrid', 'caryophyllene', 'myrcene'],
-            'uplifting': ['sativa', 'limonene', 'pinene'],
-            'calming': ['indica', 'linalool', 'myrcene'],
-            # Hemp derivative effects (other states)
-            'high': ['delta-8', 'delta-9', 'hhc', 'thca', 'thcp'],
-            'legal high': ['delta-8', 'hhc', 'delta-10', 'thca'],
-            'buzz': ['delta-8', 'hhc', 'delta-10'],
-            'party': ['delta-8', 'hhc', 'delta-10', 'blend'],
-            'social': ['delta-8', 'hhc', 'blend'],
-            'anxiety': ['cbd', 'delta-8'],
-            'microdose': ['delta-9'],
-            'appetite': ['thcv'],
-            'weight': ['thcv']
+            # Primary cannabis effects (ZenLeaf Neptune focus)
+            'sleep': ['indica', 'myrcene', 'linalool', 'cbn', 'sedating', 'sleepy'],
+            'insomnia': ['indica', 'myrcene', 'linalool', 'cbn', 'sedating', 'sleepy'],
+            'relaxing': ['indica', 'hybrid', 'myrcene', 'linalool', 'relaxed'],
+            'pain': ['indica', 'hybrid', 'caryophyllene', 'myrcene', 'pain-relief'],
+            'chronic pain': ['indica', 'caryophyllene', 'myrcene', 'pain-relief', 'anti-inflammatory'],
+            'energy': ['sativa', 'limonene', 'pinene', 'energizing', 'uplifting'],
+            'energizing': ['sativa', 'limonene', 'pinene', 'energizing', 'uplifting'],
+            'focus': ['sativa', 'hybrid', 'pinene', 'limonene', 'focused', 'creative'],
+            'creativity': ['sativa', 'hybrid', 'terpinolene', 'limonene', 'creative'],
+            'creative': ['sativa', 'hybrid', 'terpinolene', 'limonene', 'creative'],
+            'anxiety': ['indica', 'hybrid', 'linalool', 'cbd', 'calming', 'stress-relief'],
+            'stress': ['hybrid', 'linalool', 'limonene', 'stress-relief', 'calming'],
+            'mood': ['sativa', 'hybrid', 'limonene', 'uplifting', 'happy', 'euphoric'],
+            'depression': ['sativa', 'limonene', 'pinene', 'uplifting', 'mood-boost'],
+            'social': ['hybrid', 'sativa', 'limonene', 'social', 'talkative', 'euphoric'],
+            'party': ['sativa', 'hybrid', 'limonene', 'energizing', 'social'],
+            # Product type preferences
+            'beginner': ['hybrid', 'low-thc', 'balanced', 'gentle'],
+            'new user': ['hybrid', 'low-thc', 'balanced', 'gentle'],
+            'experienced': ['high-thc', 'potent', 'strong'],
+            'strong': ['high-thc', 'potent', 'intense'],
+            # Consumption preferences
+            'discrete': ['vape', 'edible', 'tincture'],
+            'quick': ['flower', 'vape', 'immediate'],
+            'long lasting': ['edible', 'tincture', 'topical'],
+            # Brand preferences (ZenLeaf Neptune)
+            'premium': ['verano', 'reserve', 'craft', 'artisan'],
+            'affordable': ['essence', 'value', 'budget'],
+            # Time-based usage
+            'daytime': ['sativa', 'hybrid', 'energizing', 'focused'],
+            'nighttime': ['indica', 'sedating', 'relaxing', 'sleep'],
+            'morning': ['sativa', 'energizing', 'uplifting', 'focused'],
+            'evening': ['indica', 'hybrid', 'relaxing', 'calming']
         }
         
         for product in self.products:
             score = 0
             
-            # Direct name/description matching
-            if query_lower in product['name'].lower():
-                score += 15
-            if query_lower in product.get('description', '').lower():
-                score += 8
-            
-            # Intent-based matching (strain type, subcategory, terpenes)
+            # Extract product characteristics
+            product_name = product['name'].lower()
+            product_brand = product.get('brand', '').lower()
+            product_desc = product.get('description', '').lower()
             subcategory = product.get('subcategory', '').lower()
-            strain_type = product.get('strain_type', '').lower() 
+            strain_type = product.get('strain_type', '').lower()
             dominant_terpene = product.get('dominant_terpene', '').lower()
+            product_type = product.get('product_type', '').lower()
+            effects = [effect.lower() for effect in product.get('effects', [])]
+            thc_percentage = product.get('thc_percentage', 0)
             
+            # Direct name/brand/description matching (higher priority)
+            if query_lower in product_name:
+                score += 25  # Increased from 15
+            if query_lower in product_brand:
+                score += 15  # Brand matching
+            if query_lower in product_desc:
+                score += 10  # Increased from 8
+            
+            # Multi-intent matching (can match multiple intents)
+            matched_intents = 0
             for intent, preferred_types in intent_mapping.items():
                 if intent in query_lower:
-                    # Check strain type (indica/sativa/hybrid)
+                    matched_intents += 1
+                    intent_score = 0
+                    
+                    # Strain type matching (primary indicator)
                     if strain_type in preferred_types:
-                        score += 30
-                    # Check subcategory (delta-8, live_resin, etc)
-                    if subcategory in preferred_types:
-                        score += 25
-                    # Check dominant terpene
+                        intent_score += 35  # Increased from 30
+                    
+                    # Effect matching (direct effect correlation)
+                    effect_matches = sum(1 for effect in effects if any(pref in effect for pref in preferred_types))
+                    intent_score += effect_matches * 15
+                    
+                    # Terpene matching (scientific backing)
                     if dominant_terpene in preferred_types:
-                        score += 20
-                    break
+                        intent_score += 25  # Increased from 20
+                    
+                    # Product type matching
+                    if product_type in preferred_types or subcategory in preferred_types:
+                        intent_score += 20
+                    
+                    # THC potency matching for experience level
+                    if 'beginner' in intent or 'new user' in intent:
+                        if 15 <= thc_percentage <= 20:  # Ideal for beginners
+                            intent_score += 15
+                        elif thc_percentage > 25:  # Too strong for beginners
+                            intent_score -= 10
+                    elif 'experienced' in intent or 'strong' in intent:
+                        if thc_percentage > 25:  # High potency
+                            intent_score += 15
+                        elif thc_percentage < 20:  # May be too weak
+                            intent_score -= 5
+                    
+                    score += intent_score
+            
+            # Bonus for multiple intent matches (comprehensive products)
+            if matched_intents > 1:
+                score += matched_intents * 5
             
             # Strain name and terpene matching
             if strain_type in ['indica', 'sativa', 'hybrid']:
