@@ -107,9 +107,13 @@ export default function SageApp() {
     console.log('Loading state changed:', isLoading)
   }, [isLoading])
 
-  // Safety: Reset loading state on mount
+  // Safety: Reset loading state on mount and set default products
   useEffect(() => {
     setIsLoading(false)
+    // Initialize with default ZenLeaf products
+    if (demoProducts.length === 0) {
+      setDefaultProducts()
+    }
   }, [])
   const [demoProducts, setDemoProducts] = useState<any[]>([])
 
@@ -146,78 +150,53 @@ export default function SageApp() {
     setCurrentPromptIndex(0)
   }, [selectedExperience])
 
-  // Function to fetch products directly from backend
-  const fetchBackendProducts = async (query: string) => {
-    try {
-      console.log('Fetching products from backend for:', query)
-      const backendUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://zenleaf-backend.onrender.com';
-      const response = await fetch(`${backendUrl}/api/v1/products/search`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: query,
-          limit: 5
-        }),
-      })
-      
-      if (response.ok) {
-        const products = await response.json()
-        console.log('Backend products:', products)
-        // Transform backend products to match expected format
-        const transformedProducts = products.map((product: any) => ({
-          id: product.id,
-          name: product.name,
-          brand: product.brand || 'ZenLeaf',
-          description: product.description,
-          price: `$${product.price}`,
-          category: product.strain_type ? product.strain_type.charAt(0).toUpperCase() + product.strain_type.slice(1) : 'Cannabis',
-          thc_percentage: product.thc_percentage,
-          cbd_percentage: product.cbd_percentage,
-          dominant_terpene: product.dominant_terpene,
-          effects: product.effects,
-          terpenes: product.terpenes,
-          lab_tested: product.lab_tested,
-          lab_report_url: product.lab_report_url,
-          match_score: product.match_score,
-          strain_type: product.strain_type,
-          product_type: product.product_type,
-          batch_number: product.batch_number,
-          harvest_date: product.harvest_date
-        }))
-        setDemoProducts(transformedProducts)
-      } else {
-        console.error('Backend products API failed:', response.status)
-        // Fallback to all products if search fails
-        const allProductsResponse = await fetch(`${backendUrl}/api/v1/products/`)
-        if (allProductsResponse.ok) {
-          const allProducts = await allProductsResponse.json()
-          const transformedProducts = allProducts.slice(0, 3).map((product: any) => ({
-            id: product.id,
-            name: product.name,
-            brand: product.brand || 'ZenLeaf',
-            description: product.description,
-            price: `$${product.price}`,
-            category: product.strain_type ? product.strain_type.charAt(0).toUpperCase() + product.strain_type.slice(1) : 'Cannabis',
-            thc_percentage: product.thc_percentage,
-            cbd_percentage: product.cbd_percentage,
-            dominant_terpene: product.dominant_terpene,
-            effects: product.effects,
-            terpenes: product.terpenes,
-            lab_tested: product.lab_tested,
-            lab_report_url: product.lab_report_url,
-            strain_type: product.strain_type,
-            product_type: product.product_type,
-            batch_number: product.batch_number,
-            harvest_date: product.harvest_date
-          }))
-          setDemoProducts(transformedProducts)
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching backend products:', error)
+  // Static ZenLeaf Neptune cannabis products as reliable fallback
+  const staticProducts = [
+    {
+      id: 'zln_001',
+      name: 'Mag Landrace',
+      brand: 'Verano Reserve',
+      description: 'Premium indica landrace strain with deep relaxation effects. Perfect for evening use and sleep support.',
+      price: '$65.00',
+      category: 'Indica',
+      thc_percentage: 26.8,
+      cbd_percentage: 0.4,
+      strain_type: 'indica',
+      effects: ['deeply-relaxing', 'sedating', 'pain-relief', 'sleep-aid', 'body-high'],
+      product_type: 'flower'
+    },
+    {
+      id: 'zln_002',
+      name: 'Super Lemon Haze',
+      brand: '(the) Essence',
+      description: 'Energizing sativa with bright citrus flavors. Ideal for daytime creativity and social activities.',
+      price: '$52.00',
+      category: 'Sativa',
+      thc_percentage: 22.3,
+      cbd_percentage: 0.2,
+      strain_type: 'sativa',
+      effects: ['energizing', 'creative', 'uplifting', 'focused', 'euphoric'],
+      product_type: 'flower'
+    },
+    {
+      id: 'zln_003',
+      name: 'Wedding Cake',
+      brand: 'Verano Reserve',
+      description: 'Premium hybrid with sweet vanilla notes. Balanced effects perfect for any time of day.',
+      price: '$68.00',
+      category: 'Hybrid',
+      thc_percentage: 28.4,
+      cbd_percentage: 0.3,
+      strain_type: 'hybrid',
+      effects: ['balanced', 'euphoric', 'relaxed', 'happy', 'creative'],
+      product_type: 'flower'
     }
+  ]
+
+  // Set static products as default
+  const setDefaultProducts = () => {
+    console.log('Setting default ZenLeaf cannabis products')
+    setDemoProducts(staticProducts)
   }
 
   const handleSearch = async () => {
@@ -229,46 +208,22 @@ export default function SageApp() {
     
     // Add timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
-      console.warn('Search timeout - resetting loading state')
+      console.warn('Search timeout - providing fallback response')
       setIsLoading(false)
-    }, 15000) // 15 second timeout
+      setExplanation('Welcome to ZenLeaf Neptune! Here are some of our premium cannabis strains perfect for your needs.')
+      setDefaultProducts()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 10000) // 10 second timeout
     
     try {
-      // Check if in development mode
-      const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost'
-      
-      let apiUrl = '/.netlify/functions/sage' // Default to Netlify functions
-      let requestBody = { 
-        user_query: searchQuery, // Use user_query for Netlify function
+      // Always use Netlify functions for consistent behavior
+      const apiUrl = '/.netlify/functions/sage'
+      const requestBody = { 
+        user_query: searchQuery,
         experience_level: selectedExperience || 'casual'
       }
       
-      // Only try backend API in development if available
-      if (isDevelopment) {
-        const backendUrl = 'http://localhost:8000'
-        const backendSageUrl = `${backendUrl}/api/v1/sage/ask`
-        
-        try {
-          const healthCheck = await fetch(`${backendUrl}/health`, { 
-            method: 'GET',
-            signal: AbortSignal.timeout(2000) // 2 second timeout
-          })
-          if (healthCheck.ok) {
-            apiUrl = backendSageUrl
-            requestBody = { 
-              query: searchQuery, // Backend uses 'query' parameter
-              experience_level: selectedExperience || 'casual'
-            }
-            console.log('Using backend API for development')
-          } else {
-            console.log('Backend not available, using Netlify functions')
-          }
-        } catch {
-          console.log('Backend not available, using Netlify functions')
-        }
-      } else {
-        console.log('Production mode: using Netlify functions')
-      }
+      console.log('Using Netlify functions for cannabis consultation')
       
       console.log('Making request to:', apiUrl)
       
@@ -276,13 +231,20 @@ export default function SageApp() {
         throw new Error('API URL is not configured properly')
       }
       
+      // Add AbortController for better timeout handling
+      const controller = new AbortController()
+      const timeoutSignal = setTimeout(() => controller.abort(), 8000) // 8 second request timeout
+      
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
+        signal: controller.signal
       })
+      
+      clearTimeout(timeoutSignal)
       
       console.log('Response status:', response.status)
       
@@ -291,11 +253,15 @@ export default function SageApp() {
         console.log('Response data:', data)
         console.log('Full explanation text:', data.explanation)
         
-        // Use the Gemini-generated explanation (now that API is working properly)
-        setExplanation(data.explanation || `I can help you find the perfect cannabis strain for your needs. Let me search our ZenLeaf selection.`)
+        // Use the explanation from Netlify function
+        setExplanation(data.explanation || `Welcome to ZenLeaf Neptune! I can help you find the perfect cannabis strains from our premium selection.`)
         
-        // Always fetch our NJ cannabis products regardless of Sage response
-        await fetchBackendProducts(searchQuery)
+        // Use products from Sage API response or fallback to static products
+        if (data.products && data.products.length > 0) {
+          setDemoProducts(data.products)
+        } else {
+          setDefaultProducts()
+        }
         
         if (data.educational_resources) {
           setEducationalResources(data.educational_resources)
@@ -308,18 +274,26 @@ export default function SageApp() {
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         console.error('API response not OK:', response.status)
-        setExplanation('I can help you find the perfect cannabis strain for your needs. Let me search our available products.')
-        // Fetch products directly from backend when Sage API fails
-        await fetchBackendProducts(searchQuery)
+        setExplanation('Welcome to ZenLeaf Neptune! I can help you find the perfect cannabis strains from our premium selection.')
+        // Use static products when API fails
+        setDefaultProducts()
         // Scroll to top for fallback response too
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
     } catch (error) {
       console.error('Error calling Sage API:', error)
-      setExplanation('I can help you find the perfect cannabis strain for your needs. Let me search our available products.')
-      // Fetch products directly from backend when error occurs
-      await fetchBackendProducts(searchQuery)
-      // Scroll to top for error fallback too
+      
+      // Provide helpful error messages based on error type
+      if (error instanceof Error && error.name === 'AbortError') {
+        setExplanation('Request timed out, but no worries! Here are some excellent cannabis options from ZenLeaf Neptune.')
+      } else if (error instanceof TypeError && error.message.includes('fetch')) {
+        setExplanation('Network issue detected. Here are our top cannabis recommendations while we resolve connectivity.')
+      } else {
+        setExplanation('Welcome to ZenLeaf Neptune! Here are some premium cannabis strains perfect for your needs.')
+      }
+      
+      // Always show products even when API fails
+      setDefaultProducts()
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } finally {
       clearTimeout(timeoutId)
@@ -624,7 +598,13 @@ export default function SageApp() {
                               <button
                                 key={strainType}
                                 type="button"
-                                onClick={() => fetchBackendProducts(strainType)}
+                                onClick={() => {
+                              // Filter static products by strain type
+                              const filtered = staticProducts.filter(p => 
+                                p.strain_type.toLowerCase() === strainType.toLowerCase()
+                              )
+                              setDemoProducts(filtered.length > 0 ? filtered : staticProducts)
+                            }}
                                 className="px-3 py-1 text-xs font-medium rounded-full bg-white/10 text-slate-300 hover:bg-emerald-400/20 hover:text-emerald-200 transition-all duration-200 border border-white/20 hover:border-emerald-300/30"
                               >
                                 {strainType.charAt(0).toUpperCase() + strainType.slice(1)}
@@ -760,28 +740,12 @@ export default function SageApp() {
                   </div>
                   <div className="flex-1">
                     <div className="space-y-4 text-slate-700">
-                      {(() => {
-                        console.log('All sections:', explanation.split('\n\n').map(s => s.substring(0, 50)));
-                        return null;
-                      })()}
-                      {explanation.split('\n\n').map((section, idx, allSections) => {
-                        // Skip pathway detail sections that come after the header
-                        if (idx > 0 && section.trim().startsWith('**') && 
-                            !section.trim().startsWith('📚') && 
-                            !section.trim().startsWith('🔬') && 
-                            !section.trim().startsWith('💡') && 
-                            !section.trim().startsWith('⚠️')) {
-                          // Check if there's a pathway header in the previous 3 sections
-                          for (let i = Math.max(0, idx - 3); i < idx; i++) {
-                            if (allSections[i] && (allSections[i].trim().startsWith('🎯 **Your') || allSections[i].trim().startsWith('🎯 **Pathways'))) {
-                              console.log('Skipping pathway section at index', idx);
-                              return null; // Skip this section, it's part of pathways
-                            }
-                          }
-                        }
+                      {/* Simplified response parsing - no complex pathway logic */}
+                      {explanation.split('\n\n').filter(section => section.trim()).map((section, idx) => {
+                        const trimmedSection = section.trim();
                         
-                        // Natural language intro at the top
-                        if (idx === 0 && !section.trim().startsWith('📚') && !section.trim().startsWith('🔬') && !section.trim().startsWith('💡') && !section.trim().startsWith('⚠️') && !section.trim().startsWith('🎯')) {
+                        // Main intro text (first non-emoji section)
+                        if (idx === 0 || (!trimmedSection.startsWith('🎯') && !trimmedSection.startsWith('📚') && !trimmedSection.startsWith('🔬') && !trimmedSection.startsWith('💡') && !trimmedSection.startsWith('⚠️'))) {
                           return (
                             <div key={idx} className="text-lg leading-relaxed text-slate-700 mb-6">
                               {section}
@@ -789,175 +753,69 @@ export default function SageApp() {
                           )
                         }
                         
-                        // New pathway options section  
-                        if (section.trim().startsWith('🎯 **Your') || section.trim().startsWith('🎯 **Pathways')) {
-                          // Extract just the title from the first part
-                          const titleMatch = section.match(/🎯 \*\*([^*]+)\*\*/);
-                          const title = titleMatch ? titleMatch[1].trim() : 'Your Options';
-                          
-                          console.log('Full pathway section:', section);
-                          console.log('Section length:', section.length);
-                          
-                          // The pathways appear to be in the NEXT sections after this header
-                          // Let's collect them from subsequent sections
-                          const pathways: Array<{title: string, details: string[]}> = [];
-                          
-                          // Look at the next few sections for pathway content
-                          for (let nextIdx = idx + 1; nextIdx < allSections.length && nextIdx <= idx + 3; nextIdx++) {
-                            const nextSection = allSections[nextIdx];
-                            console.log(`Checking section ${nextIdx} for pathways:`, nextSection?.substring(0, 80));
-                            
-                            if (nextSection && nextSection.trim().startsWith('**') && 
-                                !nextSection.trim().startsWith('📚') && 
-                                !nextSection.trim().startsWith('🔬') && 
-                                !nextSection.trim().startsWith('💡') && 
-                                !nextSection.trim().startsWith('⚠️')) {
-                              
-                              // This is a pathway section
-                              const lines = nextSection.split('\n');
-                              const pathwayTitle = lines[0];
-                              const pathwayDetails = lines.slice(1).filter(line => line.trim());
-                              
-                              pathways.push({
-                                title: pathwayTitle,
-                                details: pathwayDetails
-                              });
-                              
-                              console.log('Added pathway:', pathwayTitle);
-                            }
-                          }
-                          
-                          console.log('Parsed pathways:', pathways);
-                          
+                        // Cannabis Options section
+                        if (trimmedSection.startsWith('🎯')) {
                           return (
                             <div key={idx} className="bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-50 rounded-xl p-6 border border-emerald-200 shadow-lg shadow-emerald-100/50">
                               <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-md">
                                   <span className="text-xl">🎯</span>
                                 </div>
-                                <h3 className="font-bold text-emerald-900 text-xl">{title}</h3>
+                                <h3 className="font-bold text-emerald-900 text-xl">Your Cannabis Options</h3>
                               </div>
-                              <div className="grid gap-4">
-                                {pathways.map((pathway, pathIdx) => (
-                                  <div key={pathIdx} className="group hover:scale-[1.02] transition-transform duration-200">
-                                    <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border-l-4 border-emerald-400 shadow-md hover:shadow-lg transition-shadow">
-                                      <div className="font-semibold text-emerald-800 text-lg mb-2">
-                                        {pathway.title.replace(/\*\*/g, '')}
-                                      </div>
-                                      <div className="text-sm text-slate-700 space-y-1 pl-2">
-                                        {pathway.details.map((detail, detailIdx) => (
-                                          <div key={detailIdx} className="flex items-start">
-                                            {detail.startsWith('•') ? (
-                                              <span className="text-emerald-500 mr-2">{detail.substring(0, 1)}</span>
-                                            ) : null}
-                                            <span>{detail.startsWith('•') ? detail.substring(1).trim() : detail}</span>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
+                              <div className="text-emerald-800 space-y-2 pl-2 whitespace-pre-line">
+                                {section.replace(/🎯\s*\*\*[^*]+\*\*\s*/, '').trim()}
                               </div>
                             </div>
                           )
                         }
                         
-                        if (section.trim().startsWith('🌿 **Quick Answer**')) {
-                          // Skip this section - we don't want the Quick Answer card
-                          return null
-                        }
-                        
-                        if (section.trim().startsWith('📚 **Key Benefits**')) {
-                          return (
-                            <div key={idx} className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200 shadow-md">
-                              <div className="flex items-center gap-3 mb-3">
-                                <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg flex items-center justify-center shadow">
-                                  <span className="text-lg">📚</span>
-                                </div>
-                                <h3 className="font-bold text-blue-900 text-lg">Key Benefits</h3>
-                              </div>
-                              <div className="text-blue-800 space-y-2 pl-2">
-                                {section.split('\n').slice(1).map((line, lineIdx) => 
-                                  line.trim().startsWith('•') ? (
-                                    <div key={lineIdx} className="flex items-start gap-2">
-                                      <span className="text-blue-500 mt-1">•</span>
-                                      <span className="text-sm">{line.replace('•', '').trim()}</span>
-                                    </div>
-                                  ) : null
-                                )}
-                              </div>
-                            </div>
-                          )
-                        }
-                        
-                        if (section.trim().startsWith('🔬 **Research Insights**')) {
+                        // Science & Effects section
+                        if (trimmedSection.startsWith('🧬')) {
                           return (
                             <div key={idx} className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-5 border border-purple-200 shadow-md">
-                              <div className="flex items-start justify-between mb-2">
-                                <div className="flex items-start gap-2">
-                                  <span className="text-xl">🔬</span>
-                                  <h3 className="font-bold text-purple-800 text-lg">Research Insights</h3>
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-violet-500 rounded-lg flex items-center justify-center shadow">
+                                  <span className="text-lg">🧬</span>
                                 </div>
-                                {educationalResources?.research_studies?.papers?.length && (
-                                  <button
-                                    onClick={() => setResearchOverlayOpen(true)}
-                                    className="text-xs text-purple-600 hover:text-purple-800 bg-purple-100 hover:bg-purple-200 px-3 py-1 rounded-full transition-colors"
-                                  >
-                                    View {educationalResources.research_studies.papers.length} Studies
-                                  </button>
-                                )}
+                                <h3 className="font-bold text-purple-900 text-lg">Cannabis Science & Effects</h3>
                               </div>
-                              <div className="text-purple-700 space-y-1">
-                                {section.split('\n').slice(1).map((line, lineIdx) => 
-                                  line.trim().startsWith('•') ? (
-                                    <div key={lineIdx} className="flex items-start gap-2">
-                                      <span className="text-purple-600 mt-1">•</span>
-                                      <span>{line.replace('•', '').trim()}</span>
-                                    </div>
-                                  ) : null
-                                )}
+                              <div className="text-purple-800 space-y-2 pl-2 whitespace-pre-line">
+                                {section.replace(/🧬\s*\*\*[^*]+\*\*\s*/, '').trim()}
                               </div>
                             </div>
                           )
                         }
                         
-                        if (section.trim().startsWith('💡 **How to Use**')) {
+                        // Consumption & Dosing section
+                        if (trimmedSection.startsWith('💡')) {
                           return (
-                            <div key={idx} className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-                              <div className="flex items-start gap-2 mb-2">
-                                <span className="text-xl">💡</span>
-                                <h3 className="font-bold text-orange-800 text-lg">How to Use</h3>
+                            <div key={idx} className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-5 border border-orange-200 shadow-md">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-amber-500 rounded-lg flex items-center justify-center shadow">
+                                  <span className="text-lg">💡</span>
+                                </div>
+                                <h3 className="font-bold text-orange-900 text-lg">Consumption & Dosing</h3>
                               </div>
-                              <div className="text-orange-700 space-y-1">
-                                {section.split('\n').slice(1).map((line, lineIdx) => 
-                                  line.trim().startsWith('•') ? (
-                                    <div key={lineIdx} className="flex items-start gap-2">
-                                      <span className="text-orange-600 mt-1">•</span>
-                                      <span>{line.replace('•', '').trim()}</span>
-                                    </div>
-                                  ) : null
-                                )}
+                              <div className="text-orange-800 space-y-2 pl-2 whitespace-pre-line">
+                                {section.replace(/💡\s*\*\*[^*]+\*\*\s*/, '').trim()}
                               </div>
                             </div>
                           )
                         }
                         
-                        if (section.trim().startsWith('⚠️ **Important Notes**')) {
+                        // Safety & Compliance section
+                        if (trimmedSection.startsWith('⚠️')) {
                           return (
-                            <div key={idx} className="bg-red-50 rounded-lg p-4 border border-red-200">
-                              <div className="flex items-start gap-2 mb-2">
-                                <span className="text-xl">⚠️</span>
-                                <h3 className="font-bold text-red-800 text-lg">Important Notes</h3>
+                            <div key={idx} className="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-5 border border-red-200 shadow-md">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-pink-500 rounded-lg flex items-center justify-center shadow">
+                                  <span className="text-lg">⚠️</span>
+                                </div>
+                                <h3 className="font-bold text-red-900 text-lg">ZenLeaf Safety & Compliance</h3>
                               </div>
-                              <div className="text-red-700 space-y-1">
-                                {section.split('\n').slice(1).map((line, lineIdx) => 
-                                  line.trim().startsWith('•') ? (
-                                    <div key={lineIdx} className="flex items-start gap-2">
-                                      <span className="text-red-600 mt-1">•</span>
-                                      <span>{line.replace('•', '').trim()}</span>
-                                    </div>
-                                  ) : null
-                                )}
+                              <div className="text-red-800 space-y-2 pl-2 whitespace-pre-line">
+                                {section.replace(/⚠️\s*\*\*[^*]+\*\*\s*/, '').trim()}
                               </div>
                             </div>
                           )
