@@ -1,0 +1,19 @@
+[build]
+  base = "frontend"
+  publish = "out"
+  command = "npm ci && npm run build"
+
+[build.environment]
+  NETLIFY = "true"
+  NODE_VERSION = "18"
+  GEMINI_API_KEY = "AIzaSyDd5fe13886Gew4q6-xpDBRzpzryd8yfBE"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+
+[functions]
+  directory = "netlify/functions/"

@@ -1,0 +1,23 @@
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "18"
+  # Set GEMINI_API_KEY in Netlify UI or env, do not commit secrets
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  # With build.base = "frontend", use ../functions to point to codex_refac/functions
+  directory = "../functions"
+  included_files = ["../functions/**"]
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"

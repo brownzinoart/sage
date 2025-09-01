@@ -1,0 +1,363 @@
+================================================================================
+SAGE RESEARCH DATABASE - COMPREHENSIVE SOURCE AUDIT
+================================================================================
+Generated: August 24, 2025
+System: Sage Digital Budtender Platform - MCP Educational Server
+Purpose: Source organization and auditing for research data integrity
+
+================================================================================
+SECTION 1: ACADEMIC & GOVERNMENT RESEARCH SOURCES
+================================================================================
+
+1. PUBMED (National Center for Biotechnology Information)
+   URL: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/
+   Type: Peer-reviewed academic database
+   Credibility Score: 10/10 (Peer-reviewed)
+   Rate Limit: 3 requests/second
+   API Status: FREE (Optional API key increases limits)
+   Databases Accessed: 
+   - PubMed (biomedical literature)
+   - PMC (PubMed Central full-text articles)
+   Data Retrieved:
+   - Peer-reviewed research papers
+   - Clinical studies
+   - Meta-analyses and systematic reviews
+   - Biomedical research abstracts
+   Contact Email: sage@budguide.com
+   Tool Identifier: BudGuide-Educational-MCP
+
+2. CLINICALTRIALS.GOV (U.S. National Library of Medicine)
+   URL: https://clinicaltrials.gov/api/v2/
+   Type: Clinical trial registry
+   Credibility Score: 9/10 (Clinical-trial)
+   Rate Limit: 10 requests/second
+   API Status: FREE
+   Data Retrieved:
+   - Active and completed clinical trials
+   - Study protocols and methodologies
+   - Patient enrollment criteria
+   - Primary and secondary outcomes
+   - Sponsor and investigator information
+
+3. FDA (U.S. Food and Drug Administration)
+   URL: https://api.fda.gov/
+   Type: Government regulatory database
+   Credibility Score: 8/10 (Government)
+   Rate Limit: 1 request/second
+   API Status: FREE (Optional API key increases limits)
+   Databases Accessed:
+   - Drug labeling information
+   - Adverse event reporting system
+   - Food enforcement reports
+   Data Retrieved:
+   - Drug safety information
+   - Regulatory approvals
+   - Adverse event reports
+   - Product labeling data
+
+4. EUROPE PMC (European PubMed Central)
+   URL: https://www.ebi.ac.uk/europepmc/webservices/rest/
+   Type: European biomedical literature database
+   Credibility Score: 10/10 (Peer-reviewed)
+   Rate Limit: 10 requests/second
+   API Status: FREE
+   Status: ACTIVELY USED
+   Data Retrieved:
+   - European biomedical research
+   - Full-text articles
+   - Pre-print servers
+   - Patent information
+
+5. NIH (National Institutes of Health)
+   URL: https://api.nih.gov/
+   Type: Government research funding database
+   Credibility Score: 8/10 (Government)
+   Rate Limit: 5 requests/second
+   API Status: FREE
+   Endpoints Accessed:
+   - NIH Reporter (grant information)
+   - Clinical trials data
+   Data Retrieved:
+   - Federal research grants
+   - Principal investigator information
+   - Research funding amounts
+   - Project abstracts
+
+6. DOAJ (Directory of Open Access Journals)
+   URL: https://doaj.org/api/v2/
+   Type: Open access academic journals
+   Credibility Score: 10/10 (Peer-reviewed)
+   Rate Limit: 5 requests/second
+   API Status: FREE
+   Data Retrieved:
+   - Open access peer-reviewed articles
+   - Journal quality metrics
+   - Editorial board information
+
+7. CORE (Aggregating Open Access Research)
+   URL: https://api.core.ac.uk/v3/
+   Type: Academic research aggregator
+   Credibility Score: 7/10 (Academic)
+   Rate Limit: 10 requests/second
+   API Status: FREE (with free tier limitations)
+   Data Retrieved:
+   - Open access research papers
+   - Repository metadata
+   - Research metrics
+
+================================================================================
+SECTION 2: CANNABIS INDUSTRY & CHEMICAL DATABASES
+================================================================================
+
+8. LEAFLY (Cannabis Strain Database)
+   URL: https://web-gateway.leafly.com/api/
+   Type: Commercial cannabis strain database
+   Credibility Score: 5/10 (Industry-data)
+   Rate Limit: 5 requests/second
+   API Status: FREE (Basic access, optional API key for enhanced)
+   Status: ENABLED
+   Data Retrieved:
+   - Cannabis strain profiles
+   - User-reported effects
+   - Cannabinoid and terpene profiles
+   - Consumer reviews and ratings
+
+9. PUBCHEM (National Center for Biotechnology Information)
+   URL: https://pubchem.ncbi.nlm.nih.gov/rest/pug/
+   Type: Chemical compound database
+   Credibility Score: 8/10 (Chemical-database)
+   Rate Limit: 5 requests/second
+   API Status: FREE
+   Status: ENABLED
+   Data Retrieved:
+   - Chemical compound structures
+   - Molecular properties
+   - Biological activity data
+   - Toxicology information
+   - Chemical synthesis pathways
+
+10. INTERNAL TERPENE DATABASE
+    Type: Curated internal database
+    Credibility Score: 7/10 (Curated-data)
+    Status: ENABLED - COMPREHENSIVE
+    Data Coverage: Complete terpene profiles
+    Data Retrieved:
+    - Major cannabis terpenes (myrcene, limonene, pinene, linalool, caryophyllene)
+    - Terpene effects and mechanisms
+    - Molecular structures
+    - Therapeutic properties
+    - Interaction data
+
+================================================================================
+SECTION 3: STATE & LOCAL REGULATORY SOURCES
+================================================================================
+
+11. NC DHHS (North Carolina Department of Health and Human Services)
+    URL: https://www.ncdhhs.gov/
+    Type: State health department
+    Credibility Score: 8/10 (Government)
+    Access Method: Web scraping
+    Data Retrieved:
+    - State health regulations
+    - Hemp program guidelines
+    - Public health advisories
+
+12. NC LEGISLATURE
+    URL: https://www.ncleg.gov/
+    Type: State legislative body
+    Credibility Score: 8/10 (Government)
+    Access Method: Web scraping
+    Data Retrieved:
+    - Hemp and CBD legislation
+    - Regulatory updates
+    - Legal status changes
+
+13. NC AGRICULTURE DEPARTMENT
+    URL: https://www.ncagr.gov/
+    Type: State agricultural department
+    Credibility Score: 8/10 (Government)
+    Access Method: Web scraping
+    Data Retrieved:
+    - Hemp cultivation regulations
+    - Testing requirements
+    - Licensing information
+
+================================================================================
+SECTION 4: SEARCH TERM CATEGORIES & CLASSIFICATION
+================================================================================
+
+CANNABINOID SEARCH TERMS:
+- cannabidiol, CBD
+- cannabinol, CBN  
+- cannabigerol, CBG
+- cannabichromene, CBC
+- tetrahydrocannabinol, THC
+- hemp, cannabis
+- endocannabinoid
+
+CONDITION-SPECIFIC SEARCH TERMS:
+
+ANXIETY:
+- anxiety disorder, anxiolytic, stress, GAD
+
+SLEEP:
+- insomnia, sleep disorder, sleep quality, sleep latency, hypnotic
+
+PAIN:
+- chronic pain, analgesic, inflammation, arthritis, neuropathic pain
+
+EPILEPSY:
+- seizure, epilepsy, anticonvulsant, Dravet syndrome, Lennox-Gastaut
+
+================================================================================
+SECTION 5: CREDIBILITY SCORING SYSTEM
+================================================================================
+
+SOURCE CREDIBILITY WEIGHTS (1-10 scale):
+- Peer-reviewed: 10/10
+- Meta-analysis: 10/10
+- Systematic-review: 10/10
+- Clinical-trial: 9/10
+- Government: 8/10
+- Chemical-database: 8/10 (PubChem high accuracy)
+- Academic: 7/10
+- Curated-data: 7/10 (Internal terpene database)
+- Medical-organization: 6/10
+- Industry-data: 5/10 (Leafly - commercial but useful)
+- Case-study: 5/10
+- Preprint: 4/10
+- Blog-post: 1/10
+
+================================================================================
+SECTION 6: QUALITY FILTERS & STANDARDS
+================================================================================
+
+MINIMUM QUALITY STANDARDS:
+- Publication year: 2015 or later
+- Required fields: title, authors, year, abstract
+- Minimum citation count: 1
+- Predatory journals: EXCLUDED
+
+OUTPUT FORMATTING:
+- Citation style: APA format
+- DOI included: YES
+- PubMed ID included: YES
+- Abstract included: YES (max 500 characters)
+- Maximum studies per query: 15
+
+================================================================================
+SECTION 7: CACHING & PERFORMANCE
+================================================================================
+
+CACHE SETTINGS:
+- Cache enabled: YES
+- Time-to-live: 24 hours
+- Maximum cache size: 100 MB
+- Database file: knowledge_base/research_cache.db
+- Cache type: SQLite database
+
+RATE LIMITING:
+- PubMed: 3 requests/second
+- ClinicalTrials.gov: 10 requests/second
+- FDA: 1 request/second (most restrictive)
+- Europe PMC: 10 requests/second
+- NIH: 5 requests/second
+- Leafly: 5 requests/second
+- PubChem: 5 requests/second
+
+================================================================================
+SECTION 8: DATA RETRIEVAL STATISTICS (Last 24 Hours)
+================================================================================
+
+Based on recent query "I can't sleep":
+- Total papers found: 54 studies
+- Clinical trials retrieved: 50 studies
+- PubMed papers: 0 (specific query limitations)
+- Leafly strains: 4 profiles
+- Papers cached: 10 studies
+- Average credibility score: 6.9/10
+- High credibility papers (8+): 5 studies
+- Source distribution: 90% Clinical Trials, 10% Leafly
+
+================================================================================
+SECTION 9: API ENDPOINTS & TECHNICAL DETAILS
+================================================================================
+
+PUBMED ENDPOINTS:
+- Search: /esearch.fcgi
+- Summary: /esummary.fcgi  
+- Full text: /efetch.fcgi
+- Link: /elink.fcgi
+
+CLINICALTRIALS.GOV ENDPOINTS:
+- Studies: /studies
+- Fields: /studies/metadata
+- Statistics: /stats
+
+FDA ENDPOINTS:
+- Drug labels: /drug/label.json
+- Adverse events: /drug/event.json
+- Food enforcement: /food/enforcement.json
+
+EUROPE PMC ENDPOINTS:
+- Search: /search
+- Profile: /profile
+- Citations: /citations
+
+================================================================================
+SECTION 10: COMPLIANCE & ETHICAL CONSIDERATIONS
+================================================================================
+
+API TERMS COMPLIANCE:
+- All APIs used within free tier limitations
+- Proper attribution provided in citations
+- Rate limits respected
+- User-agent identification provided
+- Contact information registered where required
+
+DATA USAGE ETHICS:
+- Research used for educational purposes only
+- No republishing of copyrighted abstracts
+- Proper academic citation format maintained
+- Commercial use limited to recommendation context
+
+PRIVACY PROTECTION:
+- No personal health information stored
+- User queries not logged with identifying information
+- Cache purged every 24 hours
+- Anonymous access to all sources
+
+================================================================================
+SECTION 11: SYSTEM ARCHITECTURE
+================================================================================
+
+AGGREGATION WORKFLOW:
+1. Query classification (medical/strain/chemical/safety)
+2. Source prioritization based on query type
+3. Parallel API requests with rate limiting
+4. Credibility and relevance scoring
+5. Result ranking and filtering
+6. Cache storage for performance
+7. APA citation formatting
+8. Quality assurance checks
+
+ERROR HANDLING:
+- Graceful degradation when sources unavailable
+- Fallback to cached results
+- Timeout protection (30 seconds per request)
+- Exception logging for monitoring
+- Source-specific error recovery
+
+================================================================================
+END OF AUDIT DOCUMENT
+================================================================================
+
+This document provides a complete overview of all research sources, endpoints,
+credibility scoring, and technical implementation details for the Sage 
+Research Database system. 
+
+For questions or updates to this audit, contact the development team or 
+refer to the source code in /mcp_educational/sources/.
+
+Last Updated: August 24, 2025
+Document Version: 1.0

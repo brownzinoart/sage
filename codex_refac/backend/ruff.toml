@@ -1,0 +1,10 @@
+line-length = 100
+target-version = "py311"
+
+[lint]
+select = ["E","F","W","I","UP","ASYNC","B","COM","C4","DTZ","ISC","PIE","PL","Q","RUF","SIM","TID","TRY"]
+ignore = ["D"]
+
+[lint.isort]
+known-first-party = ["app"]
+combine-as-imports = true

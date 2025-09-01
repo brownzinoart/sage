@@ -1,0 +1,131 @@
+{
+  "research_database": {
+    "strain_classification": {
+      "scientific_note": "2024 genetic research shows traditional indica/sativa classification lacks genetic support. Cannabinoid and terpene profiles are more reliable predictors of effects.",
+      "traditional_effects": {
+        "indica": {
+          "common_effects": ["relaxing", "sedating", "body-high", "couch-lock", "pain-relief", "sleep-aid"],
+          "typical_terpenes": ["myrcene", "linalool", "caryophyllene"],
+          "consumer_use": "Evening, nighttime, pain management, insomnia"
+        },
+        "sativa": {
+          "common_effects": ["energizing", "uplifting", "creative", "focus", "euphoric", "cerebral-high"],
+          "typical_terpenes": ["limonene", "pinene", "terpinolene"],
+          "consumer_use": "Daytime, social activities, creative work, motivation"
+        },
+        "hybrid": {
+          "common_effects": ["balanced", "versatile", "customizable", "moderate"],
+          "typical_terpenes": "varies by genetics",
+          "consumer_use": "Flexible timing, targeted specific needs"
+        }
+      }
+    },
+    "terpenes_research": {
+      "myrcene": {
+        "effects": ["sedative", "relaxing", "couch-lock", "pain-relief", "sleep-inducing"],
+        "properties": ["analgesic", "anti-inflammatory", "anxiolytic"],
+        "abundance": "Most abundant terpene in cannabis",
+        "consumer_experience": "Promotes relaxation and sleep, body-heavy effects"
+      },
+      "limonene": {
+        "effects": ["mood-elevation", "stress-relief", "anti-anxiety", "uplifting"],
+        "properties": ["anxiolytic", "anti-inflammatory", "antidepressant"],
+        "aroma": "citrusy",
+        "consumer_experience": "Energizing, mood-boosting, social enhancement"
+      },
+      "pinene": {
+        "types": ["alpha-pinene", "beta-pinene"],
+        "effects": ["alertness", "memory-enhancement", "focus", "energy", "neuroprotective"],
+        "properties": ["anti-inflammatory", "antioxidant", "bronchodilator", "antibacterial"],
+        "consumer_experience": "Clear-headed, focused, respiratory benefits",
+        "research_2024": "Significant neuroprotective effects against amyloid β exposure"
+      },
+      "linalool": {
+        "effects": ["calming", "sedating", "sleep-improvement", "anxiety-reduction"],
+        "properties": ["anxiolytic", "neuroprotective", "antidepressant", "analgesic", "anticonvulsant"],
+        "aroma": "lavender-like",
+        "consumer_experience": "Relaxation without heavy sedation, stress relief"
+      },
+      "caryophyllene": {
+        "effects": ["anti-inflammatory", "pain-relief", "anxiety-reduction"],
+        "properties": ["analgesic", "anti-inflammatory", "gastroprotective"],
+        "unique": "Only terpene that acts as cannabinoid (CB2 receptor)",
+        "consumer_experience": "Pain management without psychoactive effects"
+      },
+      "terpinolene": {
+        "effects": ["uplifting", "creative", "energizing", "focus"],
+        "properties": ["antioxidant", "sedative-in-high-doses"],
+        "consumer_experience": "Creative enhancement, daytime energy"
+      }
+    },
+    "nj_cannabinoids": {
+      "required_testing": {
+        "THC": "primary psychoactive cannabinoid",
+        "THCA": "raw form of THC, converts when heated",
+        "CBD": "non-psychoactive, therapeutic",
+        "CBDA": "raw form of CBD",
+        "CBG": "cannabigerol, potential energy/focus",
+        "CBGA": "raw form of CBG",
+        "CBN": "cannabinol, sedating, sleep-aid"
+      },
+      "potency_classifications": {
+        "high_thc": ">20% THC",
+        "moderate_thc": "10-20% THC",
+        "low_thc": "<10% THC",
+        "high_cbd": ">15% CBD",
+        "moderate_cbd": "5-15% CBD",
+        "low_cbd": "<5% CBD"
+      }
+    },
+    "product_categories": {
+      "flower": {
+        "forms": ["loose flower", "pre-rolls", "smalls"],
+        "consumption": "smoking, vaporizing",
+        "effects_onset": "immediate (1-5 minutes)",
+        "duration": "1-3 hours"
+      },
+      "concentrates": {
+        "forms": ["wax", "shatter", "rosin", "live resin", "hash"],
+        "consumption": "dabbing, vaporizing",
+        "effects_onset": "immediate (1-5 minutes)",
+        "duration": "2-4 hours",
+        "potency": "high (60-90% THC)"
+      },
+      "edibles": {
+        "forms": ["gummies", "chocolates", "beverages", "capsules"],
+        "consumption": "oral ingestion",
+        "effects_onset": "30-120 minutes",
+        "duration": "4-8 hours",
+        "dosing": "start low (2.5-5mg), go slow"
+      },
+      "vapes": {
+        "forms": ["cartridges", "disposables", "pods"],
+        "consumption": "vaporizing",
+        "effects_onset": "immediate (1-5 minutes)",
+        "duration": "1-3 hours",
+        "convenience": "discreet, portable"
+      },
+      "tinctures": {
+        "forms": ["sublingual oils", "droppers"],
+        "consumption": "sublingual, edible",
+        "effects_onset": "15-45 minutes",
+        "duration": "2-6 hours",
+        "dosing": "precise, customizable"
+      },
+      "topicals": {
+        "forms": ["creams", "balms", "patches", "salves"],
+        "consumption": "topical application",
+        "effects_onset": "15-30 minutes",
+        "duration": "2-4 hours",
+        "psychoactivity": "typically non-psychoactive"
+      }
+    },
+    "nj_compliance": {
+      "batch_size_max": "33.07 pounds",
+      "purchase_limit": "1 ounce per transaction",
+      "required_coa": true,
+      "testing_required": ["potency", "pesticides", "heavy_metals", "mold", "bacteria", "residual_solvents"],
+      "labeling_requirements": ["thc_cbd_levels", "batch_info", "universal_warning", "no_child_appeal"]
+    }
+  }
+}

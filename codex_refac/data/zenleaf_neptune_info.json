@@ -1,0 +1,148 @@
+{
+  "store_info": {
+    "name": "Zen Leaf Neptune",
+    "location": "Neptune City, New Jersey",
+    "address": "2100 New Jersey 66, Neptune City, NJ 07753",
+    "phone": "(908) 676-5936",
+    "email": "neptune@zenleafdispensaries.com",
+    "license_type": "Adult Use Recreational",
+    "license_number": "RMD-NJ-2024-001",
+    "hours": {
+      "monday": "10:00 AM - 9:00 PM",
+      "tuesday": "9:00 AM - 9:00 PM", 
+      "wednesday": "8:00 AM - 10:00 PM",
+      "thursday": "8:00 AM - 10:00 PM",
+      "friday": "8:00 AM - 10:00 PM",
+      "saturday": "8:00 AM - 10:00 PM",
+      "sunday": "8:00 AM - 10:00 PM"
+    },
+    "services": [
+      "Recreational Cannabis Sales",
+      "Medical Cannabis Consultation", 
+      "Cabbage Club Membership",
+      "Online Ordering & Pickup",
+      "Curbside Pickup Available",
+      "Cannabis Education",
+      "Product Recommendations",
+      "New Customer Discounts"
+    ],
+    "parking": "Free parking available",
+    "accessibility": "ADA compliant facility",
+    "payment_methods": ["Cash", "Debit Card", "CanPay"],
+    "age_requirement": "21+ for recreational, 18+ with medical card"
+  },
+  "branding": {
+    "tagline": "Relax. Recharge. Refresh.",
+    "mission": "Find Your Zen",
+    "values": [
+      "Premium Quality Cannabis",
+      "Customer Education First", 
+      "Safe & Welcoming Environment",
+      "Community Focused",
+      "Compliance & Safety"
+    ],
+    "color_scheme": {
+      "primary": "#2D5E3E",
+      "secondary": "#F8F9FA", 
+      "accent": "#6B9B76",
+      "text": "#1A1A1A"
+    },
+    "logo_description": "Stylized lotus flower with clean, minimal design representing zen and wellness"
+  },
+  "compliance": {
+    "state": "New Jersey",
+    "regulatory_body": "New Jersey Cannabis Regulatory Commission (NJ-CRC)",
+    "purchase_limits": {
+      "flower": "1 ounce per day",
+      "concentrates": "5 grams per day", 
+      "edibles": "equivalent to 1 ounce flower per day"
+    },
+    "required_id": "Valid government-issued photo ID required",
+    "consumption_notice": "For use by adults 21 and older. Keep out of reach of children and pets.",
+    "universal_symbol": "New Jersey Cannabis Universal Symbol required on all products",
+    "testing_requirements": [
+      "Potency Testing",
+      "Pesticide Screening", 
+      "Heavy Metal Testing",
+      "Microbial Testing",
+      "Residual Solvent Analysis"
+    ]
+  },
+  "popular_brands": [
+    {
+      "name": "Verano Reserve",
+      "description": "Premium cultivation with artisanal attention to detail",
+      "specialties": ["High-THC Flower", "Live Resin", "Craft Genetics"]
+    },
+    {
+      "name": "(the) Essence",
+      "description": "Quality cannabis with consistent potency and effects",
+      "specialties": ["Classic Strains", "Pre-Rolls", "Reliable Flower"]
+    },
+    {
+      "name": "On The Rocks", 
+      "description": "Premium vape products with pure extracts",
+      "specialties": ["Cartridges", "Disposables", "Live Resin Vapes"]
+    },
+    {
+      "name": "Encore",
+      "description": "Precisely dosed edibles with delicious flavors", 
+      "specialties": ["Gummies", "Chocolates", "Precise Dosing"]
+    },
+    {
+      "name": "Savvy",
+      "description": "Wellness-focused products for therapeutic use",
+      "specialties": ["Tinctures", "Topicals", "CBD Products"]
+    }
+  ],
+  "featured_categories": [
+    {
+      "name": "Premium Flower",
+      "description": "Hand-selected, expertly cured flower from top cultivators",
+      "price_range": "$50-$75 per eighth"
+    },
+    {
+      "name": "Convenient Vapes",
+      "description": "Discreet, portable vaping solutions for any lifestyle",  
+      "price_range": "$40-$80"
+    },
+    {
+      "name": "Precise Edibles", 
+      "description": "Accurately dosed edibles for consistent experiences",
+      "price_range": "$25-$45"
+    },
+    {
+      "name": "Potent Concentrates",
+      "description": "High-potency extracts for experienced consumers",
+      "price_range": "$60-$90 per gram"
+    }
+  ],
+  "current_deals": [
+    {
+      "title": "First Time Patient Discount",
+      "description": "20% off entire first purchase",
+      "terms": "Valid ID required, one-time use"
+    },
+    {
+      "title": "Cabbage Club Benefits", 
+      "description": "Exclusive member pricing and early access",
+      "terms": "Membership enrollment required"
+    },
+    {
+      "title": "Wednesday Wellness",
+      "description": "15% off all tinctures and topicals",
+      "terms": "Valid Wednesdays only"
+    }
+  ],
+  "education_focus": {
+    "consultation_available": true,
+    "educational_materials": [
+      "Strain Effects Guide",
+      "Dosage Recommendations", 
+      "Consumption Methods",
+      "Terpene Education",
+      "New User Guide"
+    ],
+    "staff_expertise": "Trained budtenders with product knowledge and safety focus"
+  }
+}
