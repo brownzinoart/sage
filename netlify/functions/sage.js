@@ -1,7 +1,15 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// LLM selection: prefer OpenAI if OPENAI_API_KEY is present; otherwise fallback to Gemini
+const useOpenAI = !!process.env.OPENAI_API_KEY;
+let GoogleGenerativeAI;
+let genAI;
+if (!useOpenAI) {
+  try {
+    GoogleGenerativeAI = require('@google/generative-ai').GoogleGenerativeAI;
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  } catch (e) {
+    // Gemini not available; will rely on fallback text if OpenAI also missing
+  }
+}
 
 // ZenLeaf Neptune product data (subset for Netlify function)
 const zenleafProducts = [
@@ -163,28 +171,14 @@ function searchProducts(query, limit = 3) {
   return results.sort((a, b) => b.match_score - a.match_score).slice(0, limit);
 }
 
-// Generate AI explanation using Gemini
+// Generate AI explanation using OpenAI Responses API (preferred) or Gemini fallback
 async function generateExplanation(userQuery, experienceLevel = 'casual') {
-  try {
-    const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash',
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 1024,
-      }
-    });
-
-    const prompt = `${CANNABIS_KNOWLEDGE}
+  const prompt = `${CANNABIS_KNOWLEDGE}
 
 User Experience Level: ${experienceLevel}
 User Query: "${userQuery}"
 
-You are ZenLeaf Neptune's expert cannabis consultant. Provide premium dispensary-level guidance about our cannabis products and strains. Focus EXCLUSIVELY on cannabis (THC products), NOT hemp or CBD-only products.
-
-For beginner queries ("never smoked before", "first time", etc.), recommend:
-• Low-THC strains (10-18% THC) like indica or indica-dominant hybrids
-• Start with small amounts and go slow approach  
-• Emphasize ZenLeaf's premium quality and expert budtender guidance
+You are ZenLeaf Neptune's expert cannabis consultant. Provide premium dispensary-level guidance about our cannabis products and strains. Focus EXCLUSIVELY on cannabis (THC products), NOT hemp or CBD-only products. Do NOT recommend hemp-only or CBD-only products.
 
 Format your response with these exact sections:
 
@@ -209,14 +203,52 @@ Format your response with these exact sections:
 
 Keep response under 200 words. Emphasize ZenLeaf Neptune as New Jersey's premier cannabis dispensary. Be professional and educational.`;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    return response.text().trim();
-    
-  } catch (error) {
-    console.error('Gemini API error:', error);
-    return generateFallbackExplanation(userQuery);
+  if (useOpenAI && process.env.OPENAI_API_KEY) {
+    try {
+      const res = await fetch('https://api.openai.com/v1/responses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'o4-mini',
+          reasoning: { effort: 'medium' },
+          input: prompt,
+          max_output_tokens: 512,
+          temperature: 0.7
+        })
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('OpenAI error:', res.status, text);
+        throw new Error(`OpenAI ${res.status}`);
+      }
+      const data = await res.json();
+      const text = (data?.output?.[0]?.content?.[0]?.text) || data?.output_text || '';
+      if (text) return text.trim();
+    } catch (e) {
+      console.error('OpenAI API error:', e);
+      // fall through to Gemini or fallback
+    }
   }
+
+  if (genAI) {
+    try {
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
+      });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      return response.text().trim();
+    } catch (error) {
+      console.error('Gemini API error:', error);
+    }
+  }
+
+  return generateFallbackExplanation(userQuery);
 }
 
 // Cannabis-focused fallback when Gemini fails
@@ -328,7 +360,7 @@ exports.handler = async (event, context) => {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ error: 'user_query or query parameter is required' })
+      body: JSON.stringify({ error: 'user_query or query parameter is required' })
       };
     }
 
