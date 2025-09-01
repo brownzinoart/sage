@@ -1,18 +1,16 @@
 [build]
   base = "frontend"
-  command = "npm run build"
-  publish = ".next"
+  command = "npm ci && npm run build"
+  publish = "out"
 
 [build.environment]
+  # Enable Next.js static export in next.config when building on Netlify
+  NETLIFY = "true"
   NODE_VERSION = "18"
-  GEMINI_API_KEY = "AIzaSyDd5fe13886Gew4q6-xpDBRzpzryd8yfBE"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
 
 [functions]
+  # Functions live at repo-root netlify/functions
   directory = "netlify/functions"
-  included_files = ["netlify/functions/**"]
 
 [[headers]]
   for = "/*"
